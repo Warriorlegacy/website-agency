@@ -341,5 +341,47 @@
     "channel": "system",
     "reason": "Demo ready — drafting outreach sequence",
     "timestamp": "2026-09-17T10:19:55.052Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-09-17T10:20:47.078Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-09-17T10:20:47.079Z"
+  },
+  {
+    "lead_slug": "cornerstone-artisan-bakery",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-09-17T10:20:47.082Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 115,
+    "summary": "Owner agreed to review the pre-built demo link and will call back to schedule a 10-minute review if satisfied.",
+    "transcript": "OWNER: Yeah, hi. I'm in the middle of a service rush, so I'm going to be very brief. What is this about?\nALEX: Hi Jordan, this is Alex from Apex AI Web Studio. I know you're busy, so I’ll keep this to thirty seconds. I noticed Blue Harbor Seafood Bar has a fantastic 4.8-star rating but currently doesn't have a website. I’ve actually already built a modern, mobile-friendly demo for you at localhost:3030/demos/blue-harbor-seafood-bar. It’s a flat $750 package, no monthly fees. Do you have ten minutes later today to just glance at it?\nOWNER: Wait, you already built it? And it's only $750? That’s surprisingly low. Usually, these things cost thousands. How did you even find us, and is this one of those things where I have to sign a contract for a year?\nALEX: Great questions. We found you through local business directories and your high review volume. And no, there are no long-term contracts. The $750 is a one-time fee for the design and setup. Since I’ve already done the heavy lifting, you can check the live demo link I’m sending you via text right now. If you like it, we can schedule a quick 10-minute review call tomorrow to finalize it. If not, no hard feelings. Does that work for you?\nOWNER: Okay, that sounds reasonable. I’ll check the link when I get to the office. If it looks good, I’ll call you back to set up that review. Thanks, Alex.",
+    "timestamp": "2026-09-17T10:20:48.315Z"
+  },
+  {
+    "lead_slug": "cornerstone-artisan-bakery",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "meeting_scheduled",
+    "duration_sec": 115,
+    "summary": "Jordan, the bakery owner, initially busy, agrees to review the pre-built website demo and schedule a 10-minute follow-up call after learning about the $750 flat package.",
+    "transcript": "ALEX: Hi Jordan, this is Alex from Apex AI Web Studio. I hope I'm not catching you at a bad time. I noticed Cornerstone Artisan Bakery, with its amazing 4.8-star rating, doesn't have a website, and we've actually put together a quick demo for you.\nOWNER: Alex, I'm pretty swamped right now. What exactly is this about? A website, you said? I'm really busy with the morning rush.\nALEX: I totally understand, Jordan. We specialize in building beautiful, modern, mobile-friendly websites for local businesses like yours, super fast. We've actually pre-built a live demo for Cornerstone Artisan Bakery, which you can see at http://localhost:3030/demos/cornerstone-artisan-bakery/index.html. Our entire package, including design, setup, and getting it live, is a flat $750. It's a complete solution designed to get you online without any hassle.\nOWNER: Hmm, $750 for a complete website, and you've already built a demo? That's... surprisingly straightforward. Okay, Alex, I'm intrigued. Send me that link in a text, and I'll definitely take a look tonight. Maybe we can schedule a quick 10-minute chat tomorrow if I have questions after seeing it?",
+    "timestamp": "2026-09-17T10:20:57.115Z"
   }
 ]
