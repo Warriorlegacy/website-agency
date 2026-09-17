@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { loadAppConfig } from './config_loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -95,27 +96,10 @@ export const PROVIDERS = {
 // ─── Config Loader ────────────────────────────────────────────────────────────
 function loadAiConfig() {
   try {
-    const raw = fs.readFileSync(CONFIG_FILE, 'utf-8');
-    const cfg = JSON.parse(raw);
-    // Support both legacy flat format and new nested format
+    const cfg = loadAppConfig();
     if (cfg.ai) return cfg.ai;
-    return {
-      provider: 'groq',
-      model: cfg.groqApiKey ? 'llama-3.3-70b-versatile' : '',
-      customEndpoint: '',
-      keys: {
-        groq: cfg.groqApiKey || '',
-        openai: cfg.openaiApiKey || '',
-        anthropic: cfg.anthropicApiKey || '',
-        gemini: cfg.geminiApiKey || '',
-        openrouter: cfg.openrouterApiKey || '',
-        custom: cfg.customApiKey || ''
-      },
-      fallbackProviders: ['groq']
-    };
-  } catch {
-    return { provider: 'groq', model: 'llama-3.3-70b-versatile', keys: {}, fallbackProviders: [] };
-  }
+  } catch {}
+  return { provider: 'groq', model: 'qwen/qwen3.8-27b', keys: {}, fallbackProviders: ['gemini', 'groq'] };
 }
 
 function getApiKey(aiConfig, provider) {

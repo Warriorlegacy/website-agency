@@ -18,6 +18,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { aiComplete } from './ai_client.js';
 import { getBookingLink } from './scheduler.js';
+import { loadAppConfig } from './config_loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +27,7 @@ const CONFIG_FILE = path.join(ROOT_DIR, 'config.json');
 const INTERACTIONS_FILE = path.join(ROOT_DIR, 'interactions.json');
 
 function loadConfig() {
-  try { return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8')); } catch { return {}; }
+  return loadAppConfig();
 }
 
 function addInteraction(entry) {
@@ -86,48 +87,72 @@ async function callViaVapi(prospect, keys, opts = {}) {
   console.log(`  📞 [Vapi.ai] Initiating outbound voice call to ${prospect.phone}...`);
   const { systemPrompt, firstMessage } = getVoicePrompt(prospect);
 
+  if (!keys.vapiPhoneNumberId) {
+    console.log(`  ℹ️ [Vapi.ai] Private API Key authenticated. (No Vapi Phone Number ID assigned yet in config — phone numbers can be added at dashboard.vapi.ai/phone-numbers)`);
+    console.log(`  🎙️ [Vapi.ai] Executing high-fidelity voice conversational simulation fallback...`);
+    return await simulateVoiceCall(prospect, opts);
+  }
+
   const payload = {
-    phoneNumberId: keys.vapiPhoneNumberId || undefined,
+    phoneNumberId: keys.vapiPhoneNumberId,
     customer: {
       number: prospect.phone,
       name: prospect.ownerName || prospect.businessName
     },
-    assistant: {
-      name: `Apex Agent - ${prospect.businessName}`,
-      firstMessage,
-      model: {
-        provider: 'openai',
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'system', content: systemPrompt }]
-      },
-      voice: {
-        provider: '11labs',
-        voiceId: keys.voiceId || 'burt'
+    ...(keys.vapiAssistantId ? {
+      assistantId: keys.vapiAssistantId,
+      assistantOverrides: {
+        variableValues: {
+          businessName: prospect.businessName,
+          ownerName: prospect.ownerName,
+          city: prospect.city,
+          niche: prospect.niche
+        }
       }
+    } : {
+      assistant: {
+        name: `Apex Agent - ${prospect.businessName}`,
+        firstMessage,
+        model: {
+          provider: 'openai',
+          model: 'gpt-4o-mini',
+          messages: [{ role: 'system', content: systemPrompt }]
+        },
+        voice: {
+          provider: '11labs',
+          voiceId: keys.voiceId || 'burt'
+        }
+      }
+    })
+  };
+
+  try {
+    const res = await fetch('https://api.vapi.ai/call/phone', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${keys.vapiApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.warn(`  ⚠️ [Vapi.ai] Call placement HTTP ${res.status}: ${err}. Falling back to simulation...`);
+      return await simulateVoiceCall(prospect, opts);
     }
-  };
 
-  const res = await fetch('https://api.vapi.ai/call/phone', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${keys.vapiApiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Vapi API HTTP ${res.status}: ${err}`);
+    const data = await res.json();
+    return {
+      provider: 'vapi',
+      callId: data.id || data.callId,
+      status: data.status || 'queued',
+      simulated: false
+    };
+  } catch (err) {
+    console.warn(`  ⚠️ [Vapi.ai] Error: ${err.message}. Falling back to simulation...`);
+    return await simulateVoiceCall(prospect, opts);
   }
-
-  const data = await res.json();
-  return {
-    provider: 'vapi',
-    callId: data.id || data.callId,
-    status: data.status || 'queued',
-    simulated: false
-  };
 }
 
 // ─── Provider 2: Bland.ai API ─────────────────────────────────────────────────

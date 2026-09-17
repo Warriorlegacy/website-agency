@@ -53,15 +53,7 @@ export function loadAppConfig() {
     console.warn('⚠️ Failed to parse config.json:', err.message);
   }
 
-  // 2. Local config.local.json
-  try {
-    if (fs.existsSync(LOCAL_CONFIG_FILE)) {
-      const local = JSON.parse(fs.readFileSync(LOCAL_CONFIG_FILE, 'utf-8'));
-      config = deepMerge(config, local);
-    }
-  } catch {}
-
-  // 3. Inject Environment Variables
+  // 2. Inject Environment Variables (e.g. GitHub Actions cloud secrets)
   if (!config.ai) config.ai = { keys: {} };
   if (!config.ai.keys) config.ai.keys = {};
   if (process.env.GROQ_API_KEY) config.ai.keys.groq = process.env.GROQ_API_KEY;
@@ -82,8 +74,23 @@ export function loadAppConfig() {
 
   if (!config.voiceCalling) config.voiceCalling = { keys: {} };
   if (!config.voiceCalling.keys) config.voiceCalling.keys = {};
-  if (process.env.VAPI_API_KEY) config.voiceCalling.keys.vapiApiKey = process.env.VAPI_API_KEY;
+  if (process.env.VAPI_API_KEY) {
+    config.voiceCalling.keys.vapiApiKey = process.env.VAPI_API_KEY;
+    if (!config.voiceCalling.provider || config.voiceCalling.provider === 'simulation') {
+      config.voiceCalling.provider = 'vapi';
+    }
+  }
+  if (process.env.VAPI_ASSISTANT_ID) config.voiceCalling.keys.vapiAssistantId = process.env.VAPI_ASSISTANT_ID;
+  if (process.env.VAPI_PHONE_NUMBER_ID) config.voiceCalling.keys.vapiPhoneNumberId = process.env.VAPI_PHONE_NUMBER_ID;
   if (process.env.BLAND_API_KEY) config.voiceCalling.keys.blandApiKey = process.env.BLAND_API_KEY;
+
+  // 3. Local config.local.json (Highest precedence for local developer overrides)
+  try {
+    if (fs.existsSync(LOCAL_CONFIG_FILE)) {
+      const local = JSON.parse(fs.readFileSync(LOCAL_CONFIG_FILE, 'utf-8'));
+      config = deepMerge(config, local);
+    }
+  } catch {}
 
   return config;
 }

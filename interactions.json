@@ -174,5 +174,53 @@
     "summary": "Alex from Apex AI Web Studio called James Wilson of Apex Electrical Solutions, presented a pre-built website demo for $750, and James agreed to review the demo and schedule a follow-up call.",
     "transcript": "ALEX: Good morning, James. My name is Alex, and I'm a sales consultant with Apex AI Web Studio. I'm calling about Apex Electrical Solutions – do you have a quick minute?\nOWNER: Alex, I'm pretty busy out in the field today. What's this regarding, and how did you get my contact information?\nALEX: Totally understand, James. I actually came across your business while researching top-rated electrical services in Seattle – your 4.7-star rating is impressive! However, I noticed your current website doesn't quite showcase that level of professionalism. We've actually taken the liberty of building a live, modern website demo specifically for Apex Electrical Solutions. It's a complete, ready-to-launch package, and we offer these for a flat rate of just $750. My goal was to show you how quickly we can elevate your online presence.\nOWNER: A pre-built demo for $750? That's definitely caught my attention. Okay, I'm interested in seeing what you've put together. Can you email me the link to that demo? I'll review it this evening, and if it looks good, we can schedule a quick 10-minute chat tomorrow to discuss it further.",
     "timestamp": "2026-09-17T09:57:27.548Z"
+  },
+  {
+    "lead_slug": "summit-peak-plumbing",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "meeting_scheduled",
+    "duration_sec": 115,
+    "summary": "Robert Miller, owner of Summit Peak Plumbing, agrees to schedule a 10-minute review call next week to discuss the pre-built website demo after Alex explains the $750 flat package.",
+    "transcript": "ALEX: Hi Robert Miller? My name is Alex from Apex AI Web Studio. I was doing some research on local businesses in Denver and noticed Summit Peak Plumbing has a fantastic 4.7-star rating, but your current website doesn't quite reflect that success. We've actually put together a quick, modern demo site specifically for Summit Peak Plumbing, and I thought you might be interested in seeing it.\nOWNER: Alex, I appreciate you reaching out, but I'm pretty swamped right now. What exactly is this about, and how did you even get my number? And what's the catch with this 'demo site'?\nALEX: No problem at all, Robert, I completely understand you're busy. I found your number publicly listed for Summit Peak Plumbing, and your excellent reviews really stood out. The 'catch' is actually quite simple: we specialize in helping busy local businesses like yours get a professional, mobile-friendly website up and running quickly and affordably. We've built a live demo at http://localhost:3030/demos/summit-peak-plumbing/index.html that showcases what your new site could look like, complete with your branding and services. Our standard package for this is a flat $750, including setup and basic content migration. It's a one-time fee for a fully functional, modern site.\nOWNER: Hmm, $750 for a new site, that's definitely interesting. I'm still slammed today, but I can definitely take a look at that link you mentioned. Could you text or email me that demo link? Or better yet, let's schedule a quick 10-minute call for sometime next week, say Tuesday morning, to walk through it. That might be easier.",
+    "timestamp": "2026-09-17T10:02:03.569Z"
+  },
+  {
+    "lead_slug": "summit-peak-plumbing",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "meeting_scheduled",
+    "duration_sec": 115,
+    "summary": "Alex from Apex AI Web Studio pitched a pre-built website demo to Robert Miller of Summit Peak Plumbing, who, despite initial caution regarding time and cost, agreed to review the demo link and potentially schedule a follow-up meeting.",
+    "transcript": "ALEX: Hi Robert, this is Alex from Apex AI Web Studio. I'm calling about Summit Peak Plumbing. We noticed your excellent 4.7-star rating in Denver, but also that your current website might not be fully showcasing that quality. We've actually put together a quick, modern demo website specifically for Summit Peak Plumbing, and I wanted to see if you had a minute to take a look.\nOWNER: Alex, I appreciate the call, but I'm pretty swamped right now. What exactly is this about, and how did you get my number? Is this going to cost me an arm and a leg?\nALEX: Totally understand, Robert, and I'll be brief. We found your public business listing and wanted to reach out. Regarding cost, we specialize in high-quality, pre-built sites like the one I mentioned, offered at a flat package price of just $750. It's a complete, modern, mobile-friendly site designed to rank well. The best part is, we've already built a live demo for you at http://localhost:3030/demos/summit-peak-plumbing/index.html. It's ready to view right now. Would you be open to a quick 10-minute screen share sometime this week, or I can just send you the link to check out at your convenience?\nOWNER: Okay, $750 is interesting. I'm heading out to a job now, but that link sounds good. Send it over, and I'll definitely take a look tonight or tomorrow morning. If I like what I see, I'll reach out, or we can schedule that 10-minute review you mentioned.",
+    "timestamp": "2026-09-17T10:03:09.042Z"
+  },
+  {
+    "lead_slug": "summit-peak-plumbing",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "meeting_scheduled",
+    "duration_sec": 115,
+    "summary": "Robert Miller, owner of Summit Peak Plumbing, agreed to either review the pre-built website demo or schedule a 10-minute screen share after Alex from Apex AI Web Studio presented a $750 flat package for a modern website.",
+    "transcript": "ALEX: Good morning, Robert? This is Alex from Apex AI Web Studio. I'm calling because I noticed Summit Peak Plumbing, with your fantastic 4.7-star rating, has an incredible reputation in Denver, but your current website might not be fully reflecting that. We've actually put together a quick, modern demo for you, completely free, to show you what a fresh online presence could look like.\nOWNER: Alex, thanks for the call, but I'm pretty swamped right now. What exactly is this about, and how did you even get my number? Is this going to cost me an arm and a leg?\nALEX: I completely understand you're busy, Robert, and I'll be brief. We found you through a local business directory, and your excellent reviews stood out. Regarding cost, our pre-built demos like the one we made for Summit Peak Plumbing are part of a special $750 flat package. This includes a fully modern, mobile-responsive, SEO-optimized website, ready to go. The demo is live right now at http://localhost:3030/demos/summit-peak-plumbing/index.html. It's a quick way to see the potential without any commitment.\nOWNER: Hmm, $750, that's interesting. I appreciate you putting that together. I'm heading out to a job now, but I can definitely take a look at that link later this afternoon. Or, if you're free tomorrow morning, maybe we could do a quick 10-minute screen share?",
+    "timestamp": "2026-09-17T10:03:42.959Z"
+  },
+  {
+    "lead_slug": "summit-peak-plumbing",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 115,
+    "summary": "Robert Miller agreed to review the pre-built website demo sent via link after learning it was a flat $750 package.",
+    "transcript": "ALEX: Hi, this is Alex with Apex AI Web Studio. I’m calling about your online presence for Summit Peak Plumbing. I know you’re busy, so I’ll be brief: I’ve built a quick, modern demo of what your site could look like to help you win more Denver jobs. Do you have thirty seconds?\nOWNER: I’m in the middle of a job here. What is this about? And how did you even find my number? I’m not really in the market for a new website right now.\nALEX: I found you through your 4.7-star rating on local directories; you’re clearly doing great work, but your current site looks a bit dated compared to your reputation. I’m not selling a long-term contract today. I’ve already built a live demo specifically for you. It’s a flat $750 package if you like it, but first, I just want you to see it. Can I send the link now?\nOWNER: A flat $750? That’s cheaper than I expected, but I don’t have time to sit through a sales pitch. If it’s already built, just send me the link. If it looks good, I’ll look at it tonight. If not, we’re done.\nALEX: Understood. I’m sending the link to http://localhost:3030/demos/summit-peak-plumbing/index.html right now. It’s fully functional and tailored to your services. If you have any questions after you check it out, just reply to the email. Thanks for your time, Robert.\nOWNER: Copy that. I’ll take a look later. Thanks, Alex. Goodbye.",
+    "timestamp": "2026-09-17T10:04:56.068Z"
   }
 ]
