@@ -10,8 +10,21 @@
  *
  * ponytail: subprocess calls to Cline CLI, no npm deps
  */
+import fs from 'fs';
+import path from 'path';
 import { spawn } from 'child_process';
 import { loadAppConfig } from './config_loader.js';
+
+function getClineCmd() {
+  if (process.platform === 'win32') {
+    if (process.env.APPDATA) {
+      const npmCmd = path.join(process.env.APPDATA, 'npm', 'cline.cmd');
+      if (fs.existsSync(npmCmd)) return npmCmd;
+    }
+    return 'cline.cmd';
+  }
+  return 'cline';
+}
 
 /**
  * Run a Cline agent task in headless/JSON mode.
@@ -28,15 +41,33 @@ export async function runClineTask(prompt, opts = {}) {
   console.log(`  🤖 [Cline] Running: "${prompt.slice(0, 80)}..."`);
 
   return new Promise((resolve) => {
-    // Try headless JSON mode first (Cline ≥1.x), fall back to simple prompt
-    const args = ['--headless', '--json', prompt];
+    let settled = false;
+    const safeResolve = (val) => {
+      if (!settled) {
+        settled = true;
+        resolve(val);
+      }
+    };
 
-    const proc = spawn('cline', args, {
-      cwd: workspace,
-      stdio: ['pipe', 'pipe', 'pipe'],
-      timeout,
-      env: { ...process.env, ...clineConfig.env }
-    });
+    let proc;
+    if (process.platform === 'win32') {
+      const escapedPrompt = prompt.replace(/"/g, '`"');
+      const psCommand = `cline --json --auto-approve true -c "${workspace}" "${escapedPrompt}"`;
+      proc = spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', psCommand], {
+        cwd: workspace,
+        stdio: ['pipe', 'pipe', 'pipe'],
+        timeout,
+        env: { ...process.env, ...clineConfig.env }
+      });
+    } else {
+      const args = ['--json', '--auto-approve', 'true', '-c', workspace, prompt];
+      proc = spawn('cline', args, {
+        cwd: workspace,
+        stdio: ['pipe', 'pipe', 'pipe'],
+        timeout,
+        env: { ...process.env, ...clineConfig.env }
+      });
+    }
 
     let stdout = '';
     let stderr = '';
@@ -46,7 +77,7 @@ export async function runClineTask(prompt, opts = {}) {
     proc.on('close', (code) => {
       if (code !== 0) {
         console.warn(`  ⚠️ Cline exited ${code}`);
-        resolve({ status: 'error', exitCode: code, stderr: stderr.slice(0, 500) });
+        safeResolve({ status: 'error', exitCode: code, stderr: stderr.slice(0, 500) });
         return;
       }
 
@@ -58,27 +89,28 @@ export async function runClineTask(prompt, opts = {}) {
       } catch {}
 
       console.log(`  ✅ Cline task completed`);
-      resolve({ status: 'completed', output: parsed || stdout.slice(0, 2000) });
+      safeResolve({ status: 'completed', output: parsed || stdout.slice(0, 2000) });
     });
 
     proc.on('error', (e) => {
-      // Cline not installed — run the shell command directly as fallback
-      console.warn(`  ⚠️ Cline CLI not available (${e.message}) — running command directly`);
+      // Cline error — run command directly as fallback
+      console.warn(`  ⚠️ Cline invocation error (${e.message}) — running command directly`);
       const directArgs = prompt.trim().split(/\s+/);
-      const cmd = directArgs.shift();
-      const fallback = spawn(cmd, directArgs, {
+      const fallbackCmd = directArgs.shift();
+      const fallback = spawn(fallbackCmd, directArgs, {
         cwd: workspace,
         stdio: ['pipe', 'pipe', 'pipe'],
+        shell: process.platform === 'win32',
         timeout
       });
       let fbOut = '', fbErr = '';
       fallback.stdout.on('data', (d) => { fbOut += d; });
       fallback.stderr.on('data', (d) => { fbErr += d; });
       fallback.on('close', (c) => {
-        resolve({ status: c === 0 ? 'completed_direct' : 'error', output: fbOut.slice(0, 2000), stderr: fbErr.slice(0, 500) });
+        safeResolve({ status: c === 0 ? 'completed_direct' : 'error', output: fbOut.slice(0, 2000), stderr: fbErr.slice(0, 500) });
       });
       fallback.on('error', () => {
-        resolve({ status: 'unavailable', error: e.message });
+        safeResolve({ status: 'unavailable', error: e.message });
       });
     });
   });

@@ -23,9 +23,14 @@ export function generateOutreachSequence(prospectData, demoUrl = null) {
 
   console.log(`\n✍️ Drafting personalized outreach for [${businessName}] (Owner: ${ownerName || 'Unknown'})...`);
 
-  // Extract top issues
-  const mobileIssue = dimensions?.mobile?.problems?.[0] || 'The site is not optimized for mobile taps and quick calling.';
+  // Extract top issues (preferring real visual audit if captured)
+  const visualIssue = prospectData.visualAudit?.layoutIssues?.[0] || null;
+  const mobileIssue = visualIssue || dimensions?.mobile?.problems?.[0] || 'The site is not optimized for mobile taps and quick calling.';
   const conversionIssue = dimensions?.conversion?.problems?.[0] || 'Phone numbers are not tap-to-call on smartphones.';
+
+  const socialSummary = prospectData.socialProfiles
+    ? Object.entries(prospectData.socialProfiles).filter(([k, v]) => v).map(([k, v]) => `${k}: ${v}`).join(', ')
+    : '';
 
   const outreachMarkdown = `# Outreach Sequence: ${businessName}
 
@@ -36,7 +41,8 @@ export function generateOutreachSequence(prospectData, demoUrl = null) {
 - **Phone**: ${phone || 'N/A'}
 - **City / Market**: ${city}
 - **Audit Overall Score**: ${overallScore || 4}/10
-- **Live Demo Link**: ${effectiveDemoUrl}
+- **Visual Responsiveness**: ${prospectData.visualAudit ? (prospectData.visualAudit.hasHorizontalScroll ? '⚠️ Mobile Horizontal Overflow Detected' : '✅ Mobile Layout Audited') : 'Standard Heuristic'}
+${socialSummary ? `- **Social Profiles**: ${socialSummary}\n` : ''}- **Live Demo Link**: ${effectiveDemoUrl}
 
 ---
 
@@ -71,7 +77,7 @@ Best regards,
 ---
 
 ## 💬 Touch 2: LinkedIn / Instagram DM
-**Target Platform**: LinkedIn (Owner: ${ownerName}) or Instagram (@${slug})
+**Target Platform**: ${prospectData.socialProfiles?.linkedin ? `LinkedIn (${prospectData.socialProfiles.linkedin})` : `LinkedIn (Owner: ${ownerName})`} or ${prospectData.socialProfiles?.instagram ? `Instagram (${prospectData.socialProfiles.instagram})` : `Instagram (@${slug})`}
 
 > "Hey ${firstName}! Big fan of what you guys are doing with ${businessName} here in ${city}. I specialize in upgrading local business websites and actually built a quick modern mobile preview of yours to show what's possible — mind if I drop the link over? Totally zero pressure, just thought it might be useful! 🙂"
 

@@ -13,6 +13,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { scrapeUrl } from './lib/scraper_client.js';
 import { aiComplete, parseAiJson } from './lib/ai_client.js';
+import { captureSiteVisuals, deepCrawlContactInfo } from './lib/browser_use_scraper.js';
+import { isSendableEmail } from './lib/guardrails.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -206,6 +208,43 @@ export async function auditWebsite({ businessName, url, niche = 'general', city 
     auditData = runHeuristicAudit({ businessName, url: cleanUrl, niche, city, pageContent });
   }
 
+  // Step 2.5: Browser-Use Visual & Contact Enrichment (Engine 1)
+  let visualAudit = null;
+  let discoveredContact = null;
+  if (cleanUrl) {
+    try {
+      console.log(`   🌐 Running Browser-Use visual responsiveness analysis...`);
+      visualAudit = await captureSiteVisuals(cleanUrl, slug);
+      if (visualAudit?.layoutIssues?.length > 0 && auditData?.dimensions?.mobile) {
+        auditData.dimensions.mobile.problems = [
+          visualAudit.layoutIssues[0],
+          ...(auditData.dimensions.mobile.problems || []).slice(0, 1)
+        ];
+      }
+    } catch (err) {
+      console.warn(`   ⚠️  Visual capture skipped: ${err.message}`);
+    }
+
+    if (!ownerEmail) {
+      try {
+        console.log(`   🔎 Crawling subpages for publicly listed contact info...`);
+        discoveredContact = await deepCrawlContactInfo(cleanUrl, businessName);
+        if (discoveredContact?.emails?.length > 0) {
+          for (const cand of discoveredContact.emails) {
+            const check = isSendableEmail(cand, { observedOn: discoveredContact.observedOn });
+            if (check.ok) {
+              ownerEmail = cand;
+              console.log(`   ✉️  Discovered verified public email: ${cand} (observed on ${discoveredContact.observedOn})`);
+              break;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn(`   ⚠️  Deep contact crawl skipped: ${err.message}`);
+      }
+    }
+  }
+
   // Step 3: Build full audit record
   const auditResult = {
     businessName,
@@ -222,7 +261,17 @@ export async function auditWebsite({ businessName, url, niche = 'general', city 
     engine: auditData.engine || 'AI Audit',
     overallScore: auditData.overallScore,
     dimensions: auditData.dimensions,
-    biggestOpportunity: auditData.biggestOpportunity
+    biggestOpportunity: auditData.biggestOpportunity,
+    visualAudit: visualAudit ? {
+      source: visualAudit.source,
+      hasMobileViewport: visualAudit.hasMobileViewport,
+      hasHorizontalScroll: visualAudit.hasHorizontalScroll,
+      desktopScreenshot: visualAudit.desktopScreenshot || null,
+      mobileScreenshot: visualAudit.mobileScreenshot || null,
+      layoutIssues: visualAudit.layoutIssues || []
+    } : null,
+    socialProfiles: discoveredContact?.socialProfiles || null,
+    emailSource: discoveredContact?.observedOn || (ownerEmail ? 'provided' : null)
   };
 
   // Save to prospects/

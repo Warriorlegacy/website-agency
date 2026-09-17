@@ -14,10 +14,11 @@ import { placeVoiceCall } from './lib/voice_caller.js';
 import { sendClosingProposal, confirmDealWon } from './lib/closing_engine.js';
 import { runAutopilotCycle } from './autopilot.js';
 import { notifyLeadsHarvested } from './lib/telegram_notifier.js';
-import { scrapeViaBrowserUse } from './lib/browser_use_scraper.js';
+import { scrapeViaBrowserUse, captureSiteVisuals, deepCrawlContactInfo } from './lib/browser_use_scraper.js';
+import { isSendableEmail } from './lib/guardrails.js';
 import { placeVoiceCall as pipecatCall } from './lib/pipecat_caller.js';
 import { scheduleDemoShowcase, scheduleBatchShowcases } from './lib/postiz_scheduler.js';
-import { generateAuditViaLLM, generateOutreachViaLLM } from './lib/anythingllm_client.js';
+import { generateAuditViaLLM, generateOutreachViaLLM, handleObjectionViaPlaybook, generateClientDossier } from './lib/anythingllm_client.js';
 import { runClineTask } from './lib/cline_scheduler.js';
 import { loadAppConfig } from './lib/config_loader.js';
 
@@ -392,6 +393,53 @@ async function main() {
       break;
     }
 
+    case 'objection': {
+      const slug = slugify(args[1]);
+      const objectionText = args.slice(2).join(' ');
+      if (!slug || !objectionText) {
+        console.log('Usage: node scripts/agency_cli.js objection <slug> "<objection text>"');
+        return;
+      }
+      const prospectFile = path.join(PROSPECTS_DIR, `${slug}.json`);
+      let prospect = { businessName: slug, city: 'Local Area' };
+      if (fs.existsSync(prospectFile)) {
+        try { prospect = JSON.parse(fs.readFileSync(prospectFile, 'utf-8')); } catch {}
+      }
+      console.log(`\n🧠 [AnythingLLM Playbook] Resolving objection for [${prospect.businessName}]:`);
+      console.log(`   Objection: "${objectionText}"`);
+      const reply = await handleObjectionViaPlaybook(objectionText, prospect);
+      console.log(`\n📋 Playbook Recommended Script:\n----------------------------------------\n${reply}\n----------------------------------------`);
+      break;
+    }
+
+    case 'dossier': {
+      const slug = slugify(args[1]);
+      if (!slug) {
+        console.log('Usage: node scripts/agency_cli.js dossier <slug>');
+        return;
+      }
+      const prospectFile = path.join(PROSPECTS_DIR, `${slug}.json`);
+      if (!fs.existsSync(prospectFile)) {
+        console.error(`❌ Prospect not found: ${slug}`);
+        return;
+      }
+      const prospect = JSON.parse(fs.readFileSync(prospectFile, 'utf-8'));
+      console.log(`\n🧠 [AnythingLLM Playbook] Generating sales intelligence dossier for [${prospect.businessName}]...`);
+      const dossier = await generateClientDossier(prospect, prospect);
+      if (dossier) {
+        const dossierFile = path.join(PROSPECTS_DIR, `${slug}_dossier.json`);
+        fs.writeFileSync(dossierFile, JSON.stringify(dossier, null, 2), 'utf-8');
+        console.log(`✅ Strategic Sales Dossier Created at: prospects/${slug}_dossier.json`);
+        console.log(`   Recommended Package: ${dossier.recommendedTier?.toUpperCase()} ($${dossier.recommendedPriceUSD})`);
+        console.log(`   Winning Pitch Angle: ${dossier.keyPitchAngle}`);
+        console.log(`   Anticipated Pushback: ${dossier.anticipatedObjection}`);
+        console.log(`   Response Play: ${dossier.winningResponse}`);
+      } else {
+        console.warn('⚠️ Could not generate dossier.');
+      }
+      break;
+    }
+
     case 'cline-run': {
       const prompt = args.slice(1).join(' ') || 'Run agency selfcheck';
       console.log(`\n🤖 [Cline] Running: "${prompt}"`);
@@ -463,6 +511,51 @@ async function main() {
       break;
     }
 
+    case 'enrich-browser': {
+      const slug = slugify(args[1]);
+      const prospectFile = path.join(PROSPECTS_DIR, `${slug}.json`);
+      if (!fs.existsSync(prospectFile)) {
+        console.error(`❌ Prospect not found: ${slug}`);
+        return;
+      }
+      const prospectData = JSON.parse(fs.readFileSync(prospectFile, 'utf-8'));
+      console.log(`\n🌐 Running Browser-Use deep enrichment for [${prospectData.businessName}] (${prospectData.url})...`);
+
+      const visuals = await captureSiteVisuals(prospectData.url, slug);
+      console.log(`📸 Visual Audit Source: ${visuals.source}`);
+      if (visuals.layoutIssues?.length > 0) {
+        console.log(`   Layout Issues: ${visuals.layoutIssues.join('; ')}`);
+      }
+
+      const contact = await deepCrawlContactInfo(prospectData.url, prospectData.businessName);
+      if (contact?.emails?.length > 0) {
+        console.log(`✉️  Found public emails: ${contact.emails.join(', ')}`);
+        for (const em of contact.emails) {
+          const check = isSendableEmail(em, { observedOn: contact.observedOn });
+          if (check.ok && !prospectData.ownerEmail) {
+            prospectData.ownerEmail = em;
+            prospectData.emailSource = contact.observedOn;
+            console.log(`   Assigned verified email: ${em} (observed on ${contact.observedOn})`);
+            break;
+          }
+        }
+      }
+      if (contact?.socialProfiles) {
+        prospectData.socialProfiles = { ...(prospectData.socialProfiles || {}), ...contact.socialProfiles };
+      }
+      prospectData.visualAudit = visuals;
+      fs.writeFileSync(prospectFile, JSON.stringify(prospectData, null, 2), 'utf-8');
+
+      const pipeline = loadPipeline();
+      const pIdx = pipeline.prospects.findIndex(p => p.slug === slug);
+      if (pIdx >= 0) {
+        if (prospectData.ownerEmail) pipeline.prospects[pIdx].ownerEmail = prospectData.ownerEmail;
+        savePipeline(pipeline);
+      }
+      console.log(`✅ Enrichment complete! Updated [prospects/${slug}.json]`);
+      break;
+    }
+
     case 'call': {
       const slug = slugify(args[1]);
       const prospectFile = path.join(PROSPECTS_DIR, `${slug}.json`);
@@ -499,12 +592,15 @@ Available Commands:
   autopilot [--loop] [--dry-run] [--interval=15] [--force-call]          Run 24/7 Autonomous Agency Autopilot
   scrape-maps <niche> <city> [count]                                      Auto-harvest leads from Google Maps (OSM)
   scrape-browser <niche> <city> [count]                                   Scrape via Browser Use (AI browser agent)
+  enrich-browser <slug>                                                   Visual layout audit & deep contact crawl via Browser Use
   call <slug> [--simulate|--live]                                         Place AI voice cold call (simulation)
   call-ai <slug>                                                          Place AI voice call via Pipecat
   close-deal <slug> [starter|growth|premium]                              Confirm deposit payment & mark CLOSED_WON
   run-all <name> <url> <niche> <city> [owner] [email] [template] [phone]   Execute end-to-end audit, demo, and outreach
   audit <name> [url] [niche] [city]                                       Run 5-point website audit only
   llm-audit <url> [niche] [city]                                          Audit via AnythingLLM (local AI)
+  objection <slug> "<text>"                                               Handle client objection via Playbook RAG (AnythingLLM)
+  dossier <slug>                                                          Synthesize 1-page strategic sales dossier (AnythingLLM)
   demo <slug> [template]                                                  Generate modern HTML5 demo site
   outreach <slug>                                                         Draft multi-touch outreach sequence
   social-post [slug]                                                      Schedule social media post (Postiz)

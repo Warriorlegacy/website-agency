@@ -7,6 +7,8 @@
  *
  * ponytail: direct HTTP calls to Postiz API, no npm deps
  */
+import fs from 'fs';
+import path from 'path';
 import { loadAppConfig } from './config_loader.js';
 
 /**
@@ -20,23 +22,52 @@ export async function scheduleDemoShowcase(opts = {}) {
   const apiUrl = postiz.apiUrl || 'http://localhost:3000';
   const apiKey = postiz.apiKey || '';
 
-  if (!apiKey) {
-    console.log('  📱 [Postiz] No API key configured — skipping social post');
-    return { status: 'skipped', reason: 'no_api_key' };
-  }
-
   const { slug, businessName, niche, demoUrl, city } = opts;
 
   const captions = {
-    restaurant: `🍽️ Just built a modern website redesign for ${businessName} in ${city}! Mobile-first, fast, and designed to convert. Check it out: ${demoUrl}`,
-    medical: `🏥 New project spotlight: ${businessName} in ${city} got a complete website overhaul. Patient-friendly, SEO-optimized, and blazing fast: ${demoUrl}`,
-    trade: `🔧 Another happy client: ${businessName} in ${city} now has a website that works as hard as they do. Tap-to-call, mobile-first: ${demoUrl}`,
-    professional: `⚖️ Professional web design for ${businessName} in ${city}. Clean, trustworthy, conversion-focused: ${demoUrl}`,
-    salon: `💇‍♀️ Beauty meets technology: ${businessName} in ${city} now has a stunning online presence: ${demoUrl}`,
-    fitness: `💪 ${businessName} in ${city} just leveled up their digital game. Modern, fast, member-friendly: ${demoUrl}`
+    restaurant: `🍽️ Just built a modern website redesign for ${businessName} in ${city}! Mobile-first, fast, and designed to convert. Check it out: ${demoUrl} #WebDesign #RestaurantMarketing`,
+    medical: `🏥 New project spotlight: ${businessName} in ${city} got a complete website overhaul. Patient-friendly, SEO-optimized, and blazing fast: ${demoUrl} #HealthcareWeb #DentalDesign`,
+    trade: `🔧 Another happy client: ${businessName} in ${city} now has a website that works as hard as they do. Tap-to-call, mobile-first: ${demoUrl} #ContractorMarketing #LocalSEO`,
+    professional: `⚖️ Professional web design for ${businessName} in ${city}. Clean, trustworthy, conversion-focused: ${demoUrl} #LegalMarketing #WebDevelopment`,
+    salon: `💇‍♀️ Beauty meets technology: ${businessName} in ${city} now has a stunning online presence: ${demoUrl} #SalonMarketing #WebDesign`,
+    fitness: `💪 ${businessName} in ${city} just leveled up their digital game. Modern, fast, member-friendly: ${demoUrl} #GymMarketing #FitnessBusiness`
   };
 
-  const caption = captions[niche] || `🚀 New website redesign for ${businessName}! ${demoUrl}`;
+  const caption = captions[niche] || `🚀 New website redesign for ${businessName} in ${city}! Mobile-first, sub-second load times: ${demoUrl} #WebDesign #SmallBusiness`;
+  const platforms = ['linkedin', 'x', 'instagram'];
+  const postItem = {
+    id: `post_${slug}_${Date.now()}`,
+    slug,
+    businessName,
+    niche,
+    city,
+    demoUrl,
+    caption,
+    platforms,
+    scheduledAt: new Date(Date.now() + 3600000).toISOString(),
+    status: 'queued',
+    createdAt: new Date().toISOString()
+  };
+
+  // Always persist to local showcase queue
+  try {
+    const queueFile = path.join(process.cwd(), 'outreach', 'social_queue.json');
+    let queue = [];
+    if (fs.existsSync(queueFile)) {
+      try { queue = JSON.parse(fs.readFileSync(queueFile, 'utf-8')); } catch {}
+    }
+    const idx = queue.findIndex(q => q.slug === slug);
+    if (idx >= 0) queue[idx] = postItem;
+    else queue.push(postItem);
+    fs.writeFileSync(queueFile, JSON.stringify(queue, null, 2));
+    console.log(`  📱 [Postiz] Staged social showcase for ${businessName} in outreach/social_queue.json`);
+  } catch (e) {
+    console.warn(`  ⚠️ Postiz queue error: ${e.message}`);
+  }
+
+  if (!apiKey) {
+    return { status: 'queued_locally', id: postItem.id, caption };
+  }
 
   try {
     const res = await fetch(`${apiUrl}/api/v1/posts`, {
@@ -48,23 +79,23 @@ export async function scheduleDemoShowcase(opts = {}) {
       body: JSON.stringify({
         content: caption,
         platforms: ['linkedin', 'x'],
-        schedule_date: new Date(Date.now() + 3600000).toISOString(),
+        schedule_date: postItem.scheduledAt,
         integration_ids: postiz.integrationIds || []
       })
     });
 
     if (!res.ok) {
       const err = await res.text();
-      console.warn(`  ⚠️ Postiz API error: ${err.slice(0, 200)}`);
-      return { status: 'error', error: err.slice(0, 200) };
+      console.warn(`  ⚠️ Postiz API returned ${res.status}: ${err.slice(0, 200)}`);
+      return { status: 'queued_locally', reason: 'api_unreachable', caption };
     }
 
     const data = await res.json();
-    console.log(`  📱 [Postiz] Scheduled social post for ${businessName}`);
+    console.log(`  📱 [Postiz] Live scheduled social post for ${businessName} (ID: ${data.id})`);
     return { status: 'scheduled', postId: data.id, caption };
   } catch (e) {
-    console.warn(`  ⚠️ Postiz connection failed: ${e.message}`);
-    return { status: 'error', error: e.message };
+    console.warn(`  ⚠️ Postiz remote connection failed: ${e.message} — queued locally`);
+    return { status: 'queued_locally', caption };
   }
 }
 

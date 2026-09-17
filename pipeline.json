@@ -1,7 +1,7 @@
 {
   "agency_name": "Apex AI Web Studio",
   "version": "1.0.0",
-  "last_updated": "2026-09-17T15:51:14.603Z",
+  "last_updated": "2026-09-17T16:15:47.575Z",
   "pipeline_summary": {
     "total_prospects": 9,
     "discovered": 0,
@@ -12,7 +12,7 @@
     "meeting_scheduled": 0,
     "closed_won": 2,
     "closed_lost": 0,
-    "pipeline_value_usd": 10500
+    "pipeline_value_usd": 13500
   },
   "prospects": [
     {

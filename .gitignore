@@ -21,6 +21,7 @@ node_modules/
 .wrangler/
 dist/
 guard_out.txt
+*.zip
 
 # OS
 .DS_Store

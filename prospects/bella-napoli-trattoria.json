@@ -54,5 +54,16 @@
       "quickFix": "Add one primary CTA button (call or book) in the hero and a short 3-field inquiry form."
     }
   },
-  "biggestOpportunity": "By deploying a modern mobile-first site with click-to-call and a local SEO foundation, Bella Napoli Trattoria could capture 25–40% more inbound leads from Austin, TX searchers — turning their website from a brochure into a lead generation engine."
+  "biggestOpportunity": "By deploying a modern mobile-first site with click-to-call and a local SEO foundation, Bella Napoli Trattoria could capture 25–40% more inbound leads from Austin, TX searchers — turning their website from a brochure into a lead generation engine.",
+  "visualAudit": {
+    "success": true,
+    "source": "dom_heuristic",
+    "desktopScreenshot": null,
+    "mobileScreenshot": null,
+    "hasMobileViewport": false,
+    "hasHorizontalScroll": false,
+    "layoutIssues": [
+      "Site could not be reached via standard HTTP — possible SSL or server configuration issue"
+    ]
+  }
 }

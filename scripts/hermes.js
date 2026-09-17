@@ -41,6 +41,8 @@ import { placeVoiceCall } from './lib/voice_caller.js';
 import { sendClosingProposal, confirmDealWon } from './lib/closing_engine.js';
 import { loadAppConfig, getPublicDemoUrl } from './lib/config_loader.js';
 import { notifyDemoGenerated } from './lib/telegram_notifier.js';
+import { generateClientDossier, handleObjectionViaPlaybook } from './lib/anythingllm_client.js';
+import { scheduleDemoShowcase } from './lib/postiz_scheduler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -260,6 +262,28 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
         }
         addInteraction({ lead_slug: slug, action: 'generate_mvp', channel: 'system', result: demo.relativeUrl });
         log('✅', `[${businessName}] Demo generated: ${demo.relativeUrl}`);
+
+        // AnythingLLM (Engine 2): Synthesize strategic sales dossier
+        try {
+          const dossier = await generateClientDossier(prospectData, prospectData);
+          if (dossier) {
+            fs.writeFileSync(path.join(PROSPECTS_DIR, `${slug}_dossier.json`), JSON.stringify(dossier, null, 2));
+            log('🧠', `[${businessName}] Strategic sales dossier synthesized via AnythingLLM Playbook RAG`);
+          }
+        } catch {}
+
+        // Postiz (Engine 3): Auto-schedule social showcase post
+        try {
+          await scheduleDemoShowcase({
+            slug,
+            businessName,
+            niche: prospectData.niche || 'general',
+            city: prospectData.city || 'Local',
+            demoUrl: getPublicDemoUrl(slug)
+          });
+          log('📱', `[${businessName}] Social showcase post queued via Postiz`);
+        } catch {}
+
         try {
           await notifyDemoGenerated(prospectData, getPublicDemoUrl(slug));
         } catch {}
@@ -448,8 +472,16 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
 
     case 'place_call': {
       try {
-        log('🎙️', `[${businessName}] Calling via AI Voice Agent (${prospect.phone || 'No phone'})...`);
-        const callResult = await placeVoiceCall(prospect);
+        const cfg = loadConfig();
+        const usePipecat = cfg.integrations?.pipecat?.enabled;
+        log('🎙️', `[${businessName}] Calling via ${usePipecat ? 'Pipecat Engine' : 'AI Voice Agent'} (${prospect.phone || 'No phone'})...`);
+        let callResult;
+        if (usePipecat) {
+          const { placeVoiceCall: pipecatCall } = await import('./lib/pipecat_caller.js');
+          callResult = await pipecatCall(prospect);
+        } else {
+          callResult = await placeVoiceCall(prospect);
+        }
         if (callResult.outcome === 'meeting_scheduled') {
           if (p) { p.stage = 'MEETING_SCHEDULED'; p.lastAction = new Date().toISOString(); }
         }

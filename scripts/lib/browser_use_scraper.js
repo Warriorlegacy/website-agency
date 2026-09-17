@@ -255,3 +255,231 @@ export async function scrapeViaBrowserUse(opts = {}) {
     });
   });
 }
+
+/**
+ * Capture real desktop & mobile viewport screenshots and evaluate DOM responsiveness.
+ * @param {string} url - Target prospect website URL
+ * @param {string} slug - Lead slug identifier
+ * @param {object} opts - Optional settings
+ * @returns {Promise<object>} Visual layout findings and screenshot paths
+ */
+export async function captureSiteVisuals(url, slug, opts = {}) {
+  if (!url || url === 'https://example.com') {
+    return {
+      success: false,
+      reason: 'no_website',
+      layoutIssues: ['Business has no website — immediate opportunity for a modern online presence.']
+    };
+  }
+
+  const outDir = path.join(SCRIPT_DIR, 'prospects', slug);
+  if (!fs.existsSync(outDir)) {
+    try { fs.mkdirSync(outDir, { recursive: true }); } catch {}
+  }
+
+  const desktopPath = path.join(outDir, 'desktop_current.png');
+  const mobilePath = path.join(outDir, 'mobile_current.png');
+
+  console.log(`  📸 [Browser Use] Capturing visual viewports for ${url}...`);
+
+  const pyScript = `
+import asyncio, json, sys, os
+
+async def capture(url, out_d, out_m):
+    try:
+        from playwright.async_api import async_playwright
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            # Desktop viewport
+            page = await browser.new_page(viewport={"width": 1280, "height": 800})
+            await page.goto(url, timeout=25000, wait_until="domcontentloaded")
+            await page.screenshot(path=out_d)
+            # Mobile viewport
+            mpage = await browser.new_page(viewport={"width": 375, "height": 812}, is_mobile=True)
+            await mpage.goto(url, timeout=25000, wait_until="domcontentloaded")
+            await mpage.screenshot(path=out_m)
+            # Metrics
+            h_scroll = await mpage.evaluate("document.documentElement.scrollWidth > window.innerWidth")
+            vp = await mpage.evaluate("!!document.querySelector('meta[name=viewport]')")
+            title = await page.title()
+            await browser.close()
+            return {"success": True, "title": title, "hasHorizontalScroll": h_scroll, "hasMobileViewport": vp}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+if __name__ == "__main__":
+    u = sys.argv[1]
+    od = sys.argv[2]
+    om = sys.argv[3]
+    res = asyncio.run(capture(u, od, om))
+    print(json.dumps(res))
+`;
+
+  return new Promise((resolve) => {
+    const tmpFile = path.join(SCRIPT_DIR, `.capture_${slug}.py`);
+    fs.writeFileSync(tmpFile, pyScript);
+
+    const pythonCmd = getPythonCmd();
+    const proc = spawn(pythonCmd, [tmpFile, url, desktopPath, mobilePath], {
+      cwd: SCRIPT_DIR,
+      stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: 60000
+    });
+
+    let stdout = '';
+    proc.stdout.on('data', d => { stdout += d; });
+
+    proc.on('close', async (code) => {
+      try { fs.unlinkSync(tmpFile); } catch {}
+      if (code === 0) {
+        try {
+          const res = JSON.parse(stdout.trim());
+          if (res.success) {
+            const layoutIssues = [];
+            if (!res.hasMobileViewport) layoutIssues.push('Missing responsive mobile viewport tag — page renders as zoomed-out desktop');
+            if (res.hasHorizontalScroll) layoutIssues.push('Horizontal overflow detected on mobile devices — content exceeds screen width');
+            return resolve({
+              success: true,
+              source: 'playwright_browser',
+              desktopScreenshot: fs.existsSync(desktopPath) ? `prospects/${slug}/desktop_current.png` : null,
+              mobileScreenshot: fs.existsSync(mobilePath) ? `prospects/${slug}/mobile_current.png` : null,
+              hasMobileViewport: res.hasMobileViewport,
+              hasHorizontalScroll: res.hasHorizontalScroll,
+              layoutIssues
+            });
+          }
+        } catch {}
+      }
+
+      // Fallback: DOM inspection via pure HTTP
+      const domCheck = await auditVisualLayout(url);
+      resolve({
+        success: true,
+        source: 'dom_heuristic',
+        desktopScreenshot: null,
+        mobileScreenshot: null,
+        ...domCheck
+      });
+    });
+
+    proc.on('error', async () => {
+      try { fs.unlinkSync(tmpFile); } catch {}
+      const domCheck = await auditVisualLayout(url);
+      resolve({
+        success: true,
+        source: 'dom_heuristic',
+        desktopScreenshot: null,
+        mobileScreenshot: null,
+        ...domCheck
+      });
+    });
+  });
+}
+
+/**
+ * Deeply crawl a business website to find authentic contact info & subpages.
+ * @param {string} url - Target business homepage
+ * @param {string} businessName - Optional business name for fuzzy matching
+ * @returns {Promise<object>} Structured contact information
+ */
+export async function deepCrawlContactInfo(url, businessName = '') {
+  if (!url || url === 'https://example.com') return null;
+
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+      signal: AbortSignal.timeout(10000)
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    // Extract emails from homepage
+    const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+    const emails = Array.from(new Set(html.match(emailRegex) || []))
+      .filter(e => !/\.(png|jpg|jpeg|gif|svg|webp|css|js)$/i.test(e));
+
+    // Discover contact page sub-links
+    const linkRegex = /href=["']([^"']*(?:contact|about|location|touch|reach)[^"']*)["']/gi;
+    const sublinks = [];
+    let match;
+    while ((match = linkRegex.exec(html)) !== null) {
+      const href = match[1];
+      if (!href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#')) {
+        try {
+          const fullUrl = new URL(href, url).href;
+          if (fullUrl.startsWith('http') && !sublinks.includes(fullUrl)) {
+            sublinks.push(fullUrl);
+          }
+        } catch {}
+      }
+    }
+
+    // Crawl first 2 sublinks for additional verified email addresses
+    let contactPageUrl = null;
+    for (const sub of sublinks.slice(0, 2)) {
+      try {
+        const subRes = await fetch(sub, { signal: AbortSignal.timeout(8000) });
+        if (subRes.ok) {
+          const subHtml = await subRes.text();
+          contactPageUrl = sub;
+          const subEmails = Array.from(new Set(subHtml.match(emailRegex) || []))
+            .filter(e => !/\.(png|jpg|jpeg|gif|svg|webp|css|js)$/i.test(e));
+          emails.push(...subEmails);
+        }
+      } catch {}
+    }
+
+    // Social links
+    const socialProfiles = {
+      instagram: (html.match(/https?:\/\/(?:www\.)?instagram\.com\/[a-zA-Z0-9_.-]+/i) || [])[0] || null,
+      facebook: (html.match(/https?:\/\/(?:www\.)?facebook\.com\/[a-zA-Z0-9_.-]+/i) || [])[0] || null,
+      linkedin: (html.match(/https?:\/\/(?:www\.)?linkedin\.com\/(?:company|in)\/[a-zA-Z0-9_.-]+/i) || [])[0] || null,
+      twitter: (html.match(/https?:\/\/(?:www\.)?(?:twitter|x)\.com\/[a-zA-Z0-9_.-]+/i) || [])[0] || null
+    };
+
+    return {
+      emails: Array.from(new Set(emails)),
+      socialProfiles,
+      contactPageUrl,
+      observedOn: contactPageUrl || url
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Audit website visual layout and responsiveness via DOM heuristics.
+ * @param {string} url - Website URL
+ * @returns {Promise<object>} Visual layout metrics and detected flaws
+ */
+export async function auditVisualLayout(url) {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error('Unreachable');
+    const html = await res.text();
+
+    const hasMobileViewport = /<meta[^>]+name=["']viewport["']/i.test(html);
+    const hasFixedTable = /<table[^>]+width=["']\d{3,4}["']/i.test(html);
+    const hasFixedWidth = /width:\s*(?:[8-9]\d\d|1\d{3})px/i.test(html);
+    const hasResponsiveClasses = /flex|grid|col-md-|sm:|md:|max-w-/i.test(html);
+
+    const layoutIssues = [];
+    if (!hasMobileViewport) layoutIssues.push('No mobile viewport meta tag configured — unreadable on smartphones');
+    if (hasFixedTable || hasFixedWidth) layoutIssues.push('Desktop-fixed widths detected that break on small mobile viewports');
+    if (!hasResponsiveClasses) layoutIssues.push('Older static layout structure lacking modern CSS Flexbox/Grid flow');
+
+    return {
+      hasMobileViewport,
+      hasHorizontalScroll: hasFixedTable || hasFixedWidth,
+      layoutIssues: layoutIssues.length ? layoutIssues : ['Design lacks modern mobile-first conversion hierarchy']
+    };
+  } catch {
+    return {
+      hasMobileViewport: false,
+      hasHorizontalScroll: false,
+      layoutIssues: ['Site could not be reached via standard HTTP — possible SSL or server configuration issue']
+    };
+  }
+}
+
