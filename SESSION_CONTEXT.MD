@@ -267,3 +267,20 @@ npm run autopilot:once
 node scripts/autopilot.js --dry-run
 ```
 
+---
+
+## 11. Real-Time Telegram Event Dispatcher & Alert Matrix
+
+All critical pipeline activities deliver instant, beautifully formatted HTML alerts directly to Piyush's Telegram (`chatId: 8800893070` via `@APEXweb_STUDIO_BOT`):
+
+| Pipeline Event | Trigger Location | Telegram Alert Contents |
+|----------------|------------------|-------------------------|
+| **🚜 Data Scraping & Lead Generation** | `scripts/lib/google_maps_scraper.js` (`notifyLeadsHarvested`) | Scraped business names, category/niche, city, star ratings, phone numbers, and opportunity hooks. |
+| **🎨 Demo Website Scaffolded** | `scripts/hermes.js` (`notifyDemoGenerated`) | Client name, niche, rating, phone, live demo preview URL, and outreach sequence confirmation. |
+| **📅 Meeting / Demo Review Booked** | `scripts/lib/voice_caller.js` (`notifyMeetingScheduled`) | Decision maker name, phone, AI call summary/notes, and Cal.com booking link. |
+| **💼 Closing Proposal Dispatched** | `scripts/lib/closing_engine.js` (`notifyProposalDispatched`) | Chosen package tier ($750/$1500/$3000), 50% deposit amount (USD & INR), custom proposal link, UPI ID `6202442690@jio`, and WhatsApp verification link. |
+| **🏆 Client Deal Closed Won** | `scripts/lib/closing_engine.js` (`notifyDealClosedWon`) | Deposit confirmed, total contract value, client kickoff brief link, and onboarding package path. |
+| **🚀 Full Workflow Run Digest** | `scripts/autopilot.js` & `scripts/daily_summary.js` (`sendWorkflowRunReport`) | Comprehensive end-of-run digest: execution timestamp (IST), cloud runner status, full CRM funnel snapshot, active leads, pipeline & won revenue, run actions delta, UPI payment details, and GitHub commit link. |
+| **🚨 Workflow Failure Watchdog** | `.github/workflows/autopilot.yml` (`if: failure()`) | Immediate alert if any cloud autopilot step encounters an unhandled fatal error. |
+
+
