@@ -52,3 +52,27 @@ jobs:
             git push
             echo "✅ Successfully synced updated CRM pipeline back to repository."
           fi
+
+      - name: Alert Telegram on Workflow Failure
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node -e "
+            import('dns').then(d => {
+              try { d.setDefaultResultOrder('ipv4first'); } catch {}
+              const token = process.env.TELEGRAM_BOT_TOKEN;
+              const chatId = process.env.TELEGRAM_CHAT_ID;
+              if (token && chatId) {
+                const runUrl = 'https://github.com/' + process.env.GITHUB_REPOSITORY + '/actions/runs/' + process.env.GITHUB_RUN_ID;
+                const text = '⚠️ <b>[APEX AI WEB STUDIO] Workflow Run Alert</b>\n\n❌ <i>A cloud workflow cycle encountered an error.</i>\n\n🔍 <a href=\"' + runUrl + '\">View GitHub Actions Execution Log</a>';
+                fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' })
+                }).catch(() => {});
+              }
+            });
+          "
+

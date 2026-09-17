@@ -15,6 +15,12 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dns from 'dns';
+import { loadAppConfig } from './lib/config_loader.js';
+
+try {
+  dns.setDefaultResultOrder('ipv4first');
+} catch {}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,7 +43,7 @@ function loadInteractions() {
 }
 
 function loadConfig() {
-  try { return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8')); } catch { return {}; }
+  return loadAppConfig();
 }
 
 // ─── Stats Aggregation ───────────────────────────────────────────────────────
@@ -161,7 +167,7 @@ ${JSON.stringify(stats, null, 2)}
 }
 
 // ─── Telegram Sender ─────────────────────────────────────────────────────────
-async function sendTelegram(message, config) {
+async function sendTelegram(message, config, parseMode = 'HTML') {
   const botToken = config.notifications?.telegram?.botToken || process.env.TELEGRAM_BOT_TOKEN;
   const chatId = config.notifications?.telegram?.chatId || process.env.TELEGRAM_CHAT_ID;
   if (!botToken || !chatId) throw new Error('Telegram bot not configured');
@@ -172,7 +178,7 @@ async function sendTelegram(message, config) {
     body: JSON.stringify({
       chat_id: chatId,
       text: message,
-      parse_mode: 'Markdown',
+      parse_mode: parseMode,
       disable_web_page_preview: true
     })
   });
@@ -183,6 +189,90 @@ async function sendTelegram(message, config) {
   }
 
   return await res.json();
+}
+
+// ─── Master: sendWorkflowRunReport ──────────────────────────────────────────
+export async function sendWorkflowRunReport(cycleReport = {}) {
+  const config = loadConfig();
+  const stats = generateStats();
+  const now = new Date();
+  const istTime = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+  const isCloud = !!process.env.GITHUB_ACTIONS;
+  const runner = isCloud ? 'GitHub Actions Cloud (24/7 Autopilot)' : 'Local Host Autopilot';
+
+  // Build stage breakdown
+  const stageIcons = {
+    'CLOSED_WON': '🏆',
+    'MEETING_SCHEDULED': '📅',
+    'OUTREACH_DRAFTED': '✉️',
+    'CONTACTED': '📤',
+    'DEMO_GENERATED': '🎨',
+    'AUDITED': '📊',
+    'DISCOVERED': '🔍',
+    'CLOSED_LOST': '❌'
+  };
+
+  const stageLines = Object.entries(stats.stages)
+    .map(([st, cnt]) => `   ${stageIcons[st] || '•'} <b>${st}</b>: ${cnt}`)
+    .join('\n');
+
+  // Format cycle actions
+  const newLeads = cycleReport.harvested || [];
+  const demos = cycleReport.demos || [];
+  const calls = cycleReport.calls || [];
+  const proposals = cycleReport.proposals || [];
+
+  let actionsList = [];
+  if (newLeads.length > 0) {
+    actionsList.push(`• 🚜 <b>Scraped Leads (${newLeads.length}):</b>\n` + newLeads.map(l => `   ↳ <i>${l.businessName || l.name}</i> (${l.city || 'Austin, TX'} • ${l.niche || 'business'})`).join('\n'));
+  }
+  if (demos.length > 0) {
+    actionsList.push(`• 🎨 <b>Demo Sites Generated (${demos.length}):</b>\n` + demos.map(d => `   ↳ <i>${d.businessName || d.name}</i>`).join('\n'));
+  }
+  if (calls.length > 0) {
+    actionsList.push(`• 🎙️ <b>Voice Calls Placed (${calls.length}):</b>\n` + calls.map(c => `   ↳ <i>${c.businessName}</i> → <b>${c.outcome}</b>`).join('\n'));
+  }
+  if (proposals.length > 0) {
+    actionsList.push(`• 💼 <b>Closing Proposals Dispatched (${proposals.length}):</b>\n` + proposals.map(p => `   ↳ <i>${p.businessName}</i> ($750 Growth tier)`).join('\n'));
+  }
+
+  const actionsText = actionsList.length > 0 ? actionsList.join('\n\n') : '• <i>Funnel monitored — all leads maintained in follow-up sequence.</i>';
+
+  const message = `🚀 <b>APEX AI WEB STUDIO — WORKFLOW RUN REPORT</b>
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+⏱️ <b>Executed:</b> ${istTime} IST
+🌐 <b>Runner:</b> ${runner}
+⚡ <b>Status:</b> 🟢 <b>CYCLE COMPLETE & CRM SYNCED</b>
+
+📊 <b>CURRENT PIPELINE SNAPSHOT:</b>
+• <b>Total Leads:</b> ${stats.total}
+• <b>Active In Funnel:</b> ${stats.active}
+• <b>Pipeline Value:</b> $${stats.conversion.pipelineValue.toLocaleString()}
+• <b>Revenue Closed:</b> $${stats.conversion.wonValue.toLocaleString()}
+
+📈 <b>Funnel Stages:</b>
+${stageLines}
+
+⚡ <b>ACTIONS IN THIS RUN:</b>
+${actionsText}
+
+💳 <b>DIRECT PAYMENT & VERIFICATION:</b>
+• <b>UPI ID:</b> <code>6202442690@jio</code> (Piyush Singh)
+• <b>WhatsApp Verification:</b> <a href="https://wa.me/916202442690?text=Hi%20Piyush,%20I%20have%20sent%20the%20payment%20for%20Apex%20Web%20Studio.">+91 6202442690</a>
+• <b>Calendar Booking:</b> <a href="https://cal.com/piyush-usctna/15min">cal.com/piyush-usctna/15min</a>
+
+🔗 <a href="https://github.com/Warriorlegacy/website-agency">View GitHub Repository & CRM Pipeline</a>
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+<i>Next automated cycle scheduled in 2 hours.</i>`;
+
+  try {
+    const res = await sendTelegram(message, config, 'HTML');
+    console.log('✅ Comprehensive workflow report delivered to Telegram!');
+    return res;
+  } catch (err) {
+    console.warn('⚠️ Telegram workflow report failed:', err.message);
+    return null;
+  }
 }
 
 // ─── Master: generateAndSend ─────────────────────────────────────────────────

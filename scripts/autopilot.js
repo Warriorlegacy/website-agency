@@ -22,11 +22,17 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dns from 'dns';
 import { autoHarvestAndIngest } from './lib/google_maps_scraper.js';
 import { runHermes } from './hermes.js';
 import { placeVoiceCall } from './lib/voice_caller.js';
 import { sendClosingProposal } from './lib/closing_engine.js';
-import { generateDailySummary } from './daily_summary.js';
+import { generateDailySummary, sendWorkflowRunReport } from './daily_summary.js';
+import { loadAppConfig } from './lib/config_loader.js';
+
+try {
+  dns.setDefaultResultOrder('ipv4first');
+} catch {}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,7 +42,7 @@ const CONFIG_FILE = path.join(ROOT_DIR, 'config.json');
 const INTERACTIONS_FILE = path.join(ROOT_DIR, 'interactions.json');
 
 function loadConfig() {
-  try { return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8')); } catch { return {}; }
+  return loadAppConfig();
 }
 
 function loadPipeline() {
@@ -70,6 +76,17 @@ export async function runAutopilotCycle(opts = {}) {
   log('🚀', `======================================================`);
 
   // ── PHASE 1: Auto-Harvester (Google Maps & Local Scraping) ──
+  const cycleReport = {
+    harvested: [],
+    demos: [],
+    calls: [],
+    proposals: []
+  };
+
+  const initialSlugs = new Set(pipeline.prospects.map(p => p.slug));
+  const demosDir = path.join(ROOT_DIR, 'demos');
+  const initialDemos = new Set(fs.existsSync(demosDir) ? fs.readdirSync(demosDir) : []);
+
   const activeCount = pipeline.prospects.filter(p => !['CLOSED_WON', 'CLOSED_LOST'].includes(p.stage)).length;
   const minActiveTarget = cfg.autopilot?.minActiveTarget || 8;
 
@@ -89,6 +106,13 @@ export async function runAutopilotCycle(opts = {}) {
   log('🏛️', `Running Hermes central decision cycle...`);
   const hermesResult = await runHermes({ dryRun });
   log('✅', `Hermes executed ${hermesResult.actionsCount} automated actions.`);
+
+  // Detect newly harvested leads and newly generated demos
+  const midPipeline = loadPipeline();
+  cycleReport.harvested = midPipeline.prospects.filter(p => !initialSlugs.has(p.slug));
+  if (fs.existsSync(demosDir)) {
+    cycleReport.demos = fs.readdirSync(demosDir).filter(d => !initialDemos.has(d)).map(slug => ({ businessName: slug }));
+  }
 
   // ── PHASE 3: Autonomous AI Voice Calling Engine ──
   const voiceEnabled = cfg.autopilot?.autoCall !== false;
@@ -120,6 +144,10 @@ export async function runAutopilotCycle(opts = {}) {
           try {
             const callResult = await placeVoiceCall(candidate, { simulate: cfg.voiceCalling?.simulateFallback !== false });
             log('✅', `Voice call completed for ${candidate.businessName} — Outcome: ${callResult.outcome || 'completed'}`);
+            cycleReport.calls.push({
+              businessName: candidate.businessName,
+              outcome: callResult.outcome || 'completed'
+            });
 
             if (callResult.outcome === 'meeting_scheduled') {
               candidate.stage = 'MEETING_SCHEDULED';
@@ -150,6 +178,9 @@ export async function runAutopilotCycle(opts = {}) {
       await sendClosingProposal(lead, { packageTier: 'growth' });
       lead.proposalSent = true;
       lead.lastAction = new Date().toISOString();
+      cycleReport.proposals.push({
+        businessName: lead.businessName
+      });
     } else {
       log('🏜️', `[DRY RUN] Would send proposal and payment link to ${lead.businessName}`);
     }
@@ -158,8 +189,16 @@ export async function runAutopilotCycle(opts = {}) {
   // Save any state updates
   fs.writeFileSync(PIPELINE_FILE, JSON.stringify(refreshedPipeline, null, 2), 'utf-8');
 
+  // ── PHASE 5: Comprehensive Telegram Workflow Run Report ──
+  try {
+    log('📱', `Dispatching comprehensive workflow run report to Telegram...`);
+    await sendWorkflowRunReport(cycleReport);
+  } catch (err) {
+    log('⚠️', `Failed to send Telegram workflow report: ${err.message}`);
+  }
+
   log('🏁', `AUTOPILOT CYCLE COMPLETE — All active leads evaluated & progressed.`);
-  return { success: true };
+  return { success: true, cycleReport };
 }
 
 // ─── CLI Entry ───────────────────────────────────────────────────────────────

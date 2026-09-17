@@ -285,5 +285,61 @@
     "summary": "Owner agreed to review the pre-built website demo link sent via email after hearing the flat-rate pricing.",
     "transcript": "ALEX: Hi, this is Alex from Apex AI Web Studio. I’m calling because I noticed Bella Napoli Trattoria has a fantastic 4.8-star rating in Austin, but you don’t have a website yet. I’ve actually built a custom demo for you and wanted to share it. Do you have a quick minute?\nOWNER: I’m in the middle of service, so I’m pretty busy. What is this about? And how did you even find us?\nALEX: I completely understand, Jordan. I’ll be brief. We found you through local business directories. We’ve created a modern, mobile-friendly website specifically for Bella Napoli. It’s a flat $750 package, no monthly fees, and I can send you the live link right now so you can check it on your phone in ten seconds.\nOWNER: Fifty... no, seven-fifty? That’s not bad. I’m skeptical about these demos, but if it’s just a link, I can look at it later. Send it over. I’ll give it a quick review tonight.\nALEX: Perfect. I’m sending the link to your email now. It’s a fully functional demo with your menu and photos. If you like what you see, we can hop on a 10-minute call next week to finalize. Thanks for your time, Jordan!",
     "timestamp": "2026-09-17T10:06:19.000Z"
+  },
+  {
+    "lead_slug": "bright-smile-dental",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T10:19:55.016Z"
+  },
+  {
+    "lead_slug": "vance-sterling-law",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T10:19:55.023Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T10:19:55.030Z"
+  },
+  {
+    "lead_slug": "restaurants",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T10:19:55.034Z"
+  },
+  {
+    "lead_slug": "what-are-the-best-restaurants-with-outdoor-seating",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T10:19:55.037Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "action": "dry_run:draft_outreach",
+    "channel": "system",
+    "reason": "Demo ready — drafting outreach sequence",
+    "timestamp": "2026-09-17T10:19:55.042Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "action": "dry_run:draft_outreach",
+    "channel": "system",
+    "reason": "Demo ready — drafting outreach sequence",
+    "timestamp": "2026-09-17T10:19:55.048Z"
+  },
+  {
+    "lead_slug": "cornerstone-artisan-bakery",
+    "action": "dry_run:draft_outreach",
+    "channel": "system",
+    "reason": "Demo ready — drafting outreach sequence",
+    "timestamp": "2026-09-17T10:19:55.052Z"
   }
 ]
