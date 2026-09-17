@@ -32,7 +32,7 @@ export function generateOutreachSequence(prospectData, demoUrl = null) {
 **Prospect Details:**
 - **Business**: ${businessName}
 - **Owner / Decision-Maker**: ${ownerName || 'Business Owner'}
-- **Target Email**: ${ownerEmail || `contact@${slug}.com`}
+- **Target Email**: ${ownerEmail || 'Pending verification'}
 - **Phone**: ${phone || 'N/A'}
 - **City / Market**: ${city}
 - **Audit Overall Score**: ${overallScore || 4}/10
@@ -122,7 +122,16 @@ Best,
 `;
 
   const outreachFile = path.join(OUTREACH_DIR, `${slug}.md`);
-  fs.writeFileSync(outreachFile, outreachMarkdown, 'utf-8');
+  for (let attempt = 0; attempt < 4; attempt++) {
+    try {
+      fs.writeFileSync(outreachFile, outreachMarkdown, 'utf-8');
+      break;
+    } catch (err) {
+      if (attempt === 3) throw err;
+      const waitTill = Date.now() + 150;
+      while (Date.now() < waitTill) {}
+    }
+  }
 
   console.log(`✅ Outreach drafts generated successfully!`);
   console.log(`📁 File: [outreach/${slug}.md]`);

@@ -109,29 +109,38 @@ ${cfg.agency?.owner || 'Piyush'}
 ${agencyName}`;
 
   const email = composeEmail({
-    to: prospect.ownerEmail || `contact@${prospect.slug}.com`,
+    to: prospect.ownerEmail || '',
     subject: emailSubject,
     body: emailBody,
     agencyName
   });
 
-  if (!dryRun) {
-    const emailResult = await sendEmail(email, { leadSlug: prospect.slug });
-    addInteraction({
-      lead_slug: prospect.slug,
-      action: 'send_closing_proposal',
-      channel: 'email',
-      direction: 'outbound',
-      package: packageTier,
-      deposit_amount: payment.depositAmount,
-      payment_url: payment.paymentUrl,
-      proposal_url: proposal.relativePath,
-      email_provider: emailResult.provider
-    });
+  let emailResult = { provider: 'dry_run' };
+  if (prospect.ownerEmail) {
+    if (!dryRun) {
+      emailResult = await sendEmail(email, {
+        leadSlug: prospect.slug,
+        observedOn: prospect.ownerEmailSource || prospect.url || 'public_listing',
+        recipientConfirmed: true
+      });
+      addInteraction({
+        lead_slug: prospect.slug,
+        action: 'send_closing_proposal',
+        channel: 'email',
+        direction: 'outbound',
+        package: packageTier,
+        deposit_amount: payment.depositAmount,
+        payment_url: payment.paymentUrl,
+        proposal_url: proposal.relativePath,
+        email_provider: emailResult.provider
+      });
 
-    try {
-      await notifyProposalDispatched(prospect, { packageTier });
-    } catch {}
+      try {
+        await notifyProposalDispatched(prospect, { packageTier });
+      } catch {}
+    }
+  } else {
+    console.log(`  ⏩ [Closing Engine] Skipped proposal email for ${prospect.businessName} — no verified email`);
   }
 
   return {
@@ -173,7 +182,7 @@ export async function confirmDealWon(prospectSlug, paymentDetails = {}) {
 
 ## Client Overview
 - **Business Name:** ${prospect.businessName}
-- **Owner / Contact:** ${prospect.ownerName || 'Owner'} (${prospect.ownerEmail || 'contact@' + prospectSlug + '.com'})
+- **Owner / Contact:** ${prospect.ownerName || 'Owner'} (${prospect.ownerEmail || 'Pending verification'})
 - **Phone:** ${prospect.phone || 'N/A'}
 - **Niche:** ${prospect.niche}
 - **City:** ${prospect.city}

@@ -12,7 +12,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { isJunkBusinessName, assertNotSynthetic } from './lib/guardrails.js';
+import { isJunkBusinessName, assertNotSynthetic, isSendableEmail } from './lib/guardrails.js';
+import { findPublicEmailForBusiness } from './lib/public_email_finder.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -269,17 +270,28 @@ export async function discoverLeads({ targetNiches, targetCities, leadsPerRun, s
         }
         const slug = slugify(lead.businessName);
         if (!existingSlugs.has(slug) && lead.businessName) {
+          // Strict Real Email Capture Filter
+          console.log(`  🔎 Verifying public email for "${lead.businessName}"...`);
+          const emailResult = await findPublicEmailForBusiness(lead.businessName, [], {
+            domain: lead.url,
+            city: lead.city || city
+          });
+
+          if (!emailResult || !emailResult.email || !isSendableEmail(emailResult.email, { observedOn: emailResult.source }).ok) {
+            console.log(`  ⏩ [EMAIL FILTER] Skipping "${lead.businessName}" — no verified real contact email found`);
+            continue;
+          }
+
           existingSlugs.add(slug);
           const prospect = {
             slug,
             businessName: lead.businessName,
-            // Unknown fields stay empty — never invent a URL, email or phone.
             url: lead.url || '',
             niche,
             city: lead.city || city,
-            ownerName: lead.ownerName || null,
-            ownerEmail: lead.ownerEmail || null,
-            ownerEmailSource: lead.ownerEmailSource || null,
+            ownerName: emailResult.ownerName || lead.ownerName || 'Business Owner',
+            ownerEmail: emailResult.email,
+            ownerEmailSource: emailResult.source,
             phone: lead.phone || '',
             overallScore: null,
             stage: 'DISCOVERED',

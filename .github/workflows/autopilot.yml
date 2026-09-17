@@ -26,6 +26,19 @@ permissions:
 
 env:
   NODE_VERSION: '20'
+  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+  CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
+  SMTP_USER: ${{ secrets.SMTP_USER }}
+  SMTP_PASS: ${{ secrets.SMTP_PASS }}
+  GMAIL_USER: ${{ secrets.GMAIL_USER }}
+  GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
+  VAPI_API_KEY: ${{ secrets.VAPI_API_KEY }}
+  VAPI_ASSISTANT_ID: ${{ secrets.VAPI_ASSISTANT_ID }}
+  BLAND_API_KEY: ${{ secrets.BLAND_API_KEY }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
 jobs:
   autopilot-cycle:
@@ -60,9 +73,9 @@ jobs:
             base.ai.keys.groq         = process.env.GROQ_API_KEY        || base.ai.keys.groq || '';
             base.ai.keys.gemini       = process.env.GEMINI_API_KEY       || base.ai.keys.gemini || '';
             base.email.resendApiKey   = process.env.RESEND_API_KEY       || base.email.resendApiKey || '';
-            base.email.provider       = base.email.resendApiKey ? 'resend' : 'smtp';
-            base.email.smtp.user      = process.env.SMTP_USER            || '';
-            base.email.smtp.pass      = process.env.SMTP_PASS            || '';
+            base.email.smtp.user      = process.env.SMTP_USER            || process.env.GMAIL_USER || base.email.smtp.user || '';
+            base.email.smtp.pass      = process.env.SMTP_PASS            || process.env.GMAIL_PASS || base.email.smtp.pass || '';
+            base.email.provider       = base.email.smtp.user ? 'smtp' : (base.email.resendApiKey ? 'resend' : 'dry_run');
             base.scheduling.calcomApiKey = process.env.CAL_API_KEY       || base.scheduling.calcomApiKey || '';
             base.notifications.telegram.botToken = process.env.TELEGRAM_BOT_TOKEN || base.notifications.telegram.botToken || '';
             base.notifications.telegram.chatId   = process.env.TELEGRAM_CHAT_ID   || base.notifications.telegram.chatId || '';

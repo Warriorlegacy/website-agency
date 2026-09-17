@@ -7,7 +7,7 @@
 - **Phone**: (303) 555-0144
 - **City / Market**: Denver, CO
 - **Audit Overall Score**: 3/10
-- **Live Demo Link**: https://preview.agency.dev/demos/summit-peak-plumbing/index.html (Local preview: http://localhost:3030/demos/summit-peak-plumbing/index.html)
+- **Live Demo Link**: https://warriorlegacy.github.io/website-agency/demos/summit-peak-plumbing/index.html
 
 ---
 
@@ -24,7 +24,7 @@ While checking out your website, I noticed a couple of quick things that might b
 
 To show you what's possible, I put together a quick, modern, mobile-first preview of what a refreshed site for Summit Peak Plumbing could look like:
 
-👉 **Live Interactive Demo**: https://preview.agency.dev/demos/summit-peak-plumbing/index.html (Local preview: http://localhost:3030/demos/summit-peak-plumbing/index.html)
+👉 **Live Interactive Demo**: https://warriorlegacy.github.io/website-agency/demos/summit-peak-plumbing/index.html
 
 No pressure or sales pitch at all — if you like the direction, I'd love to chat for 5 minutes. If not, please feel free to keep the ideas and feedback!
 
@@ -56,7 +56,7 @@ Hi Robert,
 Just floating this back to the top of your inbox in case it got buried! 
 
 Here is the modern preview link again:  
-👉 https://preview.agency.dev/demos/summit-peak-plumbing/index.html (Local preview: http://localhost:3030/demos/summit-peak-plumbing/index.html)
+👉 https://warriorlegacy.github.io/website-agency/demos/summit-peak-plumbing/index.html
 
 If the timing isn't right or you're completely happy with your current setup, no worries whatsoever — I'll leave it here.
 

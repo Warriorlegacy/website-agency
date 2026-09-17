@@ -113,8 +113,30 @@ export default {
   async scheduled(event, env) {
     console.log(`[CRON] Autopilot triggered at ${new Date().toISOString()}`);
     try {
-      await runHermes(env, false);
+      const hermesResult = await runHermes(env, false);
       console.log('[CRON] Autopilot completed successfully');
+
+      // Dispatch Telegram Run Report
+      const botToken = env.TELEGRAM_BOT_TOKEN || '8333086311:AAFjuqVMnwZddUbZcPmxGJgdxDUoc5CcHAM';
+      const chatId = env.TELEGRAM_CHAT_ID || '8800893070';
+      if (botToken && chatId) {
+        const summary = await getPipelineSummary(env);
+        const text = `☁️ <b>Apex AI Web Studio — Edge Autopilot Report</b>\n` +
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+          `⏱️ <b>Executed:</b> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST\n` +
+          `🌐 <b>Runner:</b> Cloudflare Worker Edge Cron (24/7 Autopilot)\n` +
+          `⚡ <b>Status:</b> 🟢 <b>CYCLE COMPLETE & D1 SYNCED</b>\n\n` +
+          `📊 <b>PIPELINE SNAPSHOT:</b>\n` +
+          `• <b>Total Leads:</b> ${summary.total_prospects || 0}\n` +
+          `• <b>Pipeline Value:</b> $${(summary.pipeline_value_usd || 0).toLocaleString()}\n` +
+          `• <b>Actions In Run:</b> ${hermesResult?.actionsCount || 0}\n\n` +
+          `🔗 <a href="https://warriorlegacy.github.io/website-agency">View Agency Dashboard</a>`;
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', disable_web_page_preview: true })
+        }).catch(() => {});
+      }
     } catch (e) {
       console.error('[CRON] Autopilot error:', e.message);
     }

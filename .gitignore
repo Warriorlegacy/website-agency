@@ -19,6 +19,8 @@ node_modules/
 
 # Wrangler build cache
 .wrangler/
+dist/
+guard_out.txt
 
 # OS
 .DS_Store

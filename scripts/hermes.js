@@ -314,17 +314,46 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
           }
         }
 
+        // Ensure recipient has a verified real public email
+        let targetEmail = prospect.ownerEmail;
+        let targetSource = prospect.ownerEmailSource;
+        if (!targetEmail) {
+          const emailLookup = await findPublicEmailForBusiness(businessName, [], {
+            domain: prospect.url,
+            city: prospect.city
+          });
+          if (emailLookup && emailLookup.email) {
+            targetEmail = emailLookup.email;
+            targetSource = emailLookup.source;
+            prospect.ownerEmail = targetEmail;
+            prospect.ownerEmailSource = targetSource;
+            if (p) {
+              p.ownerEmail = targetEmail;
+              p.ownerEmailSource = targetSource;
+            }
+          }
+        }
+
+        if (!targetEmail) {
+          log('⏩', `[${businessName}] Skipping email — no verified public email found for owner.`);
+          break;
+        }
+
         // Build and send email
         const demoUrl = prospect.demoPath ? getPublicDemoUrl(slug) : null;
         const email = composeEmail({
-          to: prospect.ownerEmail || `contact@${slug}.com`,
+          to: targetEmail,
           subject: emailSubject,
           body: emailBody,
           demoUrl,
           agencyName: loadConfig().agency?.name || 'Apex AI Web Studio'
         });
 
-        const result = await sendEmail(email, { leadSlug: slug });
+        const result = await sendEmail(email, {
+          leadSlug: slug,
+          observedOn: targetSource || prospect.url || 'public_listing',
+          recipientConfirmed: true
+        });
 
         if (p && p.stage === 'OUTREACH_DRAFTED') {
           p.stage = 'CONTACTED';
@@ -346,6 +375,12 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
           prospectData = { ...JSON.parse(fs.readFileSync(prospectFile, 'utf-8')), ...prospect };
         }
 
+        const targetEmail = prospect.ownerEmail;
+        if (!targetEmail) {
+          log('⏩', `[${businessName}] Skipping proposal email — no verified public email found.`);
+          break;
+        }
+
         const bookingLink = getBookingLink(prospectData);
         const proposal = generateProposal({
           prospect: prospectData,
@@ -355,13 +390,17 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
         });
 
         const email = composeEmail({
-          to: prospect.ownerEmail || `contact@${slug}.com`,
+          to: targetEmail,
           subject: `Your website proposal is ready — ${businessName}`,
           body: `Hi ${prospect.ownerName || 'there'},\n\nGreat news! Based on our audit, I've put together a detailed proposal for ${businessName}'s new website.\n\nYou can view your custom proposal here:\n${proposal.relativePath}\n\nOr book a quick call to walk through it:\n${bookingLink}\n\nLooking forward to hearing from you!`,
           agencyName: loadConfig().agency?.name || 'Apex AI Web Studio'
         });
 
-        const result = await sendEmail(email, { leadSlug: slug });
+        const result = await sendEmail(email, {
+          leadSlug: slug,
+          observedOn: prospect.ownerEmailSource || prospect.url || 'public_listing',
+          recipientConfirmed: true
+        });
         addInteraction({ lead_slug: slug, action: 'send_proposal', channel: 'email', direction: 'outbound', proposalPath: proposal.relativePath });
         log('✅', `[${businessName}] Proposal sent`);
       } catch (err) {
@@ -371,16 +410,26 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
     }
 
     case 'schedule_call': {
+      const targetEmail = prospect.ownerEmail;
+      if (!targetEmail) {
+        log('⏩', `[${businessName}] Skipping booking email — no verified public email found.`);
+        break;
+      }
+
       const bookingLink = getBookingLink(prospect);
       const email = composeEmail({
-        to: prospect.ownerEmail || `contact@${slug}.com`,
+        to: targetEmail,
         subject: `Let's chat about ${businessName}'s new website`,
         body: `Hi ${prospect.ownerName || 'there'},\n\nI'd love to walk you through the demo I built for ${businessName}. Pick a time that works for you:\n\n${bookingLink}\n\nLooking forward to connecting!`,
         agencyName: loadConfig().agency?.name || 'Apex AI Web Studio'
       });
 
       try {
-        const result = await sendEmail(email, { leadSlug: slug });
+        const result = await sendEmail(email, {
+          leadSlug: slug,
+          observedOn: prospect.ownerEmailSource || prospect.url || 'public_listing',
+          recipientConfirmed: true
+        });
         if (p) { p.stage = 'MEETING_SCHEDULED'; p.lastAction = new Date().toISOString(); }
         addInteraction({ lead_slug: slug, action: 'schedule_call', channel: 'email', direction: 'outbound', bookingLink });
         log('✅', `[${businessName}] Booking link sent`);

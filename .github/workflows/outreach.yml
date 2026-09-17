@@ -18,6 +18,18 @@ on:
 permissions:
   contents: write
 
+env:
+  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+  CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
+  SMTP_USER: ${{ secrets.SMTP_USER }}
+  SMTP_PASS: ${{ secrets.SMTP_PASS }}
+  GMAIL_USER: ${{ secrets.GMAIL_USER }}
+  GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
 jobs:
   send-outreach:
     name: 📨 Send Personalized Outreach Emails
@@ -44,24 +56,15 @@ jobs:
             cfg.ai.keys.groq          = process.env.GROQ_API_KEY  || cfg.ai.keys.groq || '';
             cfg.ai.keys.gemini        = process.env.GEMINI_API_KEY || cfg.ai.keys.gemini || '';
             cfg.email.resendApiKey    = process.env.RESEND_API_KEY || cfg.email.resendApiKey || '';
-            cfg.email.provider        = cfg.email.resendApiKey ? 'resend' : 'smtp';
-            cfg.email.smtp.user       = process.env.SMTP_USER     || cfg.email.smtp.user || '';
-            cfg.email.smtp.pass       = process.env.SMTP_PASS     || cfg.email.smtp.pass || '';
+            cfg.email.smtp.user       = process.env.SMTP_USER     || process.env.GMAIL_USER || cfg.email.smtp.user || '';
+            cfg.email.smtp.pass       = process.env.SMTP_PASS     || process.env.GMAIL_PASS || cfg.email.smtp.pass || '';
+            cfg.email.provider        = cfg.email.smtp.user ? 'smtp' : (cfg.email.resendApiKey ? 'resend' : 'dry_run');
             cfg.scheduling.calcomApiKey = process.env.CAL_API_KEY || cfg.scheduling.calcomApiKey || '';
             cfg.notifications.telegram.botToken = process.env.TELEGRAM_BOT_TOKEN || cfg.notifications.telegram.botToken || '';
             cfg.notifications.telegram.chatId   = process.env.TELEGRAM_CHAT_ID   || cfg.notifications.telegram.chatId   || '';
             fs.writeFileSync('config.json', JSON.stringify(cfg, null, 2));
             console.log('✅ Config ready | email via:', cfg.email.provider);
           "
-        env:
-          GROQ_API_KEY:       ${{ secrets.GROQ_API_KEY }}
-          GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
-          RESEND_API_KEY:     ${{ secrets.RESEND_API_KEY }}
-          SMTP_USER:          ${{ secrets.SMTP_USER }}
-          SMTP_PASS:          ${{ secrets.SMTP_PASS }}
-          CAL_API_KEY:        ${{ secrets.CAL_API_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: 🤖 Run Hermes — Advance All Ready Leads
         run: |
@@ -92,6 +95,9 @@ jobs:
             const fs = require('fs');
             let interactions = [];
             try { interactions = JSON.parse(fs.readFileSync('interactions.json','utf-8')); } catch {}
+            let pipeline = {};
+            try { pipeline = JSON.parse(fs.readFileSync('pipeline.json','utf-8')); } catch {}
+            const s = pipeline.pipeline_summary || {};
             const today = new Date().toISOString().slice(0,10);
             const todayActions = interactions.filter(i => i.timestamp && i.timestamp.startsWith(today));
             const emails   = todayActions.filter(i => ['send_email','send_followup'].includes(i.action)).length;
@@ -101,25 +107,37 @@ jobs:
 
             const botToken = process.env.TELEGRAM_BOT_TOKEN;
             const chatId   = process.env.TELEGRAM_CHAT_ID;
-            if (!botToken || !chatId || (emails + proposals + audits + demos) === 0) process.exit(0);
+            if (!botToken || !chatId) process.exit(0);
+
+            const statusText = (emails + proposals + audits + demos) > 0
+              ? [
+                  \`✉️ Emails Sent: <b>\${emails}</b>\`,
+                  \`💼 Proposals Sent: <b>\${proposals}</b>\`,
+                  \`🔍 Sites Audited: <b>\${audits}</b>\`,
+                  \`🎨 Demos Generated: <b>\${demos}</b>\`
+                ].join('\n')
+              : '• <i>All leads monitored in follow-up sequence & cooling window.</i>';
 
             const text = [
-              '📧 <b>Outreach Cycle Complete</b>',
-              \`\${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}\`,
+              '📧 <b>Apex AI Web Studio — Outreach Cycle Report</b>',
+              '━━━━━━━━━━━━━━━━━━━━━━━━━━',
+              \`⏱️ \${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST\`,
+              \`⚡ Status: 🟢 <b>OUTREACH CYCLE EXECUTED</b>\`,
               '',
-              \`✉️ Emails Sent Today: <b>\${emails}</b>\`,
-              \`💼 Proposals Sent: <b>\${proposals}</b>\`,
-              \`🔍 Sites Audited: <b>\${audits}</b>\`,
-              \`🎨 Demos Generated: <b>\${demos}</b>\`,
+              '<b>📊 Cycle Activity:</b>',
+              statusText,
               '',
-              '🔗 <a href=\"https://warriorlegacy.github.io/website-agency\">Open Dashboard</a>'
+              '<b>📈 Funnel Health:</b>',
+              \`• Active Leads: \${s.total_prospects || 0}\`,
+              \`• Contacted: \${s.contacted || 0}\`,
+              \`• Deals Won: \${s.closed_won || 0}\`,
+              \`• Pipeline Value: \$\${(s.pipeline_value_usd || 0).toLocaleString()}\`,
+              '',
+              '🔗 <a href=\"https://warriorlegacy.github.io/website-agency\">Open Agency Dashboard</a>'
             ].join('\n');
 
             fetch(\`https://api.telegram.org/bot\${botToken}/sendMessage\`, {
               method:'POST', headers:{'Content-Type':'application/json'},
               body: JSON.stringify({ chat_id: chatId, text, parse_mode:'HTML', disable_web_page_preview: true })
-            }).catch(()=>{});
+            }).then(r => r.json()).then(r => console.log('Telegram sent:', r.ok)).catch(()=>{});
           "
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}

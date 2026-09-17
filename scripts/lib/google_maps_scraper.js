@@ -19,6 +19,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { loadAppConfig } from './config_loader.js';
 import { notifyLeadsHarvested } from './telegram_notifier.js';
+import { findPublicEmailForBusiness } from './public_email_finder.js';
+import { isSendableEmail, isJunkBusinessName } from './guardrails.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -381,6 +383,13 @@ export async function harvestGoogleMapsLeads(opts = {}) {
       continue;
     }
 
+    // Junk name filter
+    const nameCheck = isJunkBusinessName(item.businessName);
+    if (nameCheck.junk) {
+      console.log(`  ⏩ [FILTER] Skipping junk name "${item.businessName}" (${nameCheck.reason})`);
+      continue;
+    }
+
     // Filter by website quality
     if (filterOnlyNoOrBadWebsite) {
       const auditResult = await analyzeWebsiteQuality(item.url);
@@ -394,7 +403,29 @@ export async function harvestGoogleMapsLeads(opts = {}) {
       item.opportunityHook = auditResult.reason;
     }
 
-    // Lead qualifies!
+    // Strict Real Email Capture Filter: Verify public email exists before capturing
+    console.log(`  🔎 Verifying public email for "${item.businessName}"...`);
+    let emailResult = null;
+    if (item.email && isSendableEmail(item.email, { observedOn: item.source || 'osm' }).ok) {
+      emailResult = { email: item.email.toLowerCase().trim(), source: item.source || 'osm', sourceKind: 'direct' };
+    } else {
+      emailResult = await findPublicEmailForBusiness(item.businessName, item.emailCandidates || [], {
+        tags: item.osmTags || item.tags || {},
+        domain: item.url,
+        city: item.city || city
+      });
+    }
+
+    if (!emailResult || !emailResult.email || !isSendableEmail(emailResult.email, { observedOn: emailResult.source }).ok) {
+      console.log(`  ⏩ [EMAIL FILTER] Skipping "${item.businessName}" — no verified real contact email found`);
+      continue;
+    }
+
+    item.ownerEmail = emailResult.email;
+    item.ownerEmailSource = emailResult.source;
+    item.ownerName = emailResult.ownerName || item.ownerName || 'Business Owner';
+
+    // Lead qualifies with real verified email!
     const prospectRecord = {
       slug,
       businessName: item.businessName,
@@ -405,8 +436,9 @@ export async function harvestGoogleMapsLeads(opts = {}) {
       niche: item.niche,
       rating: item.rating ?? null,
       reviewCount: item.reviewCount ?? null,
-      ownerName: null,
-      ownerEmail: null,
+      ownerName: item.ownerName,
+      ownerEmail: item.ownerEmail,
+      ownerEmailSource: item.ownerEmailSource,
       stage: 'DISCOVERED',
       source: item.source,
       opportunityHook: item.opportunityHook || 'No modern mobile website',

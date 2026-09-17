@@ -197,7 +197,7 @@ export function generateDemoSite(prospectData, requestedTemplate = null) {
     .replaceAll('{{NICHE_TITLE}}', customTitle || nicheData.title)
     .replaceAll('{{CITY}}', city || 'Local Area')
     .replaceAll('{{PHONE}}', phone || '(555) 234-5678')
-    .replaceAll('{{EMAIL}}', ownerEmail || `contact@${slug}.com`)
+    .replaceAll('{{EMAIL}}', ownerEmail || 'contact@apexwebstudio.com')
     .replaceAll('{{SERVICES_CARDS}}', servicesHtml)
     .replaceAll('{{REVIEWS_CARDS}}', reviewsHtml);
 

@@ -1,0 +1,31 @@
+# Apex AI Web Studio — Cloudflare Worker
+name = "apex-webstudio-api"
+main = "scripts/cloudflare_worker.js"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "apex-agency"
+database_id = "d85320fb-d7a0-493c-91ad-676c2e6a9825"
+
+# KV Namespace for demos and outreach files
+[[kv_namespaces]]
+binding = "DEMOS"
+id = "5de83f1296d94745be6e624473a6f08f"
+
+[[kv_namespaces]]
+binding = "OUTREACH"
+id = "bcca911fd93245499f650468663806d9"
+
+# Cron trigger: run autopilot every 6 hours
+[triggers]
+crons = ["0 */6 * * *"]
+
+[vars]
+AGENCY_NAME = "Apex AI Web Studio"
+AGENCY_EMAIL = "contact@apexwebstudio.com"
+AGENCY_URL = "https://warriorlegacy.github.io/website-agency"
+TELEGRAM_BOT_TOKEN = "8333086311:AAFjuqVMnwZddUbZcPmxGJgdxDUoc5CcHAM"
+TELEGRAM_CHAT_ID = "8800893070"

@@ -16,7 +16,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { searchViaJina, scrapeViaJina, scrapeViaFirecrawl } from './scraper_client.js';
-import { isJunkBusinessName } from './guardrails.js';
+import { isJunkBusinessName, isSendableEmail } from './guardrails.js';
+import { findPublicEmailForBusiness } from './public_email_finder.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -404,15 +405,33 @@ export async function findLeads({ niche = 'restaurant', city = 'Austin, TX', cou
 
       discovered = discovered.filter(l => !isJunkBusinessName(l.businessName).junk);
 
-      // Deduplicate + filter already-in-pipeline
-      const filtered = discovered.filter(l => {
+      // Deduplicate + filter already-in-pipeline + verify real email
+      for (const l of discovered) {
         const slug = l.slug || slugifyBusiness(l.businessName);
-        if (excludeSet.has(slug)) return false;
-        excludeSet.add(slug);
-        return true;
-      });
+        if (excludeSet.has(slug)) continue;
 
-      allLeads.push(...filtered);
+        let emailResult = null;
+        if (l.ownerEmail && isSendableEmail(l.ownerEmail, { observedOn: l.source }).ok) {
+          emailResult = { email: l.ownerEmail, source: l.source };
+        } else {
+          emailResult = await findPublicEmailForBusiness(l.businessName, [], {
+            domain: l.url,
+            city: l.city || city
+          });
+        }
+
+        if (!emailResult || !emailResult.email || !isSendableEmail(emailResult.email, { observedOn: emailResult.source }).ok) {
+          console.log(`  ⏩ [EMAIL FILTER] Skipping "${l.businessName}" — no verified real contact email found`);
+          continue;
+        }
+
+        l.ownerEmail = emailResult.email;
+        l.ownerEmailSource = emailResult.source;
+        l.ownerName = emailResult.ownerName || l.ownerName || 'Business Owner';
+        excludeSet.add(slug);
+        allLeads.push(l);
+        if (allLeads.length >= count) break;
+      }
     } catch (err) {
       console.warn(`  ⚠️  Source "${source}" failed: ${err.message}`);
     }

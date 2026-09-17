@@ -168,28 +168,40 @@ ${JSON.stringify(stats, null, 2)}
 }
 
 // ─── Telegram Sender ─────────────────────────────────────────────────────────
-async function sendTelegram(message, config, parseMode = 'HTML') {
+// ─── Telegram Sender ─────────────────────────────────────────────────────────
+async function sendTelegram(message, config, parseMode = 'HTML', retries = 3) {
   const botToken = config.notifications?.telegram?.botToken || process.env.TELEGRAM_BOT_TOKEN;
   const chatId = config.notifications?.telegram?.chatId || process.env.TELEGRAM_CHAT_ID;
   if (!botToken || !chatId) throw new Error('Telegram bot not configured');
 
-  const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: message,
-      parse_mode: parseMode,
-      disable_web_page_preview: true
-    })
-  });
+  let lastErr;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: parseMode,
+          disable_web_page_preview: true
+        })
+      });
 
-  if (!res.ok) {
-    const err = await res.text().catch(() => '');
-    throw new Error(`Telegram ${res.status}: ${err.slice(0, 200)}`);
+      if (!res.ok) {
+        const err = await res.text().catch(() => '');
+        throw new Error(`Telegram ${res.status}: ${err.slice(0, 200)}`);
+      }
+
+      return await res.json();
+    } catch (err) {
+      lastErr = err;
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, 1200 * attempt));
+      }
+    }
   }
-
-  return await res.json();
+  throw lastErr;
 }
 
 // ─── Master: sendWorkflowRunReport ──────────────────────────────────────────
