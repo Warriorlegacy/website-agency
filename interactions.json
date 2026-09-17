@@ -627,5 +627,62 @@
     "action": "draft_outreach",
     "channel": "system",
     "timestamp": "2026-09-17T14:30:42.617Z"
+  },
+  {
+    "lead_slug": "first-watch",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655950630",
+    "to": "contact@first-watch.com",
+    "subject": "Quick redesign idea for First Watch",
+    "timestamp": "2026-09-17T14:39:10.631Z"
+  },
+  {
+    "lead_slug": "first-watch",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:39:10.728Z"
+  },
+  {
+    "lead_slug": "arbys",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655951712",
+    "to": "contact@arbys.com",
+    "subject": "Quick redesign idea for Arby's",
+    "timestamp": "2026-09-17T14:39:11.712Z"
+  },
+  {
+    "lead_slug": "arbys",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:39:11.712Z"
+  },
+  {
+    "lead_slug": "pride-cabinetry",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655952832",
+    "to": "contact@pride-cabinetry.com",
+    "subject": "Quick redesign idea for Pride Cabinetry",
+    "timestamp": "2026-09-17T14:39:12.832Z"
+  },
+  {
+    "lead_slug": "pride-cabinetry",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:39:12.833Z"
   }
 ]
