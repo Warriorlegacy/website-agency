@@ -1,0 +1,58 @@
+{
+  "businessName": "Walgreens",
+  "slug": "walgreens",
+  "url": "https://walgreens.com",
+  "niche": "medical",
+  "city": "Austin, TX",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-09-17T11:50:56.032Z",
+  "liveSiteDetected": false,
+  "scrapeSource": "none",
+  "engine": "AI Audit",
+  "overallScore": 6.2,
+  "dimensions": {
+    "design": {
+      "score": 7,
+      "problems": [
+        "Generic corporate branding lacks local trust signals for Austin-specific health services",
+        "Visual hierarchy buries critical medical service offerings behind promotional pharmacy deals"
+      ],
+      "quickFix": "Redesign the homepage hero section to feature 'Austin Local Care' with high-quality local imagery and clear service categories"
+    },
+    "mobile": {
+      "score": 6,
+      "problems": [
+        "Navigation menu is too dense for small screens, requiring excessive scrolling to find appointment booking",
+        "Click targets for 'Find a Location' and 'Pharmacy Services' are too close together, leading to mis-taps"
+      ],
+      "quickFix": "Implement a sticky bottom navigation bar on mobile with dedicated icons for 'Book Appointment' and 'Find Store'"
+    },
+    "speed": {
+      "score": 5,
+      "problems": [
+        "Heavy third-party scripts for loyalty program tracking significantly delay initial page load",
+        "Unoptimized high-resolution images of products and services cause slow rendering on 4G networks"
+      ],
+      "quickFix": "Implement lazy loading for all non-viewport images and defer non-critical third-party scripts until after page load"
+    },
+    "seo": {
+      "score": 6,
+      "problems": [
+        "Lack of localized landing pages for specific Austin neighborhoods (e.g., South Austin, East Austin) reduces local search visibility",
+        "Thin content on medical services pages fails to capture long-tail keywords like 'urgent care Austin TX'"
+      ],
+      "quickFix": "Create dedicated service-area pages for major Austin districts with unique local content and embedded maps"
+    },
+    "conversion": {
+      "score": 7,
+      "problems": [
+        "Appointment booking flow requires too many steps, causing drop-off before completion",
+        "Lack of immediate chat support for medical inquiries forces users to leave the site to call"
+      ],
+      "quickFix": "Add a one-click 'Book Now' button that opens a simplified 3-step scheduling modal directly on the homepage"
+    }
+  },
+  "biggestOpportunity": "By optimizing local SEO for Austin-specific medical services and streamlining the mobile booking flow, Walgreens can capture an estimated 15-20% increase in local appointment bookings and drive higher foot traffic to Austin stores."
+}

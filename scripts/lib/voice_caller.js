@@ -18,7 +18,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { aiComplete } from './ai_client.js';
 import { getBookingLink } from './scheduler.js';
-import { loadAppConfig } from './config_loader.js';
+import { loadAppConfig, getPublicDemoUrl } from './config_loader.js';
 import { notifyMeetingScheduled } from './telegram_notifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -45,7 +45,7 @@ export function getVoicePrompt(prospect) {
   const agencyName = cfg.agency?.name || 'Apex AI Web Studio';
   const ownerName = prospect.ownerName && prospect.ownerName !== 'Business Owner' ? prospect.ownerName : 'the business owner';
   const businessName = prospect.businessName || 'your business';
-  const demoUrl = prospect.demoPath ? `http://localhost:3030${prospect.demoPath}` : `http://localhost:3030/demos/${prospect.slug}/index.html`;
+  const demoUrl = getPublicDemoUrl(prospect.slug);
   const bookingLink = getBookingLink(prospect);
 
   return {

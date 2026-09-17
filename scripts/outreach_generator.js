@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { getPublicDemoUrl } from './lib/config_loader.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const OUTREACH_DIR = path.join(__dirname, '..', 'outreach');
@@ -17,7 +19,7 @@ if (!fs.existsSync(OUTREACH_DIR)) {
 export function generateOutreachSequence(prospectData, demoUrl = null) {
   const { businessName, slug, city, ownerName, ownerEmail, phone, dimensions, biggestOpportunity, overallScore } = prospectData;
   const firstName = ownerName && ownerName !== 'Business Owner' ? ownerName.split(' ')[0] : 'there';
-  const effectiveDemoUrl = demoUrl || `https://preview.agency.dev/demos/${slug}/index.html (Local preview: http://localhost:3030/demos/${slug}/index.html)`;
+  const effectiveDemoUrl = demoUrl || getPublicDemoUrl(slug);
 
   console.log(`\n✍️ Drafting personalized outreach for [${businessName}] (Owner: ${ownerName || 'Unknown'})...`);
 

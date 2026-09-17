@@ -38,7 +38,7 @@ import { getBookingLink } from './lib/scheduler.js';
 import { captureScreenshot } from './lib/screenshot.js';
 import { placeVoiceCall } from './lib/voice_caller.js';
 import { sendClosingProposal, confirmDealWon } from './lib/closing_engine.js';
-import { loadAppConfig } from './lib/config_loader.js';
+import { loadAppConfig, getPublicDemoUrl } from './lib/config_loader.js';
 import { notifyDemoGenerated } from './lib/telegram_notifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -260,7 +260,7 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
         addInteraction({ lead_slug: slug, action: 'generate_mvp', channel: 'system', result: demo.relativeUrl });
         log('✅', `[${businessName}] Demo generated: ${demo.relativeUrl}`);
         try {
-          await notifyDemoGenerated(prospectData, demo.relativeUrl);
+          await notifyDemoGenerated(prospectData, getPublicDemoUrl(slug));
         } catch {}
       } catch (err) {
         log('❌', `[${businessName}] Demo generation failed: ${err.message}`);
@@ -314,7 +314,7 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
         }
 
         // Build and send email
-        const demoUrl = prospect.demoPath ? `http://localhost:3030${prospect.demoPath}` : null;
+        const demoUrl = prospect.demoPath ? getPublicDemoUrl(slug) : null;
         const email = composeEmail({
           to: prospect.ownerEmail || `contact@${slug}.com`,
           subject: emailSubject,
@@ -348,7 +348,7 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
         const bookingLink = getBookingLink(prospectData);
         const proposal = generateProposal({
           prospect: prospectData,
-          demoUrl: prospect.demoPath ? `http://localhost:3030${prospect.demoPath}` : null,
+          demoUrl: prospect.demoPath ? getPublicDemoUrl(slug) : null,
           bookingLink,
           recommendedPackage: 'growth'
         });

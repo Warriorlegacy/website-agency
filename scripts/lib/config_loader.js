@@ -94,3 +94,12 @@ export function loadAppConfig() {
 
   return config;
 }
+
+/**
+ * Returns public HTTPS demo URL for a prospect slug
+ */
+export function getPublicDemoUrl(slug) {
+  const config = loadAppConfig();
+  const baseUrl = config.agency?.demoBaseUrl || 'https://warriorlegacy.github.io/website-agency/demos';
+  return `${baseUrl.replace(/\/$/, '')}/${slug}/index.html`;
+}

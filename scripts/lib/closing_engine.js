@@ -18,7 +18,7 @@ import { generateProposal } from './proposal_generator.js';
 import { createPaymentLink } from './payment.js';
 import { sendEmail, composeEmail } from './email_sender.js';
 import { getBookingLink } from './scheduler.js';
-import { loadAppConfig } from './config_loader.js';
+import { loadAppConfig, getPublicDemoUrl } from './config_loader.js';
 import { notifyProposalDispatched, notifyDealClosedWon } from './telegram_notifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -69,7 +69,7 @@ export async function sendClosingProposal(prospect, opts = {}) {
 
   // Generate custom interactive proposal
   const bookingLink = getBookingLink(prospect);
-  const demoUrl = prospect.demoPath ? `http://localhost:3030${prospect.demoPath}` : `http://localhost:3030/demos/${prospect.slug}/index.html`;
+  const demoUrl = getPublicDemoUrl(prospect.slug);
 
   const proposal = generateProposal({
     prospect,
