@@ -1,18 +1,18 @@
 {
   "agency_name": "Apex AI Web Studio",
   "version": "1.0.0",
-  "last_updated": "2026-09-17T10:38:30.960Z",
+  "last_updated": "2026-09-17T10:40:21.302Z",
   "pipeline_summary": {
     "total_prospects": 13,
-    "discovered": 4,
-    "audited": 0,
+    "discovered": 0,
+    "audited": 3,
     "demo_generated": 0,
     "outreach_drafted": 8,
     "contacted": 0,
     "meeting_scheduled": 0,
-    "closed_won": 1,
+    "closed_won": 2,
     "closed_lost": 0,
-    "pipeline_value_usd": 19500
+    "pipeline_value_usd": 16500
   },
   "prospects": [
     {
@@ -182,11 +182,12 @@
       "reviewCount": 10,
       "ownerName": "Business Owner",
       "ownerEmail": "contact@first-watch.com",
-      "stage": "DISCOVERED",
+      "stage": "AUDITED",
       "source": "osm_overpass_live",
       "opportunityHook": "No website listed on Google Maps profile",
       "createdAt": "2026-09-17T10:37:16.500Z",
-      "lastAction": "2026-09-17T10:37:16.501Z"
+      "lastAction": "2026-09-17T10:40:06.985Z",
+      "overallScore": 6.2
     },
     {
       "slug": "arbys",
@@ -200,11 +201,12 @@
       "reviewCount": 10,
       "ownerName": "Business Owner",
       "ownerEmail": "contact@arbys.com",
-      "stage": "DISCOVERED",
+      "stage": "AUDITED",
       "source": "osm_overpass_live",
       "opportunityHook": "No website listed on Google Maps profile",
       "createdAt": "2026-09-17T10:37:18.991Z",
-      "lastAction": "2026-09-17T10:37:18.991Z"
+      "lastAction": "2026-09-17T10:40:14.222Z",
+      "overallScore": 3
     },
     {
       "slug": "cool-heat-mechanical-systems-inc",
@@ -239,11 +241,12 @@
       "reviewCount": 10,
       "ownerName": "Business Owner",
       "ownerEmail": "contact@pride-cabinetry.com",
-      "stage": "DISCOVERED",
+      "stage": "AUDITED",
       "source": "osm_overpass_live",
       "opportunityHook": "No website listed on Google Maps profile",
       "createdAt": "2026-09-17T10:38:15.805Z",
-      "lastAction": "2026-09-17T10:38:15.805Z"
+      "lastAction": "2026-09-17T10:40:21.302Z",
+      "overallScore": 3
     }
   ]
 }

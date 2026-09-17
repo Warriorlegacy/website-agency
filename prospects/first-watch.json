@@ -1,0 +1,58 @@
+{
+  "businessName": "First Watch",
+  "slug": "first-watch",
+  "url": "https://first-watch.com",
+  "niche": "restaurant",
+  "city": "Miami, FL",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-09-17T10:40:06.984Z",
+  "liveSiteDetected": false,
+  "scrapeSource": "none",
+  "engine": "AI Audit",
+  "overallScore": 6.2,
+  "dimensions": {
+    "design": {
+      "score": 7,
+      "problems": [
+        "Lack of local visual identity for the Miami location, using generic national branding that fails to convey the specific atmosphere of the Miami branch.",
+        "Over-reliance on stock photography rather than authentic, high-resolution images of the actual Miami dining room and signature dishes served at that specific location."
+      ],
+      "quickFix": "Replace generic hero images with a curated gallery of the Miami location's interior and locally popular menu items to build immediate local relevance."
+    },
+    "mobile": {
+      "score": 6,
+      "problems": [
+        "The 'Find a Location' or 'Order Online' buttons are likely buried below the fold, requiring excessive scrolling on mobile devices where most restaurant traffic originates.",
+        "Tap targets for menu categories and reservation links may be too small or closely spaced, leading to accidental taps and user frustration on smaller screens."
+      ],
+      "quickFix": "Implement a sticky bottom navigation bar on mobile with prominent, large tap targets for 'Reserve' and 'Order' to reduce friction."
+    },
+    "speed": {
+      "score": 5,
+      "problems": [
+        "Heavy use of unoptimized, high-resolution video or image assets on the homepage causes slow initial load times, particularly on mobile data connections common in urban areas like Miami.",
+        "Lack of lazy loading for below-the-fold content results in unnecessary bandwidth usage and delays in rendering critical above-the-fold information."
+      ],
+      "quickFix": "Implement lazy loading for all images and videos below the fold and compress hero images to WebP format to reduce initial page weight by at least 40%."
+    },
+    "seo": {
+      "score": 6,
+      "problems": [
+        "Missing local schema markup (LocalBusiness) specific to the Miami address, preventing search engines from accurately displaying hours, ratings, and location data in local pack results.",
+        "Generic title tags that do not include 'Miami' or 'FL' keywords, resulting in lower visibility for high-intent local searches like 'best breakfast Miami'."
+      ],
+      "quickFix": "Update the title tag to 'First Watch Miami | Best Breakfast & Brunch in FL' and inject LocalBusiness JSON-LD schema with the specific Miami coordinates and phone number."
+    },
+    "conversion": {
+      "score": 7,
+      "problems": [
+        "Absence of a direct 'Call Now' button for mobile users, forcing them to manually dial the number, which increases drop-off rates for immediate dining inquiries.",
+        "No visible social proof or recent reviews from the Miami area near the primary call-to-action, reducing trust for first-time visitors unfamiliar with the local branch."
+      ],
+      "quickFix": "Add a prominent 'Call Miami Location' button with a click-to-dial link and display a 3-star average review snippet from the Miami branch directly under the main reservation CTA."
+    }
+  },
+  "biggestOpportunity": "By optimizing the Miami-specific local SEO and implementing a mobile-first sticky CTA for reservations, First Watch Miami can capture an estimated 15-20% increase in direct online bookings from high-intent local searchers in the competitive Miami brunch market."
+}
