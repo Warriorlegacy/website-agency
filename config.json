@@ -139,6 +139,38 @@
     "extractContactInfo": true,
     "autoRunIntervalMinutes": 0
   },
+  "integrations": {
+    "browserUse": {
+      "enabled": true,
+      "cloudApiKey": "",
+      "cloudApiUrl": "https://api.browser-use.com",
+      "preferCloud": false
+    },
+    "pipecat": {
+      "enabled": true,
+      "dailyRoomUrl": "",
+      "dailyToken": "",
+      "cartesiaApiKey": "",
+      "deepgramApiKey": ""
+    },
+    "postiz": {
+      "enabled": false,
+      "apiUrl": "http://localhost:3000",
+      "apiKey": "",
+      "integrationIds": []
+    },
+    "anythingllm": {
+      "enabled": true,
+      "apiUrl": "http://localhost:3001",
+      "apiKey": "",
+      "workspace": "agency"
+    },
+    "cline": {
+      "enabled": true,
+      "workspace": "",
+      "env": {}
+    }
+  },
   "_comment": {
     "ai.provider": "groq | openai | anthropic | gemini | openrouter | custom",
     "ai.customEndpoint": "e.g. http://localhost:11434/v1 for Ollama",
