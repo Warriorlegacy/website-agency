@@ -17,6 +17,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 env:
   GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -46,7 +48,7 @@ jobs:
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: 🔑 Write config from secrets
         run: |
@@ -88,56 +90,33 @@ jobs:
             git push
           fi
 
-      - name: 📊 Report Outreach Stats to Telegram
+      - name: 🏗️ Prepare Public Demo & Dashboard Assets
         if: always()
         run: |
-          node -e "
-            const fs = require('fs');
-            let interactions = [];
-            try { interactions = JSON.parse(fs.readFileSync('interactions.json','utf-8')); } catch {}
-            let pipeline = {};
-            try { pipeline = JSON.parse(fs.readFileSync('pipeline.json','utf-8')); } catch {}
-            const s = pipeline.pipeline_summary || {};
-            const today = new Date().toISOString().slice(0,10);
-            const todayActions = interactions.filter(i => i.timestamp && i.timestamp.startsWith(today));
-            const emails   = todayActions.filter(i => ['send_email','send_followup'].includes(i.action)).length;
-            const proposals = todayActions.filter(i => i.action === 'send_proposal').length;
-            const audits   = todayActions.filter(i => i.action === 'audit').length;
-            const demos    = todayActions.filter(i => i.action === 'generate_mvp').length;
+          node scripts/build.js || true
+          if [ -d demos ]; then
+            mkdir -p public/demos
+            cp -r demos/* public/demos/ 2>/dev/null || true
+          fi
+          if [ -d proposals ]; then
+            mkdir -p public/proposals
+            cp -r proposals/* public/proposals/ 2>/dev/null || true
+          fi
 
-            const botToken = process.env.TELEGRAM_BOT_TOKEN;
-            const chatId   = process.env.TELEGRAM_CHAT_ID;
-            if (!botToken || !chatId) process.exit(0);
+      - name: 🌐 Deploy Updated Demos to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          commit_message: '🚀 deploy(outreach): sync demos & dashboard — ${{ github.sha }}'
+          force_orphan: false
 
-            const statusText = (emails + proposals + audits + demos) > 0
-              ? [
-                  \`✉️ Emails Sent: <b>\${emails}</b>\`,
-                  \`💼 Proposals Sent: <b>\${proposals}</b>\`,
-                  \`🔍 Sites Audited: <b>\${audits}</b>\`,
-                  \`🎨 Demos Generated: <b>\${demos}</b>\`
-                ].join('\n')
-              : '• <i>All leads monitored in follow-up sequence & cooling window.</i>';
-
-            const text = [
-              '📧 <b>Apex AI Web Studio — Outreach Cycle Report</b>',
-              '━━━━━━━━━━━━━━━━━━━━━━━━━━',
-              \`⏱️ \${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST\`,
-              \`⚡ Status: 🟢 <b>OUTREACH CYCLE EXECUTED</b>\`,
-              '',
-              '<b>📊 Cycle Activity:</b>',
-              statusText,
-              '',
-              '<b>📈 Funnel Health:</b>',
-              \`• Active Leads: \${s.total_prospects || 0}\`,
-              \`• Contacted: \${s.contacted || 0}\`,
-              \`• Deals Won: \${s.closed_won || 0}\`,
-              \`• Pipeline Value: \$\${(s.pipeline_value_usd || 0).toLocaleString()}\`,
-              '',
-              '🔗 <a href=\"https://warriorlegacy.github.io/website-agency\">Open Agency Dashboard</a>'
-            ].join('\n');
-
-            fetch(\`https://api.telegram.org/bot\${botToken}/sendMessage\`, {
-              method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({ chat_id: chatId, text, parse_mode:'HTML', disable_web_page_preview: true })
-            }).then(r => r.json()).then(r => console.log('Telegram sent:', r.ok)).catch(()=>{});
-          "
+      - name: 📊 Send Outreach Stats & Directory to Telegram
+        if: always()
+        run: |
+          node scripts/daily_summary.js
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}

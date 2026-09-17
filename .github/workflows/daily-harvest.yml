@@ -21,6 +21,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 env:
   GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -50,7 +52,7 @@ jobs:
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: 🔑 Write config from secrets
         run: |
@@ -107,45 +109,34 @@ jobs:
             git push
           fi
 
-      - name: 🌅 Send Morning Pipeline Brief to Telegram
+      - name: 🏗️ Prepare Public Demo & Dashboard Assets
         if: always()
         run: |
-          node -e "
-            const fs = require('fs');
-            let pipeline = {};
-            try { pipeline = JSON.parse(fs.readFileSync('pipeline.json','utf-8')); } catch {}
-            const s = pipeline.pipeline_summary || {};
-            const botToken = process.env.TELEGRAM_BOT_TOKEN;
-            const chatId   = process.env.TELEGRAM_CHAT_ID;
-            if (!botToken || !chatId) process.exit(0);
+          node scripts/build.js || true
+          if [ -d demos ]; then
+            mkdir -p public/demos
+            cp -r demos/* public/demos/ 2>/dev/null || true
+            echo "✅ Synced $(ls demos/ 2>/dev/null | wc -l) demo sites"
+          fi
+          if [ -d proposals ]; then
+            mkdir -p public/proposals
+            cp -r proposals/* public/proposals/ 2>/dev/null || true
+          fi
 
-            // Find newest leads with verified emails
-            const newLeads = (pipeline.prospects || [])
-              .slice(-5)
-              .map(p => \`  • <b>\${p.businessName}</b> (\${p.city || 'Local'})\n    ✉️ <code>\${p.ownerEmail || 'Verified Email'}</code> | 🎯 Stage: <b>\${p.stage}</b>\`)
-              .join('\n');
+      - name: 🌐 Deploy Updated Demos to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          commit_message: '🚀 deploy(harvest): sync demos & dashboard — ${{ github.sha }}'
+          force_orphan: false
 
-            const text = [
-              '🌅 <b>Good Morning, Piyush!</b>',
-              '<b>Apex AI Web Studio — Daily Lead Brief</b>',
-              '',
-              '📊 <b>Pipeline Status</b>',
-              \`Total: \${s.total_prospects || 0} leads | 💰 \$\${(s.pipeline_value_usd||0).toLocaleString()}\`,
-              \`🆕 Discovered: \${s.discovered||0} | 🔍 Audited: \${s.audited||0}\`,
-              \`🎨 Demos: \${s.demo_generated||0} | 📧 Contacted: \${s.contacted||0}\`,
-              \`🤝 Won: \${s.closed_won||0} deals\`,
-              '',
-              newLeads ? \`🌾 <b>Today's Fresh Leads</b>\n\${newLeads}\` : '✅ Pipeline is well-stocked!',
-              '',
-              '🔗 <a href=\"https://warriorlegacy.github.io/website-agency\">Open Dashboard</a>'
-            ].join('\n');
-
-            fetch(\`https://api.telegram.org/bot\${botToken}/sendMessage\`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', disable_web_page_preview: true })
-            }).catch(() => {});
-          "
+      - name: 🌅 Send Comprehensive Morning Brief to Telegram
+        if: always()
+        run: |
+          node scripts/daily_summary.js
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
