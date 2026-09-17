@@ -684,5 +684,12 @@
     "direction": "outbound",
     "provider": "smtp",
     "timestamp": "2026-09-17T14:39:12.833Z"
+  },
+  {
+    "lead_slug": "omni-dental-group",
+    "action": "audit",
+    "channel": "system",
+    "result": "Score: 2/10",
+    "timestamp": "2026-09-17T16:38:02.592Z"
   }
 ]

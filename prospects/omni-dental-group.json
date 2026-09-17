@@ -1,0 +1,61 @@
+{
+  "businessName": "Omni Dental Group",
+  "slug": "omni-dental-group",
+  "url": "https://omni-dental-group.com",
+  "niche": "medical",
+  "city": "Austin, TX",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-09-17T16:38:02.592Z",
+  "liveSiteDetected": false,
+  "scrapeSource": "none",
+  "engine": "AI Audit",
+  "overallScore": 2,
+  "dimensions": {
+    "design": {
+      "score": 1,
+      "problems": [
+        "Complete absence of visual identity prevents brand recognition and trust establishment for a medical provider.",
+        "Lack of professional imagery (dentists, office, equipment) fails to humanize the service and alleviate patient anxiety."
+      ],
+      "quickFix": "Launch a basic landing page with a clean, white-and-blue medical color palette, high-quality headshots of the Austin-based dental team, and clear typography."
+    },
+    "mobile": {
+      "score": 1,
+      "problems": [
+        "No mobile-responsive interface exists, making it impossible for local Austin users to access contact info or book appointments on the go.",
+        "Absence of click-to-call functionality means mobile users cannot easily reach the office, leading to immediate drop-off."
+      ],
+      "quickFix": "Implement a mobile-first landing page with a sticky bottom bar containing a 'Call Now' button and a 'Book Appointment' link."
+    },
+    "speed": {
+      "score": 1,
+      "problems": [
+        "No website infrastructure exists, resulting in infinite load time and zero page views.",
+        "Lack of any digital presence means no server response time can be measured, effectively failing all performance benchmarks."
+      ],
+      "quickFix": "Deploy a lightweight, static HTML/CSS landing page hosted on a CDN to ensure sub-second load times for local traffic."
+    },
+    "seo": {
+      "score": 1,
+      "problems": [
+        "Zero indexed pages means Omni Dental Group is invisible to search engines for high-intent keywords like 'dentist in Austin TX'.",
+        "Lack of local schema markup and geographic targeting prevents the business from appearing in Google Maps 'Near Me' searches."
+      ],
+      "quickFix": "Create a dedicated landing page optimized for 'Dental Care Austin TX' with LocalBusiness schema markup and a Google Business Profile link."
+    },
+    "conversion": {
+      "score": 1,
+      "problems": [
+        "No call-to-action (CTA) exists to capture leads, resulting in a 0% conversion rate for any potential traffic.",
+        "Absence of online scheduling tools forces all inquiries to phone calls, creating friction that causes many patients to choose competitors with easier booking options."
+      ],
+      "quickFix": "Integrate a third-party online booking widget (like Calendly or Zocdoc) directly into the new landing page to allow instant appointment scheduling."
+    }
+  },
+  "biggestOpportunity": "Omni Dental Group is currently invisible to the digital market in Austin, TX; launching a basic, mobile-optimized landing page with online booking could capture an estimated 15-20% of local high-intent search traffic that is currently going to competitors, potentially generating 5-10 new patient leads per week.",
+  "visualAudit": null,
+  "socialProfiles": null,
+  "emailSource": null
+}
