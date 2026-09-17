@@ -17,22 +17,19 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import net from 'net';
 
+import { loadAppConfig } from './config_loader.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CONFIG_FILE = path.join(__dirname, '..', '..', 'config.json');
 const INTERACTIONS_FILE = path.join(__dirname, '..', '..', 'interactions.json');
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 function loadEmailConfig() {
-  try {
-    const cfg = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
-    return {
-      email: cfg.email || {},
-      agency: cfg.agency || {}
-    };
-  } catch {
-    return { email: {}, agency: {} };
-  }
+  const cfg = loadAppConfig();
+  return {
+    email: cfg.email || {},
+    agency: cfg.agency || {}
+  };
 }
 
 // ─── Interaction Logger ──────────────────────────────────────────────────────
