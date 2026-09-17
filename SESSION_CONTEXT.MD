@@ -231,14 +231,28 @@ The agency uses a zero-fee, high-converting direct UPI payment & WhatsApp verifi
 
 ## 10. 24/7 Autonomous Cloud Deployment (Runs When PC is OFF)
 
-The agency can run continuously in the cloud for **100% free** using the built-in GitHub Actions workflow [`.github/workflows/autopilot.yml`](file:///d:/website_agency/.github/workflows/autopilot.yml):
-- **Schedule:** Runs every 2 hours continuously on GitHub's cloud runners.
-- **Actions:** Scrapes Google Maps, runs audits, builds demos, sends emails, simulates/places calls, generates proposals, and commits updated CRM data back to the repo.
-- **Cost:** **$0.00 / month forever** (2,000 free minutes per month for private repos, unlimited for public).
-- **Environment Secrets:** Supports `GROQ_API_KEY`, `RESEND_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
+The agency is deployed and actively running in the cloud for **100% free** using GitHub Actions:
+- **Public GitHub Repository:** [https://github.com/Warriorlegacy/website-agency](https://github.com/Warriorlegacy/website-agency)
+- **Unlimited Free Minutes:** As a public repository, GitHub Actions provides **unlimited standard runner minutes** with zero minute caps and zero rate limits.
+- **Schedule:** Runs every 2 hours continuously (`0 */2 * * *`) on Ubuntu runners in the cloud even when your PC is turned off.
+- **Live Cloud Verification:** Run `35207845535` completed with `SUCCESS` in 55 seconds. Harvested 3 new leads, built demo site for Apex Electrical Solutions, executed AI voice calling with auto-fallback to Gemini, committed changes back to repository, and delivered live Telegram digest to Piyush.
+- **Configured GitHub Repository Secrets:**
+  - `GROQ_API_KEY`: Primary high-speed LLM (`qwen/qwen3.8-27b`)
+  - `GEMINI_API_KEY`: Automatic failover LLM (`gemini-2.5-flash`)
+  - `RESEND_API_KEY`: Verified email delivery engine
+  - `CAL_API_KEY`: Cal.com API v2 meeting scheduler
+  - `TELEGRAM_BOT_TOKEN`: APEX_STUDIO bot dispatcher
+  - `TELEGRAM_CHAT_ID`: Direct notification recipient (`8800893070`)
 
-### How to Run Autonomous Autopilot Locally
+### How to Trigger or Monitor Cloud Runs
+- **Web UI:** Go to [Actions tab on GitHub](https://github.com/Warriorlegacy/website-agency/actions) -> `24/7 Autonomous Agency Autopilot` -> `Run workflow`.
+- **CLI:**
+  ```bash
+  gh workflow run autopilot.yml --repo Warriorlegacy/website-agency
+  gh run list --repo Warriorlegacy/website-agency
+  ```
 
+### How to Run Locally
 ```bash
 # Continuous background mode (runs every 15 minutes)
 npm run autopilot
@@ -249,3 +263,4 @@ npm run autopilot:once
 # Or test in dry-run mode
 node scripts/autopilot.js --dry-run
 ```
+
