@@ -89,14 +89,14 @@ export async function runAutopilotCycle(opts = {}) {
 
   const activeCount = pipeline.prospects.filter(p => !['CLOSED_WON', 'CLOSED_LOST'].includes(p.stage)).length;
   const minActiveTarget = cfg.autopilot?.minActiveTarget || 8;
+  const harvestQuota = opts.harvestCount || (activeCount < minActiveTarget ? (minActiveTarget - activeCount) : 0);
 
-  if (activeCount < minActiveTarget) {
-    const quotaToHarvest = minActiveTarget - activeCount;
-    log('🚜', `Active pipeline (${activeCount}) is below target (${minActiveTarget}). Scraping Google Maps for ${quotaToHarvest} fresh leads...`);
+  if (harvestQuota > 0) {
+    log('🚜', `Harvesting ${harvestQuota} fresh leads from live Maps & OpenStreetMap...`);
     if (!dryRun) {
-      await autoHarvestAndIngest({ maxLeads: quotaToHarvest });
+      await autoHarvestAndIngest({ maxLeads: harvestQuota });
     } else {
-      log('🏜️', `[DRY RUN] Would harvest ${quotaToHarvest} leads from Google Maps`);
+      log('🏜️', `[DRY RUN] Would harvest ${harvestQuota} leads from Google Maps`);
     }
   } else {
     log('📊', `Pipeline healthy: ${activeCount} active prospects currently in funnel.`);
@@ -207,6 +207,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const dryRun = args.includes('--dry-run');
   const loop = args.includes('--loop');
   const ignoreQuietHours = args.includes('--force-call');
+  const harvestArg = args.find(a => a.startsWith('--harvest='));
+  const harvestCount = harvestArg ? parseInt(harvestArg.split('=')[1], 10) : (args.includes('--harvest') || args.includes('--force-harvest') ? 2 : 0);
   const intervalArg = args.find(a => a.startsWith('--interval='));
   const intervalMin = intervalArg ? parseInt(intervalArg.split('=')[1], 10) : 15;
 
@@ -216,7 +218,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 
     const run = async () => {
       try {
-        await runAutopilotCycle({ dryRun, ignoreQuietHours });
+        await runAutopilotCycle({ dryRun, ignoreQuietHours, harvestCount });
       } catch (err) {
         console.error(`❌ Autopilot cycle error:`, err);
       }
@@ -224,7 +226,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     };
     run();
   } else {
-    runAutopilotCycle({ dryRun, ignoreQuietHours }).catch(err => {
+    runAutopilotCycle({ dryRun, ignoreQuietHours, harvestCount }).catch(err => {
       console.error('❌ Fatal Autopilot Error:', err);
       process.exit(1);
     });

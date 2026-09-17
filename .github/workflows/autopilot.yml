@@ -6,6 +6,9 @@ on:
     - cron: '0 */2 * * *'
   workflow_dispatch:
     # Allows manually triggering an autonomous cycle from GitHub UI with one click
+  repository_dispatch:
+    # Allows external cron services like cron-job.org to trigger the workflow via API
+    types: [autopilot-trigger, cronjob-trigger]
 
 permissions:
   contents: write
