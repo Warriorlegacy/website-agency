@@ -457,5 +457,175 @@
     "to": "rajpiyush092@gmail.com",
     "subject": "🚀 Apex AI Web Studio — Autonomous Email System Active",
     "timestamp": "2026-09-17T12:23:41.935Z"
+  },
+  {
+    "lead_slug": "bright-smile-dental",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655433788",
+    "to": "sarah@brightsmilemiami.com",
+    "subject": "Quick redesign idea for Bright Smile Dental",
+    "timestamp": "2026-09-17T14:30:33.789Z"
+  },
+  {
+    "lead_slug": "bright-smile-dental",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:30:33.789Z"
+  },
+  {
+    "lead_slug": "vance-sterling-law",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655434718",
+    "to": "avance@vancestlaw.com",
+    "subject": "Quick redesign idea for Vance & Sterling Law",
+    "timestamp": "2026-09-17T14:30:34.718Z"
+  },
+  {
+    "lead_slug": "vance-sterling-law",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:30:34.718Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655435989",
+    "to": "james@apexelectric.test",
+    "subject": "Quick redesign idea for Apex Electrical Solutions",
+    "timestamp": "2026-09-17T14:30:35.989Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:30:35.990Z"
+  },
+  {
+    "lead_slug": "restaurants",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655437277",
+    "to": "contact@restaurants.com",
+    "subject": "Quick redesign idea for Restaurants",
+    "timestamp": "2026-09-17T14:30:37.277Z"
+  },
+  {
+    "lead_slug": "restaurants",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:30:37.278Z"
+  },
+  {
+    "lead_slug": "what-are-the-best-restaurants-with-outdoor-seating",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655438124",
+    "to": "contact@what-are-the-best-restaurants-with-outdoor-seating.com",
+    "subject": "Quick redesign idea for What are the best restaurants with outdoor seating?",
+    "timestamp": "2026-09-17T14:30:38.125Z"
+  },
+  {
+    "lead_slug": "what-are-the-best-restaurants-with-outdoor-seating",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:30:38.170Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655440031",
+    "to": "contact@bella-napoli-trattoria.com",
+    "subject": "Quick redesign idea for Bella Napoli Trattoria",
+    "timestamp": "2026-09-17T14:30:40.031Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:30:40.032Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655441548",
+    "to": "contact@blue-harbor-seafood-bar.com",
+    "subject": "Quick redesign idea for Blue Harbor Seafood Bar",
+    "timestamp": "2026-09-17T14:30:41.549Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:30:41.549Z"
+  },
+  {
+    "lead_slug": "cornerstone-artisan-bakery",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789655442596",
+    "to": "contact@cornerstone-artisan-bakery.com",
+    "subject": "Quick redesign idea for Cornerstone Artisan Bakery",
+    "timestamp": "2026-09-17T14:30:42.596Z"
+  },
+  {
+    "lead_slug": "cornerstone-artisan-bakery",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T14:30:42.597Z"
+  },
+  {
+    "lead_slug": "first-watch",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-09-17T14:30:42.613Z"
+  },
+  {
+    "lead_slug": "arbys",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-09-17T14:30:42.615Z"
+  },
+  {
+    "lead_slug": "pride-cabinetry",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-09-17T14:30:42.617Z"
   }
 ]
