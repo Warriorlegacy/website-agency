@@ -233,13 +233,17 @@ The agency provides a seamless, zero-friction multi-rail payment engine for both
 
 ---
 
-## 10. 24/7 Autonomous Cloud Deployment (Runs When PC is OFF)
+---
 
-The agency is deployed and actively running in the cloud for **100% free** using GitHub Actions:
+## 10. 24/7 Autonomous Cloud Deployment & cron-job.org Multi-Time Daily Scheduling
+
+The agency is deployed and actively running in the cloud for **100% free** using GitHub Actions and `cron-job.org`:
 - **Public GitHub Repository:** [https://github.com/Warriorlegacy/website-agency](https://github.com/Warriorlegacy/website-agency)
 - **Unlimited Free Minutes:** As a public repository, GitHub Actions provides **unlimited standard runner minutes** with zero minute caps and zero rate limits.
-- **Schedule:** Runs every 2 hours continuously (`0 */2 * * *`) on Ubuntu runners in the cloud even when your PC is turned off.
-- **Live Cloud Verification:** Run `35207845535` completed with `SUCCESS` in 55 seconds. Harvested real leads, generated demo sites, executed AI voice outreach, committed changes back to repository, and delivered live Telegram digest to Piyush.
+- **Dual-Trigger Architecture:**
+  1. **GitHub Actions Native Cron:** Runs every 2 hours continuously (`0 */2 * * *`) in the cloud.
+  2. **cron-job.org External Webcron (Job ID `8461816`):** Triggers `repository_dispatch` 6 times daily at **8:00 AM, 11:00 AM, 2:00 PM, 5:00 PM, 8:00 PM, and 11:00 PM IST**.
+- **Live Verification:** Run `35217917447` triggered via `repository_dispatch` completed with `SUCCESS`. Scraped real leads, generated demo sites, committed CRM updates, and delivered live Telegram digest and dual `.md` + `.pdf` reports to Piyush.
 - **Configured GitHub Repository Secrets:**
   - `GROQ_API_KEY`: Primary high-speed LLM (`qwen/qwen3.8-27b`)
   - `GEMINI_API_KEY`: Automatic failover LLM (`gemini-2.5-flash`)
@@ -252,19 +256,20 @@ The agency is deployed and actively running in the cloud for **100% free** using
 
 ---
 
-## 11. Real-Time Telegram Alert Matrix & DOCUMENT FILE Deliveries
+## 11. Real-Time Telegram Alert Matrix & DUAL DOCUMENT DELIVERIES (.md + .pdf)
 
-Every activity delivers an instant HTML notification **PLUS a downloadable `.md` document file** directly to Piyush's Telegram (`chatId: 8800893070` via `@APEXweb_STUDIO_BOT`):
+Every activity delivers an instant HTML notification **PLUS a downloadable `.md` AND executive `.pdf` document package** directly to Piyush's Telegram (`chatId: 8800893070` via `@APEXweb_STUDIO_BOT`):
 
-| Pipeline Event | Trigger Location | Telegram Document File Attached |
-|----------------|------------------|--------------------------------|
-| **🚜 Data Scraping & Lead Generation** | `scripts/lib/google_maps_scraper.js` (`notifyLeadsHarvested`) | `leads_<niche>_<date>.md` — Complete dataset with all business names, ratings, phone numbers, addresses, and audit hooks. |
-| **🎨 Demo Website Scaffolded** | `scripts/hermes.js` (`notifyDemoGenerated`) | `demo_<slug>.md` — Full technical brief of the generated demo site, mobile CTAs, and preview URL. |
-| **📅 Meeting / Demo Review Booked** | `scripts/lib/voice_caller.js` (`notifyMeetingScheduled`) | `meeting_<slug>.md` — Pre-discovery brief, client contact, call transcript notes, and Cal.com booking link. |
-| **💼 Closing Proposal Dispatched** | `scripts/lib/closing_engine.js` (`notifyProposalDispatched`) | `proposal_<slug>.md` — Formal proposal document with scope, deliverables, UPI, PayPal Global, and Bank Wire payment instructions. |
-| **🏆 Client Deal Closed Won** | `scripts/lib/closing_engine.js` (`notifyDealClosedWon`) | `closed_deal_<slug>.md` — Project Kickoff Brief and complete 6-item onboarding checklist. |
-| **🚀 Full Workflow Run Digest** | `scripts/autopilot.js` & `scripts/daily_summary.js` (`sendWorkflowRunReport`) | `workflow_run_<date>_<ts>.md` — Comprehensive run audit with financial pipeline snapshot, stage distribution, actions delta, and repo commit. |
+| Pipeline Event | Trigger Location | Telegram Documents Attached (MD + PDF) |
+|----------------|------------------|----------------------------------------|
+| **🚜 Data Scraping & Lead Generation** | `scripts/lib/google_maps_scraper.js` (`notifyLeadsHarvested`) | `leads_<niche>_<date>.md` & `leads_<niche>_<date>.pdf` — Complete dataset with all business names, ratings, phone numbers, addresses, and audit hooks. |
+| **🎨 Demo Website Scaffolded** | `scripts/hermes.js` (`notifyDemoGenerated`) | `demo_<slug>.md` & `demo_<slug>.pdf` — Full technical brief of the generated demo site, mobile CTAs, and preview URL. |
+| **📅 Meeting / Demo Review Booked** | `scripts/lib/voice_caller.js` (`notifyMeetingScheduled`) | `meeting_<slug>.md` & `meeting_<slug>.pdf` — Pre-discovery brief, client contact, call transcript notes, and Cal.com booking link. |
+| **💼 Closing Proposal Dispatched** | `scripts/lib/closing_engine.js` (`notifyProposalDispatched`) | `proposal_<slug>.md` & `proposal_<slug>.pdf` — Formal proposal document with scope, deliverables, UPI, PayPal Global, and Bank Wire payment instructions. |
+| **🏆 Client Deal Closed Won** | `scripts/lib/closing_engine.js` (`notifyDealClosedWon`) | `closed_deal_<slug>.md` & `closed_deal_<slug>.pdf` — Project Kickoff Brief and complete 6-item onboarding checklist. |
+| **🚀 Full Workflow Run Digest** | `scripts/autopilot.js` & `scripts/daily_summary.js` (`sendWorkflowRunReport`) | `workflow_run_<date>_<ts>.md` & `workflow_run_<date>_<ts>.pdf` — Comprehensive run audit with financial pipeline snapshot, stage distribution, actions delta, and repo commit. |
 | **🚨 Workflow Failure Watchdog** | `.github/workflows/autopilot.yml` (`if: failure()`) | Immediate alert with error details if an unhandled cloud issue occurs. |
+
 
 ---
 
