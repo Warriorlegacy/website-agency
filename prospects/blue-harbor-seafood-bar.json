@@ -1,0 +1,58 @@
+{
+  "businessName": "Blue Harbor Seafood Bar",
+  "slug": "blue-harbor-seafood-bar",
+  "url": "https://blue-harbor-seafood-bar.com",
+  "niche": "restaurant",
+  "city": "Austin, TX",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-09-17T09:57:01.919Z",
+  "liveSiteDetected": false,
+  "scrapeSource": "none",
+  "engine": "AI Audit",
+  "overallScore": 2,
+  "dimensions": {
+    "design": {
+      "score": 1,
+      "problems": [
+        "Complete absence of visual identity prevents brand recognition and trust establishment for a seafood bar.",
+        "Lack of high-quality food photography eliminates the primary emotional driver for restaurant customers."
+      ],
+      "quickFix": "Launch a basic one-page website featuring a hero image of the signature dish and clear branding elements."
+    },
+    "mobile": {
+      "score": 1,
+      "problems": [
+        "No mobile-optimized interface exists, blocking access for the majority of local users searching on smartphones.",
+        "Inability to tap-to-call or tap-to-navigate due to the non-existent digital footprint."
+      ],
+      "quickFix": "Implement a mobile-first landing page with sticky 'Call Now' and 'Get Directions' buttons."
+    },
+    "speed": {
+      "score": 1,
+      "problems": [
+        "Zero load time is irrelevant as there is no content to load, resulting in a 100% bounce rate for any attempted visit.",
+        "No server infrastructure exists to handle traffic or serve assets."
+      ],
+      "quickFix": "Deploy a static site on a CDN like Cloudflare Pages to ensure sub-second load times for future content."
+    },
+    "seo": {
+      "score": 1,
+      "problems": [
+        "No indexed pages exist for 'seafood bar Austin TX' or 'Blue Harbor Seafood Bar', ceding all organic search visibility to competitors.",
+        "Lack of local schema markup prevents the business from appearing in Google Maps local pack results."
+      ],
+      "quickFix": "Create a Google Business Profile and link it to a new website with LocalBusiness schema markup."
+    },
+    "conversion": {
+      "score": 1,
+      "problems": [
+        "No digital path to action exists for users to make reservations, order takeout, or view the menu online.",
+        "Inability to capture customer data or email leads for marketing campaigns due to lack of a digital presence."
+      ],
+      "quickFix": "Integrate a third-party reservation system (e.g., OpenTable or Resy) with a prominent 'Book a Table' button."
+    }
+  },
+  "biggestOpportunity": "Blue Harbor Seafood Bar in Austin, TX is currently invisible to the majority of local diners who search online first; establishing a basic, mobile-optimized web presence with online reservations could capture an estimated 20-30% increase in walk-in and reservation traffic by reclaiming lost search visibility."
+}

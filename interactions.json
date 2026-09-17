@@ -111,5 +111,68 @@
     "channel": "system",
     "reason": "New lead — running 5-dimension audit",
     "timestamp": "2026-09-17T08:47:04.835Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/apex-electrical-solutions/index.html",
+    "timestamp": "2026-09-17T09:56:51.658Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "action": "audit",
+    "channel": "system",
+    "result": "Score: 3/10",
+    "timestamp": "2026-09-17T09:57:00.582Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "action": "audit",
+    "channel": "system",
+    "result": "Score: 2/10",
+    "timestamp": "2026-09-17T09:57:01.920Z"
+  },
+  {
+    "lead_slug": "cornerstone-artisan-bakery",
+    "action": "audit",
+    "channel": "system",
+    "result": "Score: 3/10",
+    "timestamp": "2026-09-17T09:57:08.601Z"
+  },
+  {
+    "lead_slug": "bright-smile-dental",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "deterministic_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 95,
+    "summary": "Owner agreed to review live demo website",
+    "timestamp": "2026-09-17T09:57:18.250Z"
+  },
+  {
+    "lead_slug": "vance-sterling-law",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 115,
+    "summary": "Arthur Vance agreed to review the pre-built website demo sent via email after being pitched a flat $750 package.",
+    "transcript": "ALEX: Hi, this is Alex from Apex AI Web Studio. I’m calling because I noticed Vance & Sterling Law has a great 4.7-star reputation in Chicago, but your current website looks a bit dated compared to what your clients expect. I’ve actually built a quick, modern demo for you to see what’s possible. Do you have ten seconds?\nOWNER: I’m in the middle of a deposition, so I’m busy. What is this about? And how did you even find us?\nALEX: I understand, Arthur. I pulled your public business listing. I’m not asking for a long pitch. I’ve already built a live, modern demo of your site. It’s a flat $750 package if you like it, but I want you to see the design first. Can I send you the link right now so you can check it on your phone in the car?\nOWNER: A flat $750? That’s... actually reasonable. I don’t have time to sit on a call, but if it’s just a link, send it over. I’ll take a quick look tonight. If it’s good, I’ll call you back.\nALEX: Perfect. I’m sending the link to your email now. It’s a fully functional preview. Thanks for your time, Arthur. I look forward to hearing your thoughts.",
+    "timestamp": "2026-09-17T09:57:19.267Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "meeting_scheduled",
+    "duration_sec": 115,
+    "summary": "Alex from Apex AI Web Studio called James Wilson of Apex Electrical Solutions, presented a pre-built website demo for $750, and James agreed to review the demo and schedule a follow-up call.",
+    "transcript": "ALEX: Good morning, James. My name is Alex, and I'm a sales consultant with Apex AI Web Studio. I'm calling about Apex Electrical Solutions – do you have a quick minute?\nOWNER: Alex, I'm pretty busy out in the field today. What's this regarding, and how did you get my contact information?\nALEX: Totally understand, James. I actually came across your business while researching top-rated electrical services in Seattle – your 4.7-star rating is impressive! However, I noticed your current website doesn't quite showcase that level of professionalism. We've actually taken the liberty of building a live, modern website demo specifically for Apex Electrical Solutions. It's a complete, ready-to-launch package, and we offer these for a flat rate of just $750. My goal was to show you how quickly we can elevate your online presence.\nOWNER: A pre-built demo for $750? That's definitely caught my attention. Okay, I'm interested in seeing what you've put together. Can you email me the link to that demo? I'll review it this evening, and if it looks good, we can schedule a quick 10-minute chat tomorrow to discuss it further.",
+    "timestamp": "2026-09-17T09:57:27.548Z"
   }
 ]
