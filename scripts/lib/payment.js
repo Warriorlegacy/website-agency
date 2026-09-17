@@ -209,19 +209,28 @@ export function createUpiPaymentLink(opts = {}) {
   const upiId = upiCfg.upiId || '6202442690@jio';
   const payeeName = upiCfg.payeeName || 'Piyush Singh';
   const whatsappNumber = upiCfg.whatsappIntl || '916202442690';
+  const paypalMe = cfg.paypal?.meUrl || 'https://paypal.me/signhify';
+  const bankWire = cfg.bankWire || {
+    accountNumber: '000521712140642',
+    ifsc: 'JIOP0000001',
+    accountHolder: 'Piyush Raj Singh'
+  };
   const pkg = PACKAGES[packageKey] || PACKAGES.growth;
 
   const note = encodeURIComponent(`${pkg.name} Deposit - ${businessName}`);
   const upiIntentUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${pkg.depositINR}&cu=INR&tn=${note}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(upiIntentUrl)}`;
 
-  const whatsappMsg = encodeURIComponent(`Hi Piyush, I have completed the website deposit payment of ₹${pkg.depositINR.toLocaleString('en-IN')} for ${businessName}. Attached is my payment screenshot for confirmation.`);
+  const whatsappMsg = encodeURIComponent(`Hi Piyush, I have completed the website deposit payment of ₹${pkg.depositINR.toLocaleString('en-IN')} ($${pkg.deposit} USD) for ${businessName}. Attached is my payment screenshot for confirmation.`);
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`;
 
   return {
-    provider: 'upi',
+    provider: 'multi_rail',
     upiId,
     payeeName,
+    paypalUrl: `${paypalMe}/${pkg.deposit}USD`,
+    paypalMe,
+    bankWire,
     package: pkg.name,
     depositAmount: pkg.depositINR,
     amount: pkg.depositINR,
@@ -232,7 +241,7 @@ export function createUpiPaymentLink(opts = {}) {
     qrCodeUrl,
     whatsappUrl,
     whatsappNumber: upiCfg.whatsappNumber || '6202442690',
-    instructions: `Pay ₹${pkg.depositINR.toLocaleString('en-IN')} via GPay / PhonePe / Paytm / BHIM to UPI ID: ${upiId} and send screenshot to WhatsApp: +91 ${upiCfg.whatsappNumber || '6202442690'}`
+    instructions: `Pay ₹${pkg.depositINR.toLocaleString('en-IN')} ($${pkg.deposit} USD) via UPI (${upiId}), PayPal (${paypalMe}/${pkg.deposit}USD), or Bank Wire (A/C ${bankWire.accountNumber}, IFSC ${bankWire.ifsc}), then submit screenshot to WhatsApp +91 ${upiCfg.whatsappNumber || '6202442690'}`
   };
 }
 

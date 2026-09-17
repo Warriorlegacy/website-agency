@@ -179,7 +179,7 @@ async function harvestViaGooglePlaces(niche, city, count, apiKey) {
 
 // ─── Source 2: OpenStreetMap Overpass API (Free, Global, Zero-Key) ────────────
 async function harvestViaOverpassOSM(niche, city, count) {
-  console.log(`  🌍 [OpenStreetMap Overpass] Searching "${niche} in ${city}" (Zero-Key)...`);
+  console.log(`  🌍 [OpenStreetMap Overpass] Searching "${niche} in ${city}" (Zero-Key Live DB)...`);
 
   const osmTagMap = {
     restaurant: '["amenity"~"restaurant|cafe|fast_food"]',
@@ -190,31 +190,54 @@ async function harvestViaOverpassOSM(niche, city, count) {
     fitness: '["leisure"~"fitness_centre|sports_centre|gym"]'
   };
 
-  const tagFilter = osmTagMap[niche] || '["name"]';
-  const cityName = city.split(',')[0].trim();
-
-  // Overpass QL query targeting area by city name
-  const query = `
-    [out:json][timeout:15];
-    area["name"="${cityName}"]->.searchArea;
-    (
-      node${tagFilter}(area.searchArea);
-      way${tagFilter}(area.searchArea);
-    );
-    out center 30;
-  `.trim();
+  const tagFilter = osmTagMap[niche] || '["amenity"~"restaurant|cafe"]';
 
   try {
-    const url = 'https://overpass-api.de/api/interpreter';
-    const res = await fetchWithTimeout(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `data=${encodeURIComponent(query)}`
-    }, 15000);
+    // 1. Geocode city to bounding box using Nominatim
+    const geoUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`;
+    const geoRes = await fetchWithTimeout(geoUrl, {
+      headers: { 'User-Agent': 'ApexWebsiteAgencyBot/2.0 (contact@apexwebstudio.com)' }
+    }, 8000);
 
-    if (!res.ok) return [];
-    const data = await res.json();
-    const elements = data.elements || [];
+    let bboxFilter = '';
+    if (geoRes.ok) {
+      const geo = await geoRes.json();
+      if (geo[0]?.boundingbox) {
+        const [minLat, maxLat, minLon, maxLon] = geo[0].boundingbox;
+        bboxFilter = `(${minLat},${minLon},${maxLat},${maxLon})`;
+      }
+    }
+
+    // 2. Build Overpass QL query
+    const query = bboxFilter
+      ? `[out:json][timeout:25];(node${tagFilter}${bboxFilter};way${tagFilter}${bboxFilter};);out center ${count * 4};`
+      : `[out:json][timeout:25];area["name"="${city.split(',')[0].trim()}"]->.searchArea;(node${tagFilter}(area.searchArea);way${tagFilter}(area.searchArea););out center ${count * 4};`;
+
+    const endpoints = [
+      'https://overpass-api.de/api/interpreter',
+      'https://overpass.kumi.systems/api/interpreter',
+      'https://lz4.overpass-api.de/api/interpreter'
+    ];
+
+    let elements = [];
+    for (const ep of endpoints) {
+      try {
+        const res = await fetchWithTimeout(ep, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'ApexWebsiteAgencyBot/2.0 (contact@apexwebstudio.com)'
+          },
+          body: `data=${encodeURIComponent(query)}`
+        }, 12000);
+
+        if (res.ok) {
+          const data = await res.json();
+          elements = data.elements || [];
+          if (elements.length > 0) break;
+        }
+      } catch {}
+    }
 
     const leads = [];
     for (const el of elements) {
@@ -234,10 +257,10 @@ async function harvestViaOverpassOSM(niche, city, count) {
         address,
         city,
         niche,
-        rating: 4.6,
-        reviewCount: Math.floor(Math.random() * 80) + 15,
+        rating: tags.stars ? parseFloat(tags.stars) : null,
+        reviewCount: null,
         placeId: `osm_${el.id}`,
-        source: 'osm_overpass'
+        source: 'osm_overpass_live'
       });
 
       if (leads.length >= count * 3) break;
@@ -326,30 +349,10 @@ export async function harvestGoogleMapsLeads(opts = {}) {
     rawLeads.push(...osmLeads);
   }
 
-  // Priority 4: If still empty (e.g. offline/isolated testing), generate realistic local prospect
+  // Strict Zero-Mock Policy: Only live real data permitted
   if (rawLeads.length === 0) {
-    console.log(`  💡 Generating realistic local prospects for ${niche} in ${city}`);
-    const sampleNames = {
-      restaurant: ['Bella Napoli Trattoria', 'Blue Harbor Seafood Bar', 'Cornerstone Artisan Bakery'],
-      medical: ['Cedar Ridge Dental Group', 'Evergreen Spine & Wellness', 'Oak Valley Eye Clinic'],
-      trade: ['Highland Precision Plumbing', 'Tri-County Electric & Solar', 'ProShield Roof Solutions'],
-      professional: ['Heritage Legal Advisors', 'Sterling & Cross CPA Group', 'Beacon Wealth Partners'],
-      salon: ['Velvet & Rose Studio', 'Aura Luxe Beauty Lounge', 'Urban Gent Barber Club'],
-      fitness: ['Apex Performance CrossFit', 'Iron Valley Training Lab', 'Solstice Flow Yoga']
-    };
-    const list = sampleNames[niche] || sampleNames.trade;
-    rawLeads = list.map((name, i) => ({
-      businessName: name,
-      url: '', // Explicitly no website
-      phone: `(555) 349-810${i}`,
-      address: `10${i} Main St, ${city}`,
-      city,
-      niche,
-      rating: 4.8,
-      reviewCount: 42 + i * 15,
-      placeId: `sim_${slugify(name)}`,
-      source: 'simulated_local'
-    }));
+    console.log(`  ℹ️ No live leads found for ${niche} in ${city}. Zero fake/mock data policy enforced.`);
+    return [];
   }
 
   const qualifiedLeads = [];

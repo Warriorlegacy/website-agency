@@ -383,5 +383,15 @@
     "summary": "Jordan, the bakery owner, initially busy, agrees to review the pre-built website demo and schedule a 10-minute follow-up call after learning about the $750 flat package.",
     "transcript": "ALEX: Hi Jordan, this is Alex from Apex AI Web Studio. I hope I'm not catching you at a bad time. I noticed Cornerstone Artisan Bakery, with its amazing 4.8-star rating, doesn't have a website, and we've actually put together a quick demo for you.\nOWNER: Alex, I'm pretty swamped right now. What exactly is this about? A website, you said? I'm really busy with the morning rush.\nALEX: I totally understand, Jordan. We specialize in building beautiful, modern, mobile-friendly websites for local businesses like yours, super fast. We've actually pre-built a live demo for Cornerstone Artisan Bakery, which you can see at http://localhost:3030/demos/cornerstone-artisan-bakery/index.html. Our entire package, including design, setup, and getting it live, is a flat $750. It's a complete solution designed to get you online without any hassle.\nOWNER: Hmm, $750 for a complete website, and you've already built a demo? That's... surprisingly straightforward. Okay, Alex, I'm intrigued. Send me that link in a text, and I'll definitely take a look tonight. Maybe we can schedule a quick 10-minute chat tomorrow if I have questions after seeing it?",
     "timestamp": "2026-09-17T10:20:57.115Z"
+  },
+  {
+    "lead_slug": "cool-heat-mechanical-systems-inc",
+    "action": "deal_closed_won",
+    "channel": "payment_engine",
+    "direction": "inbound",
+    "deposit_amount": 750,
+    "package": "growth",
+    "client_folder": "clients/cool-heat-mechanical-systems-inc",
+    "timestamp": "2026-09-17T10:38:30.965Z"
   }
 ]

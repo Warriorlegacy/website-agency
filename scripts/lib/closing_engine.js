@@ -87,10 +87,11 @@ As discussed, we've put together your formal website proposal and launch roadmap
 📄 Custom Proposal: http://localhost:3030/${proposal.relativePath}
 🌐 Working Demo Preview: ${demoUrl}
 
-To get your new website launched, we require a 50% deposit (₹${payment.amountINR ? payment.amountINR.toLocaleString('en-IN') : '62,500'} / $${payment.amountUSD || 750}) to begin immediate production:
+To get your new website launched, we require a 50% deposit (₹${payment.amountINR ? payment.amountINR.toLocaleString('en-IN') : '62,500'} / $${payment.amountUSD || 750}) to begin immediate production. You can complete payment via any of the following options:
 
-💳 Pay Deposit via UPI: 6202442690@jio (GPay / PhonePe / Paytm)
-Payee: Piyush Singh
+1. 💳 UPI (India): 6202442690@jio (GPay / PhonePe / Paytm) · Payee: Piyush Singh
+2. 🌐 PayPal (Global / International): https://paypal.me/signhify/${payment.amountUSD || 750}USD
+3. 🏦 Direct Bank Wire: A/C 000521712140642 · IFSC JIOP0000001 (Piyush Raj Singh)
 
 📲 After paying, please submit your payment screenshot on WhatsApp to +91 6202442690:
 https://wa.me/916202442690?text=${encodeURIComponent('Hi Piyush, I have completed the website deposit payment for ' + businessName + '. Attached is my payment screenshot for verification.')}

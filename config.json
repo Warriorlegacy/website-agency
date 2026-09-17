@@ -55,6 +55,15 @@
       "whatsappNumber": "6202442690",
       "whatsappIntl": "916202442690"
     },
+    "paypal": {
+      "meUrl": "https://paypal.me/signhify",
+      "username": "signhify"
+    },
+    "bankWire": {
+      "accountNumber": "000521712140642",
+      "ifsc": "JIOP0000001",
+      "accountHolder": "Piyush Raj Singh"
+    },
     "razorpayKeyId": "",
     "razorpayKeySecret": "",
     "stripeSecretKey": "",

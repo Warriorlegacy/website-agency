@@ -178,52 +178,66 @@ export function generateProposal(opts = {}) {
       </div>
     </div>
 
-    <!-- Direct UPI & Instant WhatsApp Confirmation -->
+    <!-- Payment Options: UPI, PayPal Global & Direct Bank Wire -->
     <div style="background: white; border: 2px solid #10b981; border-radius: 20px; padding: 36px; text-align: center; margin-bottom: 32px; box-shadow: 0 10px 30px rgba(16,185,129,0.1);">
       <div style="display: inline-block; background: #ecfdf5; color: #059669; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">
-        ⚡ Instant Activation via UPI
+        ⚡ Instant Deposit Activation (Global & India)
       </div>
-      <h2 style="font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Scan to Pay 50% Deposit & Confirm Subscription</h2>
-      <p style="font-size: 14px; color: #64748b; max-width: 540px; margin: 0 auto 24px;">
-        Pay the 50% deposit securely via Google Pay, PhonePe, Paytm, or BHIM. Send the screenshot on WhatsApp for instant confirmation.
+      <h2 style="font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Pay 50% Deposit & Confirm Subscription</h2>
+      <p style="font-size: 14px; color: #64748b; max-width: 580px; margin: 0 auto 24px;">
+        Pay securely via UPI (India), PayPal (International / US / UK / Global), or Direct Bank Wire. Send your confirmation screenshot on WhatsApp for instant onboarding.
       </p>
 
-      <div style="display: flex; justify-content: center; align-items: center; gap: 32px; flex-wrap: wrap; margin-bottom: 28px;">
-        <!-- QR Code -->
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px; display: inline-block;">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=${PACKAGES[recommendedPackage]?.depositINR || 62500}&cu=INR&tn=${encodeURIComponent(businessName + ' Website Deposit')}`)}" alt="UPI QR Code" style="width: 200px; height: 200px; display: block; border-radius: 8px;">
-          <div style="font-size: 11px; color: #94a3b8; margin-top: 8px; font-weight: 600;">Scan with GPay / PhonePe / Paytm</div>
+      <div style="display: flex; justify-content: center; align-items: stretch; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; text-align: left;">
+        <!-- Option 1: UPI & QR Code -->
+        <div style="flex: 1; min-width: 250px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
+          <div style="font-size: 12px; font-weight: 700; color: #059669; text-transform: uppercase; margin-bottom: 8px;">Option 1: UPI (GPay / PhonePe / Paytm)</div>
+          <div style="text-align: center; margin: 12px 0;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=${PACKAGES[recommendedPackage]?.depositINR || 62500}&cu=INR&tn=${encodeURIComponent(businessName + ' Website Deposit')}`)}" alt="UPI QR Code" style="width: 160px; height: 160px; display: inline-block; border-radius: 8px;">
+          </div>
+          <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: 700;">UPI ID</div>
+          <div style="font-size: 15px; font-weight: 800; color: #0f172a; font-family: monospace; background: #ffffff; padding: 6px 10px; border-radius: 6px; border: 1px dashed #cbd5e1; margin-top: 4px;">6202442690@jio</div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 6px;">Payee: <strong>Piyush Singh</strong></div>
+          <div style="font-size: 16px; font-weight: 800; color: #059669; margin-top: 8px;">₹${(PACKAGES[recommendedPackage]?.depositINR || 62500).toLocaleString('en-IN')}</div>
         </div>
 
-        <!-- Details & WhatsApp -->
-        <div style="text-align: left; max-width: 320px;">
-          <div style="margin-bottom: 16px;">
-            <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Official UPI ID</div>
-            <div style="font-size: 18px; font-weight: 800; color: #0f172a; font-family: monospace; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; margin-top: 4px; display: inline-block; border: 1px dashed #cbd5e1;">
-              6202442690@jio
-            </div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Payee: <strong>Piyush Singh</strong></div>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Deposit Amount (${recommendedPackage.toUpperCase()})</div>
-            <div style="font-size: 24px; font-weight: 800; color: #059669;">
-              ₹${(PACKAGES[recommendedPackage]?.depositINR || 62500).toLocaleString('en-IN')} <span style="font-size: 14px; color: #64748b; font-weight: 500;">($${(PACKAGES[recommendedPackage]?.deposit || 750)} USD)</span>
+        <!-- Option 2: PayPal Global -->
+        <div style="flex: 1; min-width: 250px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: #0284c7; text-transform: uppercase; margin-bottom: 8px;">Option 2: PayPal Global (USD / Credit Card)</div>
+            <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 16px;">
+              Ideal for international clients paying via Credit Card, Debit Card, or PayPal Balance in USD.
+            </p>
+            <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: 700;">Deposit Amount</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 4px 0 16px;">
+              $${(PACKAGES[recommendedPackage]?.deposit || 750)} <span style="font-size: 13px; color: #64748b; font-weight: normal;">USD</span>
             </div>
           </div>
-
-          <!-- WhatsApp Submission Button -->
-          <a href="https://wa.me/916202442690?text=${encodeURIComponent(`Hi Piyush, I have completed the website deposit payment for ${businessName}. Attached is my payment screenshot for confirmation.`)}" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white; text-decoration: none; padding: 14px 20px; border-radius: 12px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 14px rgba(37,211,102,0.4);">
-            <span>📲 Send Screenshot on WhatsApp</span>
+          <a href="https://paypal.me/signhify/${(PACKAGES[recommendedPackage]?.deposit || 750)}USD" target="_blank" style="display: block; text-align: center; background: #0070ba; color: white; text-decoration: none; padding: 12px 18px; border-radius: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 12px rgba(0,112,186,0.3);">
+            💳 Pay via PayPal.me/signhify
           </a>
-          <div style="font-size: 11px; color: #64748b; margin-top: 8px; text-align: center;">
-            WhatsApp: <strong>+91 6202442690</strong> (Instant Verification)
-          </div>
+        </div>
+
+        <!-- Option 3: Direct Bank Wire -->
+        <div style="flex: 1; min-width: 250px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
+          <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Option 3: Direct Bank Wire (IMPS / NEFT)</div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 8px;">Account Holder:</div>
+          <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Piyush Raj Singh</div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 8px;">Account Number:</div>
+          <div style="font-size: 14px; font-weight: 800; font-family: monospace; color: #0f172a; background: #fff; padding: 4px 8px; border-radius: 6px; border: 1px dashed #cbd5e1; display: inline-block;">000521712140642</div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 8px;">IFSC Code:</div>
+          <div style="font-size: 14px; font-weight: 800; font-family: monospace; color: #0f172a; background: #fff; padding: 4px 8px; border-radius: 6px; border: 1px dashed #cbd5e1; display: inline-block;">JIOP0000001</div>
         </div>
       </div>
 
-      <div style="font-size: 13px; color: #64748b; background: #f8fafc; padding: 12px 20px; border-radius: 10px; display: inline-block;">
-        🔒 Subscription and project kickoff confirmed immediately upon screenshot receipt.
+      <!-- WhatsApp Screenshot Verification Button -->
+      <div style="max-width: 480px; margin: 0 auto;">
+        <a href="https://wa.me/916202442690?text=${encodeURIComponent(`Hi Piyush, I have completed the website deposit payment for ${businessName}. Attached is my payment screenshot for confirmation.`)}" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white; text-decoration: none; padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 14px rgba(37,211,102,0.4);">
+          <span>📲 Submit Screenshot on WhatsApp (+91 6202442690)</span>
+        </a>
+        <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
+          🔒 Subscription and project kickoff confirmed immediately upon screenshot receipt.
+        </div>
       </div>
     </div>
 

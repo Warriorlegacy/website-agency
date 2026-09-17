@@ -215,17 +215,21 @@ The server (`node scripts/agency_cli.js serve 3030` or `npm start`) exposes a fu
 
 ---
 
-## 9. Direct UPI & WhatsApp Payment Verification Workflow
+## 9. Multi-Rail Payment Engine (UPI, PayPal Global, Direct Bank Wire & WhatsApp Verification)
 
-The agency uses a zero-fee, high-converting direct UPI payment & WhatsApp verification workflow:
-- **Official UPI ID:** `6202442690@jio`
-- **Payee Name:** Piyush Singh
-- **WhatsApp Verification Number:** `+91 6202442690`
+The agency provides a seamless, zero-friction multi-rail payment engine for both domestic (India) and international clients:
+- **Official UPI ID (India):** `6202442690@jio` (Payee: Piyush Singh)
+- **PayPal Global (International / USD):** `https://paypal.me/signhify`
+- **Direct Bank Wire:**
+  - **Account Number:** `000521712140642`
+  - **IFSC Code:** `JIOP0000001`
+  - **Account Holder:** Piyush Raj Singh
+- **WhatsApp Instant Verification:** `+91 6202442690`
 - **Workflow:**
-  1. Proposal pages dynamically generate a UPI payment QR code + GPay/PhonePe deep link for the exact deposit amount (₹31,250 Starter / ₹62,500 Growth / ₹1,25,000 Premium).
-  2. Client scans the QR code or taps to pay on their phone.
-  3. Client taps the green **"📲 Send Screenshot on WhatsApp"** button, opening WhatsApp with a pre-filled confirmation text to `+91 6202442690`.
-  4. The operator confirms the transaction screenshot and issues the subscription/project kickoff confirmation (`node scripts/agency_cli.js close-deal <slug> [package]`).
+  1. Proposal pages dynamically generate a UPI payment QR code + GPay/PhonePe deep link, PayPal Global checkout link (`paypal.me/signhify/<amount>USD`), and Bank Wire details for the exact deposit amount (₹31,250 Starter / ₹62,500 Growth / ₹1,25,000 Premium).
+  2. Client chooses their preferred rail and completes payment.
+  3. Client taps the green **"📲 Submit Screenshot on WhatsApp"** button, opening WhatsApp with pre-filled confirmation text to `+91 6202442690`.
+  4. The operator verifies the screenshot and confirms kickoff (`node scripts/agency_cli.js close-deal <slug> [package]`), which notifies Telegram and auto-generates onboarding packages.
 
 ---
 
@@ -235,7 +239,7 @@ The agency is deployed and actively running in the cloud for **100% free** using
 - **Public GitHub Repository:** [https://github.com/Warriorlegacy/website-agency](https://github.com/Warriorlegacy/website-agency)
 - **Unlimited Free Minutes:** As a public repository, GitHub Actions provides **unlimited standard runner minutes** with zero minute caps and zero rate limits.
 - **Schedule:** Runs every 2 hours continuously (`0 */2 * * *`) on Ubuntu runners in the cloud even when your PC is turned off.
-- **Live Cloud Verification:** Run `35207845535` completed with `SUCCESS` in 55 seconds. Harvested 3 new leads, built demo site for Apex Electrical Solutions, executed AI voice calling with auto-fallback to Gemini, committed changes back to repository, and delivered live Telegram digest to Piyush.
+- **Live Cloud Verification:** Run `35207845535` completed with `SUCCESS` in 55 seconds. Harvested real leads, generated demo sites, executed AI voice outreach, committed changes back to repository, and delivered live Telegram digest to Piyush.
 - **Configured GitHub Repository Secrets:**
   - `GROQ_API_KEY`: Primary high-speed LLM (`qwen/qwen3.8-27b`)
   - `GEMINI_API_KEY`: Automatic failover LLM (`gemini-2.5-flash`)
@@ -245,42 +249,48 @@ The agency is deployed and actively running in the cloud for **100% free** using
   - `VAPI_ASSISTANT_ID`: SIGNHIFY Outbound Agent (`65e7ac0a-6c30-43f1-b947-d1b27dc8cafc`)
   - `TELEGRAM_BOT_TOKEN`: APEX_STUDIO bot dispatcher
   - `TELEGRAM_CHAT_ID`: Direct notification recipient (`8800893070`)
-- **Automated Telegram Workflow Reports:** Dispatches a complete, rich HTML report to Piyush's Telegram on **every single workflow run** (run timing, pipeline health, scraped leads, generated demos, voice calls & outcomes, proposals, UPI ID `6202442690@jio`, and WhatsApp link), with an automated failure alert step if any step fails.
-
-### How to Trigger or Monitor Cloud Runs
-- **Web UI:** Go to [Actions tab on GitHub](https://github.com/Warriorlegacy/website-agency/actions) -> `24/7 Autonomous Agency Autopilot` -> `Run workflow`.
-- **CLI:**
-  ```bash
-  gh workflow run autopilot.yml --repo Warriorlegacy/website-agency
-  gh run list --repo Warriorlegacy/website-agency
-  ```
-
-### How to Run Locally
-```bash
-# Continuous background mode (runs every 15 minutes)
-npm run autopilot
-
-# Or single-pass execution
-npm run autopilot:once
-
-# Or test in dry-run mode
-node scripts/autopilot.js --dry-run
-```
 
 ---
 
-## 11. Real-Time Telegram Event Dispatcher & Alert Matrix
+## 11. Real-Time Telegram Alert Matrix & DOCUMENT FILE Deliveries
 
-All critical pipeline activities deliver instant, beautifully formatted HTML alerts directly to Piyush's Telegram (`chatId: 8800893070` via `@APEXweb_STUDIO_BOT`):
+Every activity delivers an instant HTML notification **PLUS a downloadable `.md` document file** directly to Piyush's Telegram (`chatId: 8800893070` via `@APEXweb_STUDIO_BOT`):
 
-| Pipeline Event | Trigger Location | Telegram Alert Contents |
-|----------------|------------------|-------------------------|
-| **🚜 Data Scraping & Lead Generation** | `scripts/lib/google_maps_scraper.js` (`notifyLeadsHarvested`) | Scraped business names, category/niche, city, star ratings, phone numbers, and opportunity hooks. |
-| **🎨 Demo Website Scaffolded** | `scripts/hermes.js` (`notifyDemoGenerated`) | Client name, niche, rating, phone, live demo preview URL, and outreach sequence confirmation. |
-| **📅 Meeting / Demo Review Booked** | `scripts/lib/voice_caller.js` (`notifyMeetingScheduled`) | Decision maker name, phone, AI call summary/notes, and Cal.com booking link. |
-| **💼 Closing Proposal Dispatched** | `scripts/lib/closing_engine.js` (`notifyProposalDispatched`) | Chosen package tier ($750/$1500/$3000), 50% deposit amount (USD & INR), custom proposal link, UPI ID `6202442690@jio`, and WhatsApp verification link. |
-| **🏆 Client Deal Closed Won** | `scripts/lib/closing_engine.js` (`notifyDealClosedWon`) | Deposit confirmed, total contract value, client kickoff brief link, and onboarding package path. |
-| **🚀 Full Workflow Run Digest** | `scripts/autopilot.js` & `scripts/daily_summary.js` (`sendWorkflowRunReport`) | Comprehensive end-of-run digest: execution timestamp (IST), cloud runner status, full CRM funnel snapshot, active leads, pipeline & won revenue, run actions delta, UPI payment details, and GitHub commit link. |
-| **🚨 Workflow Failure Watchdog** | `.github/workflows/autopilot.yml` (`if: failure()`) | Immediate alert if any cloud autopilot step encounters an unhandled fatal error. |
+| Pipeline Event | Trigger Location | Telegram Document File Attached |
+|----------------|------------------|--------------------------------|
+| **🚜 Data Scraping & Lead Generation** | `scripts/lib/google_maps_scraper.js` (`notifyLeadsHarvested`) | `leads_<niche>_<date>.md` — Complete dataset with all business names, ratings, phone numbers, addresses, and audit hooks. |
+| **🎨 Demo Website Scaffolded** | `scripts/hermes.js` (`notifyDemoGenerated`) | `demo_<slug>.md` — Full technical brief of the generated demo site, mobile CTAs, and preview URL. |
+| **📅 Meeting / Demo Review Booked** | `scripts/lib/voice_caller.js` (`notifyMeetingScheduled`) | `meeting_<slug>.md` — Pre-discovery brief, client contact, call transcript notes, and Cal.com booking link. |
+| **💼 Closing Proposal Dispatched** | `scripts/lib/closing_engine.js` (`notifyProposalDispatched`) | `proposal_<slug>.md` — Formal proposal document with scope, deliverables, UPI, PayPal Global, and Bank Wire payment instructions. |
+| **🏆 Client Deal Closed Won** | `scripts/lib/closing_engine.js` (`notifyDealClosedWon`) | `closed_deal_<slug>.md` — Project Kickoff Brief and complete 6-item onboarding checklist. |
+| **🚀 Full Workflow Run Digest** | `scripts/autopilot.js` & `scripts/daily_summary.js` (`sendWorkflowRunReport`) | `workflow_run_<date>_<ts>.md` — Comprehensive run audit with financial pipeline snapshot, stage distribution, actions delta, and repo commit. |
+| **🚨 Workflow Failure Watchdog** | `.github/workflows/autopilot.yml` (`if: failure()`) | Immediate alert with error details if an unhandled cloud issue occurs. |
+
+---
+
+## 12. Strict Zero-Mock / Real Data Enforcement
+
+- **All synthetic/mock fallback code purged:** `simulated_local` removed completely from `scripts/lib/google_maps_scraper.js`.
+- **Live OpenStreetMap Database:** Queries live businesses via Nominatim geocoding bounding box (`https://nominatim.openstreetmap.org`) and multi-mirror Overpass API interpreter with valid User-Agent headers.
+- **Zero Hallucination:** No fabricated phone numbers, addresses, or fake star ratings are ever stored or reported.
+
+---
+
+## 13. Required AI Models & API Keys for 100% Zero-Touch Automation
+
+To operate with complete autonomy and zero human intervention, the agency architecture uses the following stack:
+
+| Component | Required Key / Provider | Current Status | Purpose in Zero-Touch Automation |
+|-----------|-------------------------|----------------|----------------------------------|
+| **High-Speed AI Reasoning** | `GROQ_API_KEY` | ✅ Active (`gsk_...`) | Sub-second LLM decisions, lead scoring, and reply classification (`qwen/qwen3.8-27b`). |
+| **Failover Multi-Modal AI** | `GEMINI_API_KEY` | ✅ Active (`AQ...`) | Deep website audit analysis, visual critique, and backup LLM (`gemini-2.5-flash`). |
+| **AI Voice Outbound Calling** | `VAPI_API_KEY` & `VAPI_ASSISTANT_ID` | ✅ Active (`5425...` / `65e7...`) | Places outbound AI cold calls, handles objections, checks calendar availability. *Note: Dialing real external phone lines requires an active phone number in Vapi dashboard.* |
+| **Transactional Cold Email** | `RESEND_API_KEY` | ✅ Active (`re_...`) | Dispatches 3-touch personalized outreach. *Note: Sending to external business domains requires domain verification at resend.com/domains.* |
+| **Discovery Scheduler** | `CAL_API_KEY` | ✅ Active (`cal_...`) | Real-time calendar slot booking via `cal.com/piyush-usctna/15min`. |
+| **Real-Time Telegram Reporter**| `TELEGRAM_BOT_TOKEN` & `CHAT_ID`| ✅ Active (`8333...` / `8800893070`) | Real-time text alerts + document file delivery on every workflow run. |
+| **Google Places API Key** *(Optional)* | Google Cloud `places.googleapis.com` | 🟡 Recommended for Google Maps | Direct official Google Maps search (ratings, reviews, place IDs, owner websites). |
+| **Jina AI API Key** *(Optional)* | `jina.ai` (Free tier) | 🟡 Recommended for Web Search | Free deep web reader & decision-maker search (`s.jina.ai`). |
+| **Hunter.io / Apollo Key** *(Optional)* | `hunter.io` / `apollo.io` (Free tier) | ⚪ Optional Enrichment | Finding verified personal emails of business owners. |
+
 
 

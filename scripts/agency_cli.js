@@ -13,6 +13,7 @@ import { harvestGoogleMapsLeads, autoHarvestAndIngest } from './lib/google_maps_
 import { placeVoiceCall } from './lib/voice_caller.js';
 import { sendClosingProposal, confirmDealWon } from './lib/closing_engine.js';
 import { runAutopilotCycle } from './autopilot.js';
+import { notifyLeadsHarvested } from './lib/telegram_notifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -331,6 +332,12 @@ async function main() {
       }
       savePipeline(pipeline);
       console.log(`\n✅ Successfully added ${results.length} qualified leads to pipeline CRM!`);
+      if (results.length > 0) {
+        try {
+          await notifyLeadsHarvested(results, { niche, city });
+          console.log(`📱 Dispatched real-time leads report document to Telegram.`);
+        } catch {}
+      }
       break;
     }
 

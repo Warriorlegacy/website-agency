@@ -20,9 +20,9 @@ try {
 } catch {}
 
 /**
- * Core send helper
+ * Core send helper for text messages
  */
-export async function sendTelegramAlert(htmlMessage) {
+export async function sendTelegramAlert(htmlMessage, retries = 2) {
   const config = loadAppConfig();
   const botToken = config.notifications?.telegram?.botToken || process.env.TELEGRAM_BOT_TOKEN;
   const chatId = config.notifications?.telegram?.chatId || process.env.TELEGRAM_CHAT_ID;
@@ -31,38 +31,94 @@ export async function sendTelegramAlert(htmlMessage) {
     return false;
   }
 
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: htmlMessage,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true
-      })
-    });
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: htmlMessage,
+          parse_mode: 'HTML',
+          disable_web_page_preview: true
+        })
+      });
 
-    if (!res.ok) {
-      const err = await res.text().catch(() => '');
-      console.warn(`⚠️ Telegram dispatch HTTP ${res.status}: ${err.slice(0, 150)}`);
+      if (!res.ok) {
+        const err = await res.text().catch(() => '');
+        console.warn(`⚠️ Telegram dispatch HTTP ${res.status}: ${err.slice(0, 150)}`);
+        if (attempt < retries) await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
+      return true;
+    } catch (err) {
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
+      console.warn(`⚠️ Telegram dispatch network error: ${err.message}`);
       return false;
     }
-    return true;
-  } catch (err) {
-    console.warn(`⚠️ Telegram dispatch network error: ${err.message}`);
-    return false;
   }
+  return false;
 }
 
 /**
- * 1. Data Scraping & Lead Generation Alert
+ * Core send helper for document files (.md, .json, .html, .txt)
+ */
+export async function sendTelegramDocument(filename, content, caption = '', retries = 2) {
+  const config = loadAppConfig();
+  const botToken = config.notifications?.telegram?.botToken || process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = config.notifications?.telegram?.chatId || process.env.TELEGRAM_CHAT_ID;
+
+  if (!botToken || !chatId) {
+    return false;
+  }
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const form = new FormData();
+      form.append('chat_id', chatId);
+      form.append('document', blob, filename);
+      if (caption) {
+        form.append('caption', caption);
+        form.append('parse_mode', 'HTML');
+      }
+
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+        method: 'POST',
+        body: form
+      });
+
+      if (!res.ok) {
+        const err = await res.text().catch(() => '');
+        console.warn(`⚠️ Telegram document dispatch HTTP ${res.status}: ${err.slice(0, 150)}`);
+        if (attempt < retries) await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
+      return true;
+    } catch (err) {
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
+      console.warn(`⚠️ Telegram document dispatch error: ${err.message}`);
+      return false;
+    }
+  }
+  return false;
+}
+
+/**
+ * 1. Data Scraping & Lead Generation Alert + Document File
  */
 export async function notifyLeadsHarvested(leads = [], meta = {}) {
   if (!leads || leads.length === 0) return;
   const count = leads.length;
   const city = meta.city || leads[0]?.city || 'Target Market';
   const niche = meta.niche || leads[0]?.niche || 'Local Businesses';
+  const dateStr = new Date().toISOString().split('T')[0];
 
   const leadList = leads.slice(0, 5).map(l => {
     const phone = l.phone ? ` • 📞 <code>${l.phone}</code>` : '';
@@ -79,13 +135,43 @@ export async function notifyLeadsHarvested(leads = [], meta = {}) {
 
 ${leadList}${extra}
 
-⚡ <i>Automated audit and responsive demo generation initiated.</i>`;
+⚡ <i>Full scraped dataset document attached below.</i>`;
 
-  return await sendTelegramAlert(message);
+  await sendTelegramAlert(message);
+
+  // Generate & deliver full scraped leads markdown document
+  const docRows = leads.map((l, idx) => {
+    return `### ${idx + 1}. ${l.businessName}
+- **Category / Niche:** ${l.niche || niche}
+- **City / Market:** ${l.city || city}
+- **Address:** ${l.address || 'Local market'}
+- **Phone:** ${l.phone || 'N/A'}
+- **Rating:** ${l.rating || 'N/A'} ⭐ (${l.reviewCount || 0} reviews)
+- **Current URL:** ${l.url || 'None (No website detected)'}
+- **Opportunity Hook:** ${l.opportunityHook || 'Needs mobile-first conversion website'}
+- **Source:** ${l.source || 'google_places'}
+`;
+  }).join('\n---\n\n');
+
+  const docContent = `# Data Scraping & Lead Generation Report
+**Generated:** ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST  
+**Target:** ${niche.toUpperCase()} in ${city}  
+**Total Leads Discovered:** ${count}  
+
+---
+
+${docRows}
+
+---
+*Report auto-generated by Apex AI Web Studio Auto-Harvester.*
+`;
+
+  const docFilename = `leads_${niche.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${dateStr}.md`;
+  return await sendTelegramDocument(docFilename, docContent, `📄 <b>Attached:</b> <code>${docFilename}</code> (${count} leads)`);
 }
 
 /**
- * 2. Demo Website Built Alert
+ * 2. Demo Website Built Alert + Document
  */
 export async function notifyDemoGenerated(prospect, demoUrl) {
   if (!prospect) return;
@@ -98,11 +184,29 @@ export async function notifyDemoGenerated(prospect, demoUrl) {
 
 ✉️ <i>Hyper-personalized 3-touch outreach sequence drafted.</i>`;
 
-  return await sendTelegramAlert(message);
+  await sendTelegramAlert(message);
+
+  const docContent = `# Demo Website Specification — ${prospect.businessName}
+**Generated:** ${new Date().toISOString()}  
+**Business Name:** ${prospect.businessName}  
+**City:** ${prospect.city}  
+**Niche:** ${prospect.niche}  
+**Phone:** ${prospect.phone || 'N/A'}  
+**Live Demo Preview:** ${demoUrl || `http://localhost:3030/demos/${prospect.slug}/index.html`}  
+
+## Built Features & Optimizations
+1. Mobile-First Responsive Layout with Fixed Tap-To-Call CTA
+2. Speed Optimization: Sub-2.0s DOM Load Time
+3. Local SEO Meta Tags & Schema.org JSON-LD
+4. Conversion Architecture: Direct booking & lead capture form
+5. Hero Section tailored for ${prospect.niche} inquiries in ${prospect.city}
+`;
+
+  return await sendTelegramDocument(`demo_${prospect.slug}.md`, docContent, `🎨 <b>Attached:</b> Demo Site Brief for <code>${prospect.businessName}</code>`);
 }
 
 /**
- * 3. Meeting Scheduled / Voice Call Alert
+ * 3. Meeting Scheduled / Voice Call Alert + Document
  */
 export async function notifyMeetingScheduled(prospect, details = {}) {
   if (!prospect) return;
@@ -117,11 +221,29 @@ export async function notifyMeetingScheduled(prospect, details = {}) {
 
 🔗 <a href="https://cal.com/piyush-usctna/15min">View Cal.com Booking Calendar</a>`;
 
-  return await sendTelegramAlert(message);
+  await sendTelegramAlert(message);
+
+  const docContent = `# Discovery Meeting & Demo Review Brief — ${prospect.businessName}
+**Scheduled Time:** ${new Date().toISOString()}  
+**Client:** ${prospect.businessName}  
+**Contact:** ${prospect.ownerName || 'Owner'}  
+**Phone:** ${prospect.phone || 'N/A'}  
+**Email:** ${prospect.ownerEmail || 'N/A'}  
+**Booking Link:** https://cal.com/piyush-usctna/15min  
+
+## Call Notes & Pre-Discovery
+${details.summary || 'Client agreed to live demo walkthrough and proposal review.'}
+
+## Target Proposal Package
+- Recommended Package: Growth ($1,500 Total / $750 50% Deposit)
+- Payment Rails: UPI (6202442690@jio), PayPal (paypal.me/signhify), Bank Wire (000521712140642)
+`;
+
+  return await sendTelegramDocument(`meeting_${prospect.slug}.md`, docContent, `📅 <b>Attached:</b> Meeting Brief for <code>${prospect.businessName}</code>`);
 }
 
 /**
- * 4. Client Proposal Dispatched Alert
+ * 4. Client Proposal Dispatched Alert + Document File
  */
 export async function notifyProposalDispatched(prospect, opts = {}) {
   if (!prospect) return;
@@ -132,20 +254,57 @@ export async function notifyProposalDispatched(prospect, opts = {}) {
   const message = `💼 <b>CLOSING PROPOSAL DISPATCHED</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 🏢 <b>Prospect:</b> ${prospect.businessName}
-📦 <b>Package:</b> ${pkg.toUpperCase()} (50% Deposit: ₹${amountINR} / $${amountUSD})
+📦 <b>Package:</b> ${pkg.toUpperCase()} (50% Deposit: ₹${amountINR} / $${amountUSD} USD)
 📄 <b>Proposal Link:</b> http://localhost:3030/proposals/${prospect.slug}.html
 
 💳 <b>PAYMENT DETAILS INVOICED:</b>
-• <b>UPI ID:</b> <code>6202442690@jio</code> (Piyush Singh)
-• <b>WhatsApp Verification:</b> <a href="https://wa.me/916202442690?text=Hi%20Piyush,%20I%20have%20completed%20payment%20for%20${encodeURIComponent(prospect.businessName)}">+91 6202442690</a>
+1. <b>UPI (India):</b> <code>6202442690@jio</code> (Piyush Singh)
+2. <b>PayPal Global:</b> <a href="https://paypal.me/signhify/${amountUSD}USD">paypal.me/signhify/${amountUSD}USD</a>
+3. <b>Direct Bank Wire:</b> A/C <code>000521712140642</code> · IFSC <code>JIOP0000001</code>
+📲 <b>WhatsApp Verification:</b> <a href="https://wa.me/916202442690?text=Hi%20Piyush,%20I%20have%20completed%20payment%20for%20${encodeURIComponent(prospect.businessName)}">+91 6202442690</a>
 
-<i>Waiting for client deposit screenshot confirmation.</i>`;
+<i>Formal proposal document delivered below.</i>`;
 
-  return await sendTelegramAlert(message);
+  await sendTelegramAlert(message);
+
+  const docContent = `# Client Website Proposal — ${prospect.businessName}
+**Date:** ${new Date().toLocaleDateString()}  
+**Client:** ${prospect.businessName} (${prospect.city})  
+**Package:** ${pkg.toUpperCase()}  
+**Contract Value:** $${amountUSD * 2} USD  
+**50% Deposit Required:** ₹${amountINR} ($${amountUSD} USD)  
+
+---
+
+## Scope of Deliverables
+1. Custom Modern Responsive Website on Custom Domain with SSL
+2. High-converting Mobile Architecture with Tap-to-Call
+3. Speed Optimization (< 2.0s page load)
+4. Local SEO Foundation & Google Business Profile Integration
+5. Contact Form & Lead Capture Routing
+
+---
+
+## Approved Payment Methods
+- **UPI (GPay / PhonePe / Paytm):** \`6202442690@jio\` (Piyush Singh)
+- **PayPal Global (USD / Credit Card):** https://paypal.me/signhify/${amountUSD}USD
+- **Direct Bank Wire:**
+  - Account Number: \`000521712140642\`
+  - IFSC Code: \`JIOP0000001\`
+  - Account Holder: **Piyush Raj Singh**
+
+---
+
+## Instant Verification & Kickoff
+Submit deposit screenshot to WhatsApp: **+91 6202442690**  
+Direct WhatsApp Link: https://wa.me/916202442690?text=Deposit%20Confirmed%20for%20${encodeURIComponent(prospect.businessName)}
+`;
+
+  return await sendTelegramDocument(`proposal_${prospect.slug}.md`, docContent, `💼 <b>Attached:</b> Official Proposal for <code>${prospect.businessName}</code>`);
 }
 
 /**
- * 5. Client Closed Won Alert (Deposit Received)
+ * 5. Client Closed Won Alert (Deposit Received) + Document File
  */
 export async function notifyDealClosedWon(prospect, opts = {}) {
   if (!prospect) return;
@@ -166,7 +325,32 @@ export async function notifyDealClosedWon(prospect, opts = {}) {
 • <code>clients/${prospect.slug}/kickoff_brief.md</code>
 • <code>clients/${prospect.slug}/onboarding.json</code>
 
-🚀 <i>Project onboarding initialized — 7-day launch countdown started!</i>`;
+🚀 <i>Client Kickoff & Onboarding Document attached below!</i>`;
 
-  return await sendTelegramAlert(message);
+  await sendTelegramAlert(message);
+
+  const docContent = `# Client Kickoff & Onboarding Package — ${prospect.businessName}
+**Status:** CLOSED_WON  
+**Date Closed:** ${new Date().toISOString()}  
+**Client:** ${prospect.businessName} (${prospect.city})  
+**Package:** ${packageTier.toUpperCase()}  
+**Deposit Secured:** ₹${depositINR} ($${depositPaid} USD)  
+**Total Value:** $${totalContract} USD  
+
+---
+
+## Onboarding Checklist
+- [x] Deposit Payment Verified via WhatsApp (+91 6202442690)
+- [ ] Welcome Email with Brand Assets Request Sent
+- [ ] Domain DNS Configuration Received
+- [ ] Final Copy & Content Review Completed
+- [ ] Mobile & Speed QA Pass
+- [ ] Live Domain Deployment & SSL Active
+- [ ] Remaining 50% Final Payment Received
+
+---
+*Generated by Apex AI Web Studio Autonomous Closing Engine.*
+`;
+
+  return await sendTelegramDocument(`closed_deal_${prospect.slug}.md`, docContent, `🏆 <b>Attached:</b> Client Kickoff & Onboarding Package for <code>${prospect.businessName}</code>`);
 }
