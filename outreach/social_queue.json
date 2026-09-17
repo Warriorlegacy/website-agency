@@ -15,5 +15,22 @@
     "scheduledAt": "2026-09-17T17:17:12.572Z",
     "status": "queued",
     "createdAt": "2026-09-17T16:17:12.575Z"
+  },
+  {
+    "id": "post_omni-dental-group_1789664283225",
+    "slug": "omni-dental-group",
+    "businessName": "Omni Dental Group",
+    "niche": "medical",
+    "city": "Austin, TX",
+    "demoUrl": "https://warriorlegacy.github.io/website-agency/demos/omni-dental-group/index.html",
+    "caption": "🏥 New project spotlight: Omni Dental Group in Austin, TX got a complete website overhaul. Patient-friendly, SEO-optimized, and blazing fast: https://warriorlegacy.github.io/website-agency/demos/omni-dental-group/index.html #HealthcareWeb #DentalDesign",
+    "platforms": [
+      "linkedin",
+      "x",
+      "instagram"
+    ],
+    "scheduledAt": "2026-09-17T17:58:03.225Z",
+    "status": "queued",
+    "createdAt": "2026-09-17T16:58:03.225Z"
   }
 ]

@@ -691,5 +691,78 @@
     "channel": "system",
     "result": "Score: 2/10",
     "timestamp": "2026-09-17T16:38:02.592Z"
+  },
+  {
+    "lead_slug": "omni-dental-group",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/omni-dental-group/index.html",
+    "timestamp": "2026-09-17T16:58:02.052Z"
+  },
+  {
+    "lead_slug": "omni-dental-group",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-09-17T16:58:07.263Z"
+  },
+  {
+    "lead_slug": "omni-dental-group",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789664319656",
+    "to": "operations@omnidentalgroup.com",
+    "subject": "Quick redesign idea for Omni Dental Group",
+    "timestamp": "2026-09-17T16:58:39.657Z"
+  },
+  {
+    "lead_slug": "omni-dental-group",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T16:58:39.659Z"
+  },
+  {
+    "lead_slug": "rossis-pizzeria",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789664356050",
+    "to": "marco@rossispizza.com",
+    "subject": "Quick redesign idea for Rossi's Pizzeria",
+    "timestamp": "2026-09-17T16:59:16.051Z"
+  },
+  {
+    "lead_slug": "rossis-pizzeria",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-17T16:59:16.054Z"
+  },
+  {
+    "lead_slug": "bright-smile-dental",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789664372303",
+    "to": "sarah@brightsmilemiami.com",
+    "subject": "Quick redesign idea for Bright Smile Dental",
+    "timestamp": "2026-09-17T16:59:32.303Z"
+  },
+  {
+    "lead_slug": "vance-sterling-law",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789664376359",
+    "to": "avance@vancestlaw.com",
+    "subject": "Quick redesign idea for Vance & Sterling Law",
+    "timestamp": "2026-09-17T16:59:36.360Z"
   }
 ]

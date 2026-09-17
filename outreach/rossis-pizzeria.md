@@ -7,7 +7,7 @@
 - **Phone**: (512) 555-0199
 - **City / Market**: Austin, TX
 - **Audit Overall Score**: 3/10
-- **Live Demo Link**: https://preview.agency.dev/demos/rossis-pizzeria/index.html (Local preview: http://localhost:3030/demos/rossis-pizzeria/index.html)
+- **Live Demo Link**: https://warriorlegacy.github.io/website-agency/demos/rossis-pizzeria/index.html (Local preview: http://localhost:3030/demos/rossis-pizzeria/index.html)
 
 ---
 
@@ -24,7 +24,7 @@ While checking out your website, I noticed a couple of quick things that might b
 
 To show you what's possible, I put together a quick, modern, mobile-first preview of what a refreshed site for Rossi's Pizzeria could look like:
 
-👉 **Live Interactive Demo**: https://preview.agency.dev/demos/rossis-pizzeria/index.html (Local preview: http://localhost:3030/demos/rossis-pizzeria/index.html)
+👉 **Live Interactive Demo**: https://warriorlegacy.github.io/website-agency/demos/rossis-pizzeria/index.html (Local preview: http://localhost:3030/demos/rossis-pizzeria/index.html)
 
 No pressure or sales pitch at all — if you like the direction, I'd love to chat for 5 minutes. If not, please feel free to keep the ideas and feedback!
 
@@ -34,8 +34,8 @@ Best regards,
 
 **Piyush / Apex AI Web Studio**  
 *Website Redesign & Conversion Specialists*  
-[Your Phone / Portfolio Link]  
-[Registered Agency Physical Address Placeholder, Austin, TX]  
+Direct / WhatsApp: +91 6202442690 · https://warriorlegacy.github.io/website-agency  
+Apex AI Web Studio, India  
 
 *(Reply STOP and I will never follow up again.)*
 
@@ -56,7 +56,7 @@ Hi Marco,
 Just floating this back to the top of your inbox in case it got buried! 
 
 Here is the modern preview link again:  
-👉 https://preview.agency.dev/demos/rossis-pizzeria/index.html (Local preview: http://localhost:3030/demos/rossis-pizzeria/index.html)
+👉 https://warriorlegacy.github.io/website-agency/demos/rossis-pizzeria/index.html (Local preview: http://localhost:3030/demos/rossis-pizzeria/index.html)
 
 If the timing isn't right or you're completely happy with your current setup, no worries whatsoever — I'll leave it here.
 

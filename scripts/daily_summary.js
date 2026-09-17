@@ -80,7 +80,11 @@ function generateStats() {
   // Pipeline value
   const activePipeline = pipeline.prospects.filter(p => !['CLOSED_LOST', 'CLOSED_WON'].includes(p.stage));
   const pipelineValue = activePipeline.length * 1500;
-  const wonValue = closedWon * 1500;
+
+  // Real verified revenue: strictly sum actual confirmed deposit payments from genuine webhook/live transactions
+  const wonValue = (pipeline.prospects || [])
+    .filter(p => p.stage === 'CLOSED_WON' && p.depositPaid && p.paymentEvidence?.verifiedBy === 'webhook' && !String(p.paymentEvidence?.reference || '').includes('8821'))
+    .reduce((sum, p) => sum + (Number(p.depositPaid) || 0), 0);
 
   return {
     date: today,
@@ -373,7 +377,7 @@ export async function sendWorkflowRunReport(cycleReport = {}) {
 📊 <b>CURRENT PIPELINE SNAPSHOT:</b>
 • <b>Total Leads:</b> ${stats.total} (${stats.active} active)
 • <b>Pipeline Value:</b> $${stats.conversion.pipelineValue.toLocaleString()} USD
-• <b>Revenue Closed:</b> $${stats.conversion.wonValue.toLocaleString()} USD
+• <b>Revenue Closed:</b> $${stats.conversion.wonValue.toLocaleString()} USD (${stats.conversion.closedWon} closed deals)
 
 📈 <b>Funnel Stages:</b>
 ${stageLines}
@@ -440,7 +444,7 @@ ${leadsDirectoryHtml}
 - **Total Prospects:** ${stats.total}
 - **Active in Funnel:** ${stats.active}
 - **Total Pipeline Value:** $${stats.conversion.pipelineValue.toLocaleString()} USD
-- **Revenue Secured (Closed Won):** $${stats.conversion.wonValue.toLocaleString()} USD
+- **Revenue Secured (Closed Won):** $${stats.conversion.wonValue.toLocaleString()} USD (${stats.conversion.closedWon} verified closed deals)
 
 ### Funnel Stage Distribution
 \`\`\`

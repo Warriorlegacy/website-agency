@@ -34,8 +34,8 @@ Best regards,
 
 **Piyush / Apex AI Web Studio**  
 *Website Redesign & Conversion Specialists*  
-[Your Phone / Portfolio Link]  
-[Registered Agency Physical Address Placeholder, Denver, CO]  
+Direct / WhatsApp: +91 6202442690 · https://warriorlegacy.github.io/website-agency  
+Apex AI Web Studio, India  
 
 *(Reply STOP and I will never follow up again.)*
 

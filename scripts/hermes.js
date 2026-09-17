@@ -259,6 +259,7 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
           p.stage = 'DEMO_GENERATED';
           p.demoPath = demo.relativeUrl;
           p.lastAction = new Date().toISOString();
+          Object.assign(prospect, p);
         }
         addInteraction({ lead_slug: slug, action: 'generate_mvp', channel: 'system', result: demo.relativeUrl });
         log('✅', `[${businessName}] Demo generated: ${demo.relativeUrl}`);
@@ -303,7 +304,9 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
         generateOutreachSequence(prospectData);
         if (p) {
           p.stage = 'OUTREACH_DRAFTED';
+          p.outreachPath = `/outreach/${slug}.md`;
           p.lastAction = new Date().toISOString();
+          Object.assign(prospect, p);
         }
         addInteraction({ lead_slug: slug, action: 'draft_outreach', channel: 'system' });
         log('✅', `[${businessName}] Outreach sequence drafted`);
@@ -322,19 +325,31 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
 
         if (fs.existsSync(outreachFile)) {
           const md = fs.readFileSync(outreachFile, 'utf-8');
-          // Extract first email from outreach markdown
-          const emailMatch = md.match(/##\s*(?:Email|Touch)\s*(?:1|One)[^\n]*\n([\s\S]*?)(?=##|$)/i);
+          // Extract first email from outreach markdown (handling optional emojis in heading)
+          const emailMatch = md.match(/##[^\n]*(?:Email|Touch)\s*(?:1|One)[^\n]*\n([\s\S]*?)(?=##|$)/i);
           if (emailMatch) {
-            emailBody = emailMatch[1].trim();
-            const subjectMatch = md.match(/Subject:\s*(.+)/i);
-            if (subjectMatch) emailSubject = subjectMatch[1].trim();
+            let matchedText = emailMatch[1].trim();
+            const subjectMatch = matchedText.match(/(?:\*\*Subject\*\*|Subject):\s*(.+)/i);
+            if (subjectMatch) {
+              emailSubject = subjectMatch[1].trim();
+              matchedText = matchedText.replace(/(?:\*\*Subject\*\*|Subject):\s*.+\n*/i, '').trim();
+            }
+            emailBody = matchedText;
           }
 
           // For follow-ups, try to find Email 2 or 3
           if (action === 'send_followup') {
             const touchCount = getLeadInteractions(slug).filter(i => i.action === 'send_email' || i.action === 'send_followup').length;
-            const followupMatch = md.match(new RegExp(`##\\s*(?:Email|Touch)\\s*(?:${touchCount + 1})[^\\n]*\\n([\\s\\S]*?)(?=##|$)`, 'i'));
-            if (followupMatch) emailBody = followupMatch[1].trim();
+            const followupMatch = md.match(new RegExp(`##[^\\n]*(?:Email|Touch)\\s*(?:${touchCount + 1}|Two|Three)[^\\n]*\\n([\\s\\S]*?)(?=##|$)`, 'i'));
+            if (followupMatch) {
+              let matchedFollowup = followupMatch[1].trim();
+              const subjectMatch = matchedFollowup.match(/(?:\*\*Subject\*\*|Subject):\s*(.+)/i);
+              if (subjectMatch) {
+                emailSubject = subjectMatch[1].trim();
+                matchedFollowup = matchedFollowup.replace(/(?:\*\*Subject\*\*|Subject):\s*.+\n*/i, '').trim();
+              }
+              emailBody = matchedFollowup;
+            }
           }
         }
 
@@ -376,12 +391,14 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
         const result = await sendEmail(email, {
           leadSlug: slug,
           observedOn: targetSource || prospect.url || 'public_listing',
-          recipientConfirmed: true
+          recipientConfirmed: true,
+          demoUrl
         });
 
-        if (p && p.stage === 'OUTREACH_DRAFTED') {
+        if (p) {
           p.stage = 'CONTACTED';
           p.lastAction = new Date().toISOString();
+          Object.assign(prospect, p);
         }
         addInteraction({ lead_slug: slug, action, channel: 'email', direction: 'outbound', provider: result.provider });
         log('✅', `[${businessName}] Email sent via ${result.provider}`);
@@ -533,13 +550,25 @@ async function runHermes(opts = {}) {
 
   for (const prospect of activeProspects) {
     try {
-      const decision = await decideAction(prospect);
+      // Cascade pre-outreach pipeline: DISCOVERED -> AUDITED -> DEMO_GENERATED -> OUTREACH_DRAFTED -> CONTACTED
+      let cascadeSteps = 4;
+      while (cascadeSteps-- > 0) {
+        const decision = await decideAction(prospect);
 
-      if (decision.action !== 'no_action') {
-        await executeAction(prospect, decision, pipeline, dryRun);
-        actionsCount++;
-      } else {
-        log('⏸️', `[${prospect.businessName}] Skipped — ${decision.reason}`);
+        if (decision.action !== 'no_action') {
+          const prevStage = prospect.stage;
+          await executeAction(prospect, decision, pipeline, dryRun);
+          actionsCount++;
+          // If lead reached CONTACTED, or terminal stage, or did not advance stage, stop cascading
+          if (['CONTACTED', 'MEETING_SCHEDULED', 'CLOSED_WON', 'CLOSED_LOST'].includes(prospect.stage) || prospect.stage === prevStage) {
+            break;
+          }
+        } else {
+          if (cascadeSteps === 3) {
+            log('⏸️', `[${prospect.businessName}] Skipped — ${decision.reason}`);
+          }
+          break;
+        }
       }
     } catch (err) {
       log('⚠️', `[${prospect.businessName}] Error: ${err.message}`);

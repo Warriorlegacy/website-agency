@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { getPublicDemoUrl } from './lib/config_loader.js';
+import { getPublicDemoUrl, loadAppConfig } from './lib/config_loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +20,12 @@ export function generateOutreachSequence(prospectData, demoUrl = null) {
   const { businessName, slug, city, ownerName, ownerEmail, phone, dimensions, biggestOpportunity, overallScore } = prospectData;
   const firstName = ownerName && ownerName !== 'Business Owner' ? ownerName.split(' ')[0] : 'there';
   const effectiveDemoUrl = demoUrl || getPublicDemoUrl(slug);
+  const cfg = loadAppConfig();
+  const agencyName = cfg.agency?.name || 'Apex AI Web Studio';
+  const agencyOwner = cfg.agency?.owner || 'Piyush Singh';
+  const agencyPhone = cfg.agency?.phone || '+91 6202442690';
+  const agencyAddress = cfg.agency?.address || 'Apex AI Web Studio, India';
+  const agencyWebsite = cfg.agency?.website || 'https://warriorlegacy.github.io/website-agency';
 
   console.log(`\n✍️ Drafting personalized outreach for [${businessName}] (Owner: ${ownerName || 'Unknown'})...`);
 
@@ -67,10 +73,10 @@ Wishing you a fantastic week ahead.
 
 Best regards,
 
-**Piyush / Apex AI Web Studio**  
+**${agencyOwner} · ${agencyName}**  
 *Website Redesign & Conversion Specialists*  
-[Your Phone / Portfolio Link]  
-[Registered Agency Physical Address Placeholder, ${city}]  
+Direct / WhatsApp: ${agencyPhone} · ${agencyWebsite}  
+${agencyAddress}  
 
 *(Reply STOP and I will never follow up again.)*
 
@@ -98,8 +104,10 @@ If the timing isn't right or you're completely happy with your current setup, no
 Have a great rest of your week!
 
 Best,  
-**Piyush**  
+**${agencyOwner} · ${agencyName}**  
+${agencyAddress}  
 *(Reply STOP to opt out)*
+
 
 ---
 
