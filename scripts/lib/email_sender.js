@@ -16,6 +16,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import net from 'net';
+import tls from 'tls';
 
 import { loadAppConfig } from './config_loader.js';
 
@@ -122,47 +123,148 @@ async function sendViaResend(email, apiKey, fromAddress) {
   return { provider: 'resend', messageId: data.id };
 }
 
-// ─── Provider 2: Generic SMTP (raw, no npm) ──────────────────────────────────
+// ─── Provider 2: Generic SMTP (raw TLS/STARTTLS, zero npm) ───────────────────
 async function sendViaSMTP(email, smtpConfig) {
-  const { host, port, user, pass, from } = smtpConfig;
-  if (!host || !user || !pass) throw new Error('SMTP config incomplete');
+  const host = smtpConfig.host || 'smtp.gmail.com';
+  const port = parseInt(smtpConfig.port, 10) || 587;
+  const user = smtpConfig.user || process.env.SMTP_USER || process.env.GMAIL_USER;
+  const pass = (smtpConfig.pass || process.env.SMTP_PASS || process.env.GMAIL_PASS || '').replace(/\s+/g, '');
+  const from = smtpConfig.from || `Apex AI Web Studio <${user}>`;
 
-  // Minimal SMTP implementation using net/tls
-  // For production, recommend using Resend or an external API
-  // This is a simplified version — real SMTP needs STARTTLS, AUTH, etc.
+  if (!user || !pass) {
+    throw new Error('SMTP user or password missing from configuration');
+  }
+
   return new Promise((resolve, reject) => {
-    const commands = [
-      `EHLO ${host}`,
-      `AUTH LOGIN`,
-      Buffer.from(user).toString('base64'),
-      Buffer.from(pass).toString('base64'),
-      `MAIL FROM:<${from || user}>`,
-      `RCPT TO:<${email.to}>`,
-      `DATA`,
-      `From: ${from || user}\r\nTo: ${email.to}\r\nSubject: ${email.subject}\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n${email.html}\r\n.`,
-      `QUIT`
-    ];
+    let socket;
+    let buffer = '';
+    let state = 'INIT';
+    let timeoutTimer;
 
-    const socket = net.createConnection(port || 587, host, () => {
-      let cmdIdx = 0;
-      socket.on('data', (data) => {
-        const response = data.toString();
-        if (cmdIdx < commands.length) {
-          socket.write(commands[cmdIdx] + '\r\n');
-          cmdIdx++;
-        }
-        if (response.startsWith('250') && cmdIdx >= commands.length) {
-          socket.end();
-          resolve({ provider: 'smtp', messageId: `smtp-${Date.now()}` });
+    function cleanup() {
+      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (socket && !socket.destroyed) socket.destroy();
+    }
+
+    timeoutTimer = setTimeout(() => {
+      cleanup();
+      reject(new Error(`SMTP connection timeout (25s) to ${host}:${port}`));
+    }, 25000);
+
+    function send(cmd) {
+      if (socket && socket.writable) {
+        socket.write(cmd + '\r\n');
+      }
+    }
+
+    function setupSocket(sock) {
+      sock.on('data', (data) => {
+        buffer += data.toString('utf-8');
+        const lines = buffer.split('\r\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const isMultiLine = /^\d{3}-/.test(line);
+          const code = line.slice(0, 3);
+
+          if (isMultiLine) continue; // wait for final response line
+
+          if (state === 'INIT' && code === '220') {
+            if (port === 465) {
+              state = 'EHLO';
+              send('EHLO localhost');
+            } else {
+              state = 'STARTTLS_EHLO';
+              send('EHLO localhost');
+            }
+          } else if (state === 'STARTTLS_EHLO' && code === '250') {
+            state = 'STARTTLS_REQ';
+            send('STARTTLS');
+          } else if (state === 'STARTTLS_REQ' && code === '220') {
+            state = 'UPGRADING';
+            const tlsSocket = tls.connect({
+              socket: sock,
+              host,
+              rejectUnauthorized: false
+            }, () => {
+              socket = tlsSocket;
+              buffer = '';
+              setupSocket(tlsSocket);
+              state = 'EHLO';
+              send('EHLO localhost');
+            });
+            tlsSocket.on('error', (err) => {
+              cleanup();
+              reject(err);
+            });
+            return;
+          } else if (state === 'EHLO' && code === '250') {
+            state = 'AUTH_REQ';
+            send('AUTH LOGIN');
+          } else if (state === 'AUTH_REQ' && code === '334') {
+            state = 'AUTH_USER';
+            send(Buffer.from(user).toString('base64'));
+          } else if (state === 'AUTH_USER' && code === '334') {
+            state = 'AUTH_PASS';
+            send(Buffer.from(pass).toString('base64'));
+          } else if (state === 'AUTH_PASS' && code === '235') {
+            state = 'MAIL_FROM';
+            const cleanFrom = from.match(/<([^>]+)>/)?.[1] || user;
+            send(`MAIL FROM:<${cleanFrom}>`);
+          } else if (state === 'MAIL_FROM' && code === '250') {
+            state = 'RCPT_TO';
+            send(`RCPT TO:<${email.to}>`);
+          } else if (state === 'RCPT_TO' && code === '250') {
+            state = 'DATA_REQ';
+            send('DATA');
+          } else if (state === 'DATA_REQ' && code === '354') {
+            state = 'DATA_SENDING';
+            const cleanFrom = from.includes('<') ? from : `"${from}" <${user}>`;
+            const mimeHeaders = [
+              `From: ${cleanFrom}`,
+              `To: ${email.to}`,
+              `Subject: ${email.subject}`,
+              `MIME-Version: 1.0`,
+              `Content-Type: text/html; charset=UTF-8`,
+              `Date: ${new Date().toUTCString()}`,
+              `Message-ID: <${Date.now()}.${Math.random().toString(36).slice(2)}@${host}>`
+            ];
+            const rawMessage = mimeHeaders.join('\r\n') + '\r\n\r\n' + email.html + '\r\n.';
+            send(rawMessage);
+          } else if (state === 'DATA_SENDING' && code === '250') {
+            state = 'QUIT';
+            send('QUIT');
+            cleanup();
+            resolve({
+              provider: 'smtp',
+              messageId: `smtp-${Date.now()}`,
+              account: user
+            });
+            return;
+          } else if (code.startsWith('4') || code.startsWith('5')) {
+            cleanup();
+            reject(new Error(`SMTP Error [${code}] at state ${state}: ${line}`));
+            return;
+          }
         }
       });
-      socket.on('error', reject);
-    });
 
-    setTimeout(() => {
-      socket.destroy();
-      reject(new Error('SMTP timeout'));
-    }, 15000);
+      sock.on('error', (err) => {
+        cleanup();
+        reject(err);
+      });
+    }
+
+    if (port === 465) {
+      socket = tls.connect(port, host, { rejectUnauthorized: false }, () => {
+        setupSocket(socket);
+      });
+    } else {
+      socket = net.createConnection(port, host, () => {
+        setupSocket(socket);
+      });
+    }
   });
 }
 
@@ -194,13 +296,18 @@ export async function sendEmail(email, opts = {}) {
 
   let result;
 
+  const smtpConfig = emailCfg.smtp || {};
+  const hasSmtpCreds = (smtpConfig.user || process.env.SMTP_USER || process.env.GMAIL_USER) &&
+                       (smtpConfig.pass || process.env.SMTP_PASS || process.env.GMAIL_PASS);
   const resendApiKey = emailCfg.resendApiKey || process.env.RESEND_API_KEY;
+
   if (dryRun) {
     result = sendViaDryRun(email);
+  } else if (emailCfg.provider === 'smtp' || hasSmtpCreds) {
+    // Prefer SMTP with verified credentials because it can send to ANY external domain without sandbox lock
+    result = await sendViaSMTP(email, smtpConfig);
   } else if (resendApiKey) {
     result = await sendViaResend(email, resendApiKey, emailCfg.fromAddress);
-  } else if (emailCfg.smtp?.host) {
-    result = await sendViaSMTP(email, emailCfg.smtp);
   } else {
     console.warn('[email_sender] No email provider configured — using dry run');
     result = sendViaDryRun(email);

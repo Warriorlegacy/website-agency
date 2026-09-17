@@ -39,6 +39,10 @@ jobs:
           BLAND_API_KEY: ${{ secrets.BLAND_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
         run: |
           echo "🚀 Starting Cloud Autonomous Agency Cycle..."
           node scripts/autopilot.js --once

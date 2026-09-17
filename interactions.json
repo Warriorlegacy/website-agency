@@ -435,5 +435,27 @@
     "channel": "system",
     "result": "/demos/pride-cabinetry/index.html",
     "timestamp": "2026-09-17T11:51:56.102Z"
+  },
+  {
+    "lead_slug": "test-delivery",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "resend",
+    "messageId": "01a0af47-064e-743f-817d-4ce563573d1f",
+    "to": "piyushrajsingh092@gmail.com",
+    "subject": "Apex AI Web Studio — Live Client Demo Delivery Test",
+    "timestamp": "2026-09-17T12:11:02.921Z"
+  },
+  {
+    "lead_slug": "first-watch",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789647821929",
+    "to": "rajpiyush092@gmail.com",
+    "subject": "🚀 Apex AI Web Studio — Autonomous Email System Active",
+    "timestamp": "2026-09-17T12:23:41.935Z"
   }
 ]

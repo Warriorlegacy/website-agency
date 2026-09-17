@@ -38,14 +38,15 @@
     "address": "Apex AI Web Studio, India"
   },
   "email": {
+    "provider": "smtp",
     "resendApiKey": "",
-    "fromAddress": "Apex AI Web Studio <onboarding@resend.dev>",
+    "fromAddress": "Apex AI Web Studio <rajpiyush092@gmail.com>",
     "smtp": {
-      "host": "",
+      "host": "smtp.gmail.com",
       "port": 587,
       "user": "",
       "pass": "",
-      "from": ""
+      "from": "Apex AI Web Studio <rajpiyush092@gmail.com>"
     }
   },
   "payments": {
