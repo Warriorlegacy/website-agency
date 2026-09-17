@@ -340,31 +340,66 @@ Every activity delivers an instant HTML notification **PLUS a downloadable `.md`
 
 ## 13. Required AI Models & API Keys (Current State)
 
-**⚠️ All API keys in `config.json` are empty strings.** The system runs entirely on heuristic fallbacks and free tool integrations. To enable full AI-powered automation, populate the keys in `config.json`.
+**🟢 GitHub Secrets Configured:** All API keys and credentials provided by the operator are securely injected into GitHub Repository Secrets on `Warriorlegacy/website-agency`, powering 24/7 GitHub Actions execution even when local PC is off. Local development loads keys safely from git-ignored `config.local.json`.
 
-| Component | Required Key / Provider | Current Status | Purpose |
-|-----------|-------------------------|----------------|---------|
-| **Outbound Cold Email (Gmail SMTP)** | `GMAIL_USER` & `GMAIL_PASS` | 🔴 Empty | Gmail SMTP cold email delivery. |
-| **Transactional Email (Fallback)** | `RESEND_API_KEY` | 🔴 Empty | Resend API email fallback. |
-| **High-Speed AI Reasoning** | `GROQ_API_KEY` | 🔴 Empty | Sub-second LLM decisions via Groq. |
-| **Failover Multi-Modal AI** | `GEMINI_API_KEY` | 🔴 Empty | Google Gemini backup LLM. |
-| **AI Voice Outbound Calling** | `VAPI_API_KEY` | 🔴 Empty | Vapi.ai voice calling. |
-| **Discovery Scheduler** | `CAL_API_KEY` | 🔴 Empty | Cal.com meeting scheduler. |
-| **Real-Time Telegram Reporter**| `TELEGRAM_BOT_TOKEN` & `TELEGRAM_CHAT_ID`| 🔴 Empty | Telegram bot notifications. |
-| **Google Places API** | `GOOGLE_PLACES_API_KEY` | 🔴 Empty | Official Google Maps search. |
-| **Jina AI API** | `JINA_API_KEY` | 🔴 Empty | Free web reader & search. |
-| **Browser Use** | Python + browser-use installed | 🟡 Needs Setup | Real Google Maps scraping via browser automation. |
-| **Pipecat** | Python + pipecat installed | 🟡 Needs Setup | Real-time AI voice calling framework. |
-| **Postiz** | Postiz server running | 🟡 Needs Setup | Social media scheduling. |
-| **AnythingLLM** | AnythingLLM server running | 🟡 Needs Setup | Local AI brain for audits/proposals. |
-| **Cline** | Cline CLI installed | 🟡 Needs Setup | Scheduled autonomous agent runs. |
+| Component | Provider / Variable | Cloud Status | Local Status | Purpose |
+|-----------|--------------------|--------------|--------------|---------|
+| **High-Speed AI Reasoning** | `GROQ_API_KEY` | 🟢 Active | 🟢 In config.local.json | Sub-second LLM decisions via Groq. |
+| **Failover Multi-Modal AI** | `GEMINI_API_KEY` | 🟢 Active | 🟢 In config.local.json | Google Gemini backup LLM. |
+| **Transactional Email** | `RESEND_API_KEY` | 🟢 Active | 🟢 In config.local.json | Resend API email delivery. |
+| **Discovery Scheduler** | `CAL_API_KEY` | 🟢 Active | 🟢 In config.local.json | Cal.com meeting scheduler. |
+| **Real-Time Telegram Reporter** | `TELEGRAM_BOT_TOKEN` & `TELEGRAM_CHAT_ID` | 🟢 Active | 🟢 In config.local.json | Real-time run briefs & dual PDF/MD document packages. |
+| **AI Voice Outbound Calling** | `VAPI_API_KEY` & `VAPI_ASSISTANT_ID` | 🟢 Active | 🟢 In config.local.json | Conversational outbound phone calls. |
 
-**Free tool alternatives (no API keys required):**
-- Browser Use replaces Google Places API (scrapes real Google Maps via browser)
-- Pipecat replaces Vapi.ai (real-time AI voice calling)
-- Postiz replaces manual social media posting
-- AnythingLLM replaces paid LLM APIs (local AI inference)
-- Cline replaces paid coding agents (autonomous task execution)
+**Free tool integrations active in codebase:**
+- **Browser Use (`scripts/lib/browser_use_scraper.js`):** AI browser agent for Google Maps data extraction with OSM and direct HTTP fallback.
+- **Pipecat (`scripts/lib/pipecat_caller.js`):** Real-time conversational AI voice calling framework with dual-agent simulation fallback.
+- **Postiz (`scripts/lib/postiz_scheduler.js`):** Multi-platform social media post scheduler for demo site showcases.
+- **AnythingLLM (`scripts/lib/anythingllm_bridge.js`):** RAG local intelligence querying for client research.
+- **Cline (`scripts/lib/cline_scheduler.js`):** Autonomous headless CLI agent task scheduler.
+
+---
+
+## 14. Email Sending Engine (Gmail SMTP + Resend Fallback)
+
+Apex AI Web Studio features a built-in, zero-npm asynchronous SMTP client (`scripts/lib/email_sender.js`):
+
+- **Sender Account:** `rajpiyush092@gmail.com` (configurable via `config.json`)
+- **Protocol:** Standard SMTP over `STARTTLS` on submission port `587` (`smtp.gmail.com`)
+- **Current Status:** 🟢 **Resend API Active** in GitHub Actions cloud runner; Gmail SMTP ready upon operator password injection.
+- **Cloud Runner:** Fully autonomous email dispatch with CAN-SPAM / GDPR 1-click opt-out.
+
+---
+
+## 15. Public Cloud Demo Hosting Infrastructure (Cloudflare Pages)
+
+Prospects can view their custom redesign demos immediately via Cloudflare Pages and GitHub Pages:
+
+- **Agency Dashboard:** [https://apex-webstudio.pages.dev](https://apex-webstudio.pages.dev) & [https://warriorlegacy.github.io/website-agency](https://warriorlegacy.github.io/website-agency)
+- **Worker API:** [https://apex-webstudio-api.piyushrajsingh092.workers.dev](https://apex-webstudio-api.piyushrajsingh092.workers.dev)
+- **Integration Across the Stack:**
+  - Dashboard fetches all data from Worker API (D1 + KV)
+  - Demo URLs, outreach drafts, and proposals served via Worker API endpoints
+  - Cron autopilot runs every 6 hours even when PC is off
+
+---
+
+## 16. 24/7 Cloud Autopilot & Telegram Delivery (Verified)
+
+- **Execution Cadence (GitHub Actions Cloud):**
+  - `autopilot.yml`: Runs every 6 hours (`0 */6 * * *`)
+  - `daily-harvest.yml`: Runs daily at 3:30 AM UTC / 9:00 AM IST (`30 3 * * *`)
+  - `outreach.yml`: Runs weekdays at 7:00 AM UTC / 12:30 PM IST (`0 7 * * 1-5`)
+  - `selfcheck-deploy.yml`: Runs on every push to `main` (45/45 self-check tests + Pages deploy)
+- **Strict Real Email Ingestion Gate:**
+  - Every lead must pass `findPublicEmailForBusiness` before entering `pipeline.json`.
+  - Businesses without public inquiry emails are logged and filtered out immediately.
+  - Zero synthetic `@${slug}.com` string generation permitted.
+- **Guaranteed Telegram Dispatch:**
+  - Every workflow run executes an `always()` step posting execution status, metrics, and pipeline value to Telegram chat `8800893070`.
+  - Autopilot runs compile and upload dual `.pdf` and `.md` executive audit reports.
+- **Autonomous Operations:**
+  - Operates continuously 24/7 in GitHub Actions and Cloudflare Worker cloud runtimes without requiring local PC uptime.
 
 ---
 
