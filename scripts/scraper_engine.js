@@ -12,6 +12,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { isJunkBusinessName, assertNotSynthetic } from './lib/guardrails.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, '..');
@@ -131,8 +133,8 @@ async function scrapeViaYelp(niche, city) {
   console.log(`  🔍 [Yelp Scraper] Fetching: ${yelpCategory} in ${city}...`);
   const html = await fetchHtml(searchUrl, 10000);
   if (!html) {
-    console.log(`  ⚠️  [Yelp] No response for ${city} — using synthetic fallback`);
-    return generateSyntheticLeads(niche, city, 4);
+    console.log(`  ⚠️  [Yelp] No response for ${city} — no leads returned (zero-fabrication policy)`);
+    return [];
   }
 
   const leads = [];
@@ -159,21 +161,22 @@ async function scrapeViaYelp(niche, city) {
       leads.push({
         businessName: name,
         url: '',
-        phone: phoneMatches[i]?.[1] || '(555) 000-0000',
+        // Only ever store a phone that was actually observed for THIS business.
+        // Index-aligned guessing produced wrong numbers — never do that.
+        phone: '',
         city,
         niche,
-        ownerName: 'Business Owner',
-        ownerEmail: '',
+        ownerName: null,
+        ownerEmail: null,
         source: 'yelp'
       });
       if (leads.length >= 6) break;
     }
   }
 
-  if (leads.length < 2) {
-    console.log(`  ⚠️  [Yelp] Only ${leads.length} valid business names — supplementing with synthetic leads`);
-    const synth = generateSyntheticLeads(niche, city, 4);
-    return [...leads, ...synth].slice(0, 5);
+  if (leads.length === 0) {
+    console.log(`  ⚠️  [Yelp] 0 valid business names extracted — returning empty (no synthetic padding)`);
+    return [];
   }
 
   console.log(`  ✅ [Yelp] Found ${leads.length} valid business leads`);
@@ -189,8 +192,8 @@ async function scrapeViaGoogle(niche, city) {
   console.log(`  🔍 [Google Scraper] Query: "${query}"`);
   const html = await fetchHtml(searchUrl, 8000);
   if (!html) {
-    console.log(`  ⚠️  [Google] Blocked — using synthetic fallback`);
-    return generateSyntheticLeads(niche, city, 3);
+    console.log(`  ⚠️  [Google] Blocked — no leads returned (zero-fabrication policy)`);
+    return [];
   }
 
   // Extract business names from Google results
@@ -205,11 +208,12 @@ async function scrapeViaGoogle(niche, city) {
       leads.push({
         businessName: name,
         url: '',
-        phone: '(555) 000-0000',
+        // No phone was observed for this business — leave it unknown rather than invent one.
+        phone: '',
         city,
         niche,
-        ownerName: 'Business Owner',
-        ownerEmail: '',
+        ownerName: null,
+        ownerEmail: null,
         source: 'google'
       });
       if (leads.length >= 5) break;
@@ -217,61 +221,7 @@ async function scrapeViaGoogle(niche, city) {
   }
 
   console.log(`  ✅ [Google] Extracted ${leads.length} potential leads`);
-  return leads.length > 0 ? leads : generateSyntheticLeads(niche, city, 3);
-}
-
-// ─── Synthetic Lead Generator (ultimate fallback — demo-ready realistic data) ──
-const SYNTHETIC_BUSINESS_TEMPLATES = {
-  restaurant: [
-    { name: "Mario's Italian Kitchen", owner: "Mario Conti", suffix: "restaurant" },
-    { name: "The Rustic Fork", owner: "Emma Collins", suffix: "restaurant" },
-    { name: "Golden Dragon Chinese", owner: "Wei Zhang", suffix: "restaurant" },
-    { name: "Casa Bonita Mexican Grill", owner: "Carlos Reyes", suffix: "restaurant" },
-    { name: "Harbor Fish & Chips", owner: "Sean O'Brien", suffix: "restaurant" },
-    { name: "Bella Napoli Pizzeria", owner: "Antonio Russo", suffix: "restaurant" }
-  ],
-  medical: [
-    { name: "Sunrise Family Dental", owner: "Dr. Jennifer Park", suffix: "dental" },
-    { name: "Peak Health Chiropractic", owner: "Dr. Marcus Webb", suffix: "clinic" },
-    { name: "ClearVision Eye Care", owner: "Dr. Patricia Moore", suffix: "clinic" },
-    { name: "Harmony Physiotherapy", owner: "Dr. Rachel Kim", suffix: "physio" },
-    { name: "Metropolitan Dental Group", owner: "Dr. James Sullivan", suffix: "dental" }
-  ],
-  trade: [
-    { name: "All-Star Plumbing Co.", owner: "Robert Fletcher", suffix: "plumbing" },
-    { name: "ProTech Electrical Services", owner: "David Nguyen", suffix: "electric" },
-    { name: "Summit Roofing & Repair", owner: "Mike Harrison", suffix: "roofing" },
-    { name: "Arctic Air HVAC", owner: "Tom Bradley", suffix: "hvac" },
-    { name: "Guardian Home Services", owner: "Chris Martinez", suffix: "services" }
-  ],
-  professional: [
-    { name: "Hayes & Partners Law", owner: "Nathan Hayes", suffix: "law" },
-    { name: "Cornerstone Accounting", owner: "Linda Pearson", suffix: "cpa" },
-    { name: "Meridian Financial Group", owner: "George Thompson", suffix: "financial" },
-    { name: "Atlas Real Estate Law", owner: "Diana Foster", suffix: "law" },
-    { name: "Premier Tax Advisors", owner: "Frank Henderson", suffix: "tax" }
-  ]
-};
-
-function generateSyntheticLeads(niche, city, count = 3) {
-  const templates = SYNTHETIC_BUSINESS_TEMPLATES[niche] || SYNTHETIC_BUSINESS_TEMPLATES.trade;
-  const citySlug = slugify(city.split(',')[0]);
-  const results = [];
-  for (let i = 0; i < Math.min(count, templates.length); i++) {
-    const t = templates[Math.floor(Math.random() * templates.length)];
-    const slug = slugify(t.name);
-    results.push({
-      businessName: t.name,
-      url: `http://${slug.replace(/-/g, '')}.com`,
-      phone: `(555) ${String(Math.floor(Math.random() * 900) + 100)}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
-      city,
-      niche,
-      ownerName: t.owner,
-      ownerEmail: `${t.owner.split(' ')[0].toLowerCase()}@${slug.replace(/-/g, '')}.com`,
-      source: 'synthetic'
-    });
-  }
-  return results;
+  return leads;
 }
 
 // ─── Main Discovery Engine ────────────────────────────────────────────────────
@@ -312,18 +262,25 @@ export async function discoverLeads({ targetNiches, targetCities, leadsPerRun, s
 
       // Filter out already-known leads
       for (const lead of rawLeads) {
+        const nameCheck = isJunkBusinessName(lead.businessName);
+        if (nameCheck.junk) {
+          console.log(`  ️  Skipped junk record "${lead.businessName}" — ${nameCheck.reason}`);
+          continue;
+        }
         const slug = slugify(lead.businessName);
         if (!existingSlugs.has(slug) && lead.businessName) {
           existingSlugs.add(slug);
           const prospect = {
             slug,
             businessName: lead.businessName,
-            url: lead.url || `https://${slug.replace(/-/g, '')}.com`,
+            // Unknown fields stay empty — never invent a URL, email or phone.
+            url: lead.url || '',
             niche,
             city: lead.city || city,
-            ownerName: lead.ownerName || 'Business Owner',
-            ownerEmail: lead.ownerEmail || `contact@${slug}.com`,
-            phone: lead.phone || '(555) 000-0000',
+            ownerName: lead.ownerName || null,
+            ownerEmail: lead.ownerEmail || null,
+            ownerEmailSource: lead.ownerEmailSource || null,
+            phone: lead.phone || '',
             overallScore: null,
             stage: 'DISCOVERED',
             source: lead.source || 'scraper',
@@ -331,6 +288,7 @@ export async function discoverLeads({ targetNiches, targetCities, leadsPerRun, s
             outreachPath: null,
             lastAction: new Date().toISOString()
           };
+          assertNotSynthetic(prospect, 'discovered lead');
           newLeads.push(prospect);
           pipeline.prospects.push(prospect);
           console.log(`  ✅ Discovered: [${lead.businessName}] (${city}) via ${lead.source || 'scraper'}`);

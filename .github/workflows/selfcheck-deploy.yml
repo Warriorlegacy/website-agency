@@ -1,0 +1,167 @@
+name: 🔧 Self-Check & Deploy Dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/**'
+      - 'templates/**'
+      - 'scripts/**'
+      - 'config.json'
+      - 'package.json'
+  workflow_dispatch:
+    inputs:
+      run_selfcheck:
+        description: 'Run system self-check'
+        required: false
+        default: 'true'
+      deploy_pages:
+        description: 'Deploy dashboard to GitHub Pages'
+        required: false
+        default: 'true'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  selfcheck:
+    name: 🔍 System Self-Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ github.event.inputs.run_selfcheck != 'false' }}
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔑 Minimal config for selfcheck
+        run: |
+          node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
+            cfg.ai.keys.groq = process.env.GROQ_API_KEY || cfg.ai.keys.groq || '';
+            fs.writeFileSync('config.json', JSON.stringify(cfg, null, 2));
+          "
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+
+      - name: ✅ Run Agency Self-Check
+        id: selfcheck
+        run: |
+          node scripts/agency_cli.js selfcheck 2>&1 | tee selfcheck.log
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: 📤 Upload Selfcheck Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfcheck-report
+          path: selfcheck.log
+          retention-days: 7
+
+      - name: 📣 Alert on Check Failure
+        if: failure()
+        run: |
+          node -e "
+            const botToken = process.env.TELEGRAM_BOT_TOKEN;
+            const chatId   = process.env.TELEGRAM_CHAT_ID;
+            if (!botToken || !chatId) process.exit(0);
+            const runUrl = \`https://github.com/\${process.env.GITHUB_REPOSITORY}/actions/runs/\${process.env.GITHUB_RUN_ID}\`;
+            fetch(\`https://api.telegram.org/bot\${botToken}/sendMessage\`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: chatId,
+                text: \`🚨 <b>Agency Self-Check Failed!</b>\n\nA system check detected issues.\n\n<a href=\"\${runUrl}\">View Error Log</a>\`,
+                parse_mode: 'HTML', disable_web_page_preview: true
+              })
+            }).catch(()=>{});
+          "
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  deploy-dashboard:
+    name: 🚀 Deploy Dashboard to GitHub Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: selfcheck
+    if: ${{ always() && github.event.inputs.deploy_pages != 'false' }}
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🏗️ Build Dashboard Assets
+        run: |
+          echo "Building dashboard..."
+          node scripts/build.js || true
+
+          # Ensure public/ has the latest pipeline data embedded
+          node -e "
+            const fs = require('fs');
+            let pipeline = {};
+            try { pipeline = JSON.parse(fs.readFileSync('pipeline.json','utf-8')); } catch {}
+            const summary = pipeline.pipeline_summary || {};
+            const embed = 'window.__PIPELINE_DATA__ = ' + JSON.stringify(summary) + ';';
+            const dataFile = 'public/pipeline-data.js';
+            fs.writeFileSync(dataFile, embed);
+            console.log('✅ Pipeline data embedded for dashboard');
+          "
+
+      - name: 📋 Copy Demo Sites to Public
+        run: |
+          if [ -d demos ]; then
+            mkdir -p public/demos
+            cp -r demos/* public/demos/ 2>/dev/null || true
+            echo "✅ Copied $(ls demos/ 2>/dev/null | wc -l) demo sites"
+          fi
+
+      - name: 📋 Copy Proposals to Public
+        run: |
+          if [ -d proposals ]; then
+            mkdir -p public/proposals
+            cp -r proposals/* public/proposals/ 2>/dev/null || true
+          fi
+
+      - name: 🌐 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          commit_message: '🚀 deploy: dashboard update — ${{ github.sha }}'
+          force_orphan: false
+
+      - name: ✅ Notify Deployment Success
+        if: success()
+        run: |
+          node -e "
+            const botToken = process.env.TELEGRAM_BOT_TOKEN;
+            const chatId   = process.env.TELEGRAM_CHAT_ID;
+            if (!botToken || !chatId) process.exit(0);
+            fetch(\`https://api.telegram.org/bot\${botToken}/sendMessage\`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: chatId,
+                text: '🚀 <b>Dashboard Deployed!</b>\n\nYour Apex AI Web Studio dashboard is live:\n🔗 <a href=\"https://warriorlegacy.github.io/website-agency\">https://warriorlegacy.github.io/website-agency</a>',
+                parse_mode: 'HTML', disable_web_page_preview: false
+              })
+            }).catch(()=>{});
+          "
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}

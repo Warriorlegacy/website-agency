@@ -163,8 +163,8 @@ async function harvestViaGooglePlaces(niche, city, count, apiKey) {
         address,
         city,
         niche,
-        rating: item.rating || 4.5,
-        reviewCount: item.user_ratings_total || 12,
+        rating: item.rating ?? null,
+        reviewCount: item.user_ratings_total ?? null,
         placeId: item.place_id || '',
         source: 'google_places'
       });
@@ -181,13 +181,24 @@ async function harvestViaGooglePlaces(niche, city, count, apiKey) {
 async function harvestViaOverpassOSM(niche, city, count) {
   console.log(`  🌍 [OpenStreetMap Overpass] Searching "${niche} in ${city}" (Zero-Key Live DB)...`);
 
+  // ponytail: tighter OSM tag filters to avoid cross-niche false positives
   const osmTagMap = {
     restaurant: '["amenity"~"restaurant|cafe|fast_food"]',
-    medical: '["amenity"~"dentist|clinic|doctors|pharmacy"]',
+    medical: '["amenity"="dentist"]',
     trade: '["craft"~"plumber|electrician|hvac|carpenter|painter|roofer"]',
     professional: '["office"~"lawyer|accountant|financial|tax_advisor"]',
-    salon: '["shop"~"hairdresser|beauty|massage"]',
+    salon: '["shop"~"hairdresser|beauty"]',
     fitness: '["leisure"~"fitness_centre|sports_centre|gym"]'
+  };
+
+  // Validate that OSM result actually matches the requested niche
+  const osmNicheValidators = {
+    restaurant: (tags) => ['restaurant','cafe','fast_food'].includes(tags.amenity),
+    medical: (tags) => tags.amenity === 'dentist',
+    trade: (tags) => ['plumber','electrician','hvac','carpenter','painter','roofer'].includes(tags.craft),
+    professional: (tags) => ['lawyer','accountant','financial','tax_advisor'].includes(tags.office),
+    salon: (tags) => ['hairdresser','beauty'].includes(tags.shop),
+    fitness: (tags) => ['fitness_centre','sports_centre','gym'].includes(tags.leisure)
   };
 
   const tagFilter = osmTagMap[niche] || '["amenity"~"restaurant|cafe"]';
@@ -240,10 +251,14 @@ async function harvestViaOverpassOSM(niche, city, count) {
     }
 
     const leads = [];
+    const validateNiche = osmNicheValidators[niche];
     for (const el of elements) {
       const tags = el.tags || {};
       const name = tags.name || tags['name:en'] || tags.brand;
       if (!name) continue;
+
+      // Validate niche match — skip businesses that don't belong to requested category
+      if (validateNiche && !validateNiche(tags)) continue;
 
       const website = tags.website || tags['contact:website'] || tags.url || '';
       const phone = tags.phone || tags['contact:phone'] || '';
@@ -299,8 +314,8 @@ async function harvestViaSerpApi(niche, city, count, apiKey) {
       address: r.address || city,
       city,
       niche,
-      rating: r.rating || 4.5,
-      reviewCount: r.reviews || 20,
+      rating: r.rating ?? null,
+      reviewCount: r.reviews ?? null,
       placeId: r.place_id || '',
       source: 'serpapi_maps'
     })).filter(x => x.businessName);
@@ -388,10 +403,10 @@ export async function harvestGoogleMapsLeads(opts = {}) {
       address: item.address || city,
       city: item.city,
       niche: item.niche,
-      rating: item.rating || 4.5,
-      reviewCount: item.reviewCount || 10,
-      ownerName: 'Business Owner',
-      ownerEmail: `contact@${slug}.com`,
+      rating: item.rating ?? null,
+      reviewCount: item.reviewCount ?? null,
+      ownerName: null,
+      ownerEmail: null,
       stage: 'DISCOVERED',
       source: item.source,
       opportunityHook: item.opportunityHook || 'No modern mobile website',

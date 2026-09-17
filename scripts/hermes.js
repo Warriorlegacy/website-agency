@@ -33,6 +33,7 @@ import { auditWebsite, slugify } from './audit_engine.js';
 import { generateDemoSite } from './demo_generator.js';
 import { generateOutreachSequence } from './outreach_generator.js';
 import { sendEmail, composeEmail } from './lib/email_sender.js';
+import { findPublicEmailForBusiness } from './lib/public_email_finder.js';
 import { generateProposal } from './lib/proposal_generator.js';
 import { getBookingLink } from './lib/scheduler.js';
 import { captureScreenshot } from './lib/screenshot.js';

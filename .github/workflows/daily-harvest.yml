@@ -1,0 +1,144 @@
+name: 🌅 Daily Lead Harvest & Morning Brief
+
+on:
+  schedule:
+    # Runs every day at 3:30 AM UTC = 9:00 AM IST — fresh leads ready before you wake up
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+    inputs:
+      niches:
+        description: 'Comma-separated niches (e.g. restaurant,medical,salon)'
+        required: false
+        default: 'restaurant,medical,trade'
+      cities:
+        description: 'Comma-separated cities (e.g. "Austin TX,Miami FL")'
+        required: false
+        default: 'Austin TX,Miami FL,Chicago IL'
+      leads_per_niche:
+        description: 'Leads to harvest per niche'
+        required: false
+        default: '3'
+
+permissions:
+  contents: write
+
+jobs:
+  harvest-leads:
+    name: 🌾 Harvest Fresh Business Leads
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔑 Write config from secrets
+        run: |
+          node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
+            cfg.ai.keys.groq       = process.env.GROQ_API_KEY  || cfg.ai.keys.groq || '';
+            cfg.ai.keys.gemini     = process.env.GEMINI_API_KEY || cfg.ai.keys.gemini || '';
+            cfg.email.resendApiKey = process.env.RESEND_API_KEY || cfg.email.resendApiKey || '';
+            cfg.email.provider     = cfg.email.resendApiKey ? 'resend' : 'smtp';
+            cfg.notifications.telegram.botToken = process.env.TELEGRAM_BOT_TOKEN || cfg.notifications.telegram.botToken || '';
+            cfg.notifications.telegram.chatId   = process.env.TELEGRAM_CHAT_ID   || cfg.notifications.telegram.chatId   || '';
+            fs.writeFileSync('config.json', JSON.stringify(cfg, null, 2));
+            console.log('✅ Config ready');
+          "
+        env:
+          GROQ_API_KEY:       ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY:     ${{ secrets.RESEND_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      - name: 🌾 Harvest Leads from OpenStreetMap + Jina
+        run: |
+          NICHES="${{ github.event.inputs.niches || 'restaurant,medical,trade' }}"
+          CITIES="${{ github.event.inputs.cities || 'Austin TX,Miami FL,Chicago IL' }}"
+          COUNT="${{ github.event.inputs.leads_per_niche || '3' }}"
+
+          echo "🗺️ Harvesting: niches=$NICHES | cities=$CITIES | count=$COUNT"
+
+          # Run scraper for each niche/city combo
+          IFS=',' read -ra NICHE_LIST <<< "$NICHES"
+          IFS=',' read -ra CITY_LIST  <<< "$CITIES"
+
+          for niche in "${NICHE_LIST[@]}"; do
+            for city in "${CITY_LIST[@]}"; do
+              echo "  → Scraping: $niche in $city"
+              node scripts/agency_cli.js scrape-maps "$niche" "$city" "$COUNT" || true
+              sleep 2
+            done
+          done
+
+      - name: 🔍 Run Hermes on New Leads (Audit + Demo)
+        run: |
+          echo "🏛️ Running Hermes to advance newly discovered leads..."
+          node scripts/agency_cli.js hermes || true
+
+      - name: 💾 Commit New Leads to Repository
+        run: |
+          git config --global user.name  "Apex AI Agency Bot"
+          git config --global user.email "bot@apexwebstudio.com"
+          git add pipeline.json interactions.json prospects/ demos/ outreach/ || true
+          if git diff --staged --quiet; then
+            echo "ℹ️ No new leads harvested today."
+          else
+            COUNT=$(git diff --staged --name-only | grep -c "prospects/" || echo "0")
+            git commit -m "feat(leads): 🌾 harvested $COUNT fresh leads — $(date -u '+%Y-%m-%d') [skip ci]"
+            git push
+          fi
+
+      - name: 🌅 Send Morning Pipeline Brief to Telegram
+        if: always()
+        run: |
+          node -e "
+            const fs = require('fs');
+            let pipeline = {};
+            try { pipeline = JSON.parse(fs.readFileSync('pipeline.json','utf-8')); } catch {}
+            const s = pipeline.pipeline_summary || {};
+            const botToken = process.env.TELEGRAM_BOT_TOKEN;
+            const chatId   = process.env.TELEGRAM_CHAT_ID;
+            if (!botToken || !chatId) process.exit(0);
+
+            // Find newest leads
+            const newLeads = (pipeline.prospects || [])
+              .filter(p => p.stage === 'DISCOVERED')
+              .slice(0, 5)
+              .map(p => \`  • \${p.businessName} (\${p.city})\`)
+              .join('\n');
+
+            const text = [
+              '🌅 <b>Good Morning, Piyush!</b>',
+              '<b>Apex AI Web Studio — Daily Lead Brief</b>',
+              '',
+              '📊 <b>Pipeline Status</b>',
+              \`Total: \${s.total_prospects || 0} leads | 💰 \$\${(s.pipeline_value_usd||0).toLocaleString()}\`,
+              \`🆕 Discovered: \${s.discovered||0} | 🔍 Audited: \${s.audited||0}\`,
+              \`🎨 Demos: \${s.demo_generated||0} | 📧 Contacted: \${s.contacted||0}\`,
+              \`🤝 Won: \${s.closed_won||0} deals\`,
+              '',
+              newLeads ? \`🌾 <b>Today's Fresh Leads</b>\n\${newLeads}\` : '✅ Pipeline is well-stocked!',
+              '',
+              '🔗 <a href=\"https://warriorlegacy.github.io/website-agency\">Open Dashboard</a>'
+            ].join('\n');
+
+            fetch(\`https://api.telegram.org/bot\${botToken}/sendMessage\`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', disable_web_page_preview: true })
+            }).catch(() => {});
+          "
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}

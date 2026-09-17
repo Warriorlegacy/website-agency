@@ -1,85 +1,173 @@
-name: 24/7 Autonomous Agency Autopilot
+name: 🤖 24/7 Autonomous Autopilot — Harvest → Audit → Demo → Email
 
 on:
   schedule:
-    # Runs every 2 hours continuously in the cloud (even when your PC is turned off)
-    - cron: '0 */2 * * *'
+    # Runs every 6 hours on the dot (12am, 6am, 12pm, 6pm UTC = 5:30am, 11:30am, 5:30pm, 11:30pm IST)
+    - cron: '0 */6 * * *'
   workflow_dispatch:
-    # Allows manually triggering an autonomous cycle from GitHub UI with one click
+    inputs:
+      dry_run:
+        description: 'Dry run (preview actions without executing)'
+        required: false
+        default: 'false'
+      harvest_count:
+        description: 'Number of fresh leads to harvest (0 = auto)'
+        required: false
+        default: '0'
+      force_harvest:
+        description: 'Force harvest even if pipeline is healthy'
+        required: false
+        default: 'false'
   repository_dispatch:
-    # Allows external cron services like cron-job.org to trigger the workflow via API
     types: [autopilot-trigger, cronjob-trigger]
 
 permissions:
   contents: write
 
+env:
+  NODE_VERSION: '20'
+
 jobs:
   autopilot-cycle:
+    name: 🚀 Full Autonomous Pipeline Cycle
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js
+      - name: ⚙️ Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
-      - name: Run 24/7 Autopilot Cycle
-        env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
-          VAPI_API_KEY: ${{ secrets.VAPI_API_KEY }}
-          VAPI_ASSISTANT_ID: ${{ secrets.VAPI_ASSISTANT_ID }}
-          BLAND_API_KEY: ${{ secrets.BLAND_API_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          GMAIL_USER: ${{ secrets.GMAIL_USER }}
-          GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
+      - name: 🔧 Install dependencies (if any)
         run: |
-          echo "🚀 Starting Cloud Autonomous Agency Cycle..."
-          node scripts/autopilot.js --once
+          if [ -f package-lock.json ]; then npm ci --prefer-offline; fi
 
-      - name: Commit & Push Updated CRM Data
-        run: |
-          git config --global user.name "Apex AI Agency Bot"
-          git config --global user.email "bot@apexwebstudio.com"
-          git add pipeline.json interactions.json prospects/ demos/ outreach/ proposals/ clients/ reports/ || true
-          if git diff --staged --quiet; then
-            echo "No changes to commit in this cycle."
-          else
-            git commit -m "chore(autopilot): autonomous pipeline cycle update [skip ci]"
-            git push
-            echo "✅ Successfully synced updated CRM pipeline back to repository."
-          fi
-
-      - name: Alert Telegram on Workflow Failure
-        if: failure()
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      - name: 🔑 Write config from secrets
         run: |
           node -e "
-            import('dns').then(d => {
-              try { d.setDefaultResultOrder('ipv4first'); } catch {}
-              const token = process.env.TELEGRAM_BOT_TOKEN;
-              const chatId = process.env.TELEGRAM_CHAT_ID;
-              if (token && chatId) {
-                const runUrl = 'https://github.com/' + process.env.GITHUB_REPOSITORY + '/actions/runs/' + process.env.GITHUB_RUN_ID;
-                const text = '⚠️ <b>[APEX AI WEB STUDIO] Workflow Run Alert</b>\n\n❌ <i>A cloud workflow cycle encountered an error.</i>\n\n🔍 <a href=\"' + runUrl + '\">View GitHub Actions Execution Log</a>';
-                fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' })
-                }).catch(() => {});
-              }
-            });
-          "
+            const fs = require('fs');
+            const base = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
 
+            // Inject secrets from environment into config
+            base.ai.keys.groq         = process.env.GROQ_API_KEY        || base.ai.keys.groq || '';
+            base.ai.keys.gemini       = process.env.GEMINI_API_KEY       || base.ai.keys.gemini || '';
+            base.email.resendApiKey   = process.env.RESEND_API_KEY       || base.email.resendApiKey || '';
+            base.email.provider       = base.email.resendApiKey ? 'resend' : 'smtp';
+            base.email.smtp.user      = process.env.SMTP_USER            || '';
+            base.email.smtp.pass      = process.env.SMTP_PASS            || '';
+            base.scheduling.calcomApiKey = process.env.CAL_API_KEY       || base.scheduling.calcomApiKey || '';
+            base.notifications.telegram.botToken = process.env.TELEGRAM_BOT_TOKEN || base.notifications.telegram.botToken || '';
+            base.notifications.telegram.chatId   = process.env.TELEGRAM_CHAT_ID   || base.notifications.telegram.chatId || '';
+            base.voiceCalling.keys.vapiApiKey    = process.env.VAPI_API_KEY       || '';
+            base.voiceCalling.keys.vapiAssistantId = process.env.VAPI_ASSISTANT_ID || '';
+            base.voiceCalling.keys.blandApiKey   = process.env.BLAND_API_KEY      || '';
+            base.voiceCalling.simulateFallback   = !process.env.VAPI_API_KEY;
+
+            fs.writeFileSync('config.json', JSON.stringify(base, null, 2));
+            console.log('✅ Config secrets injected');
+            console.log('   AI provider:', base.ai.provider, '| model:', base.ai.model);
+            console.log('   Email provider:', base.email.provider);
+            console.log('   Telegram configured:', !!base.notifications.telegram.botToken);
+            console.log('   Cal.com configured:', !!base.scheduling.calcomApiKey);
+            console.log('   Voice calling:', base.voiceCalling.simulateFallback ? 'simulation' : 'live');
+          "
+        env:
+          GROQ_API_KEY:        ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY:      ${{ secrets.RESEND_API_KEY }}
+          CAL_API_KEY:         ${{ secrets.CAL_API_KEY }}
+          SMTP_USER:           ${{ secrets.SMTP_USER }}
+          SMTP_PASS:           ${{ secrets.SMTP_PASS }}
+          VAPI_API_KEY:        ${{ secrets.VAPI_API_KEY }}
+          VAPI_ASSISTANT_ID:   ${{ secrets.VAPI_ASSISTANT_ID }}
+          BLAND_API_KEY:       ${{ secrets.BLAND_API_KEY }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:    ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      - name: 🤖 Run Full Autopilot Cycle
+        id: autopilot
+        run: |
+          DRY_RUN="${{ github.event.inputs.dry_run || 'false' }}"
+          FORCE_HARVEST="${{ github.event.inputs.force_harvest || 'false' }}"
+          HARVEST_COUNT="${{ github.event.inputs.harvest_count || '0' }}"
+
+          ARGS=""
+          [ "$DRY_RUN" = "true" ] && ARGS="$ARGS --dry-run"
+          [ "$FORCE_HARVEST" = "true" ] && ARGS="$ARGS --force-harvest"
+          [ "$HARVEST_COUNT" != "0" ] && ARGS="$ARGS --harvest=$HARVEST_COUNT"
+
+          echo "🚀 Running: node scripts/autopilot.js $ARGS"
+          node scripts/autopilot.js $ARGS
+
+      - name: 💾 Commit & Push CRM Data Updates
+        if: always()
+        run: |
+          git config --global user.name  "Apex AI Agency Bot"
+          git config --global user.email "bot@apexwebstudio.com"
+
+          # Stage all CRM data files (ignore config.json with secrets)
+          git add pipeline.json interactions.json \
+            prospects/ demos/ outreach/ proposals/ \
+            clients/ reports/ || true
+
+          if git diff --staged --quiet; then
+            echo "ℹ️ No CRM changes in this cycle."
+          else
+            CYCLE_TIME=$(date -u "+%Y-%m-%d %H:%M UTC")
+            git commit -m "chore(autopilot): 🤖 autonomous cycle — $CYCLE_TIME [skip ci]"
+            git push
+            echo "✅ CRM pipeline synced to repository."
+          fi
+
+      - name: 📊 Send Telegram Run Summary
+        if: always()
+        run: |
+          node -e "
+            const fs = require('fs');
+            const status = '${{ job.status }}';
+            const runUrl = \`https://github.com/\${process.env.GITHUB_REPOSITORY}/actions/runs/\${process.env.GITHUB_RUN_ID}\`;
+
+            let pipeline = {};
+            try { pipeline = JSON.parse(fs.readFileSync('pipeline.json','utf-8')); } catch {}
+            const summary = pipeline.pipeline_summary || {};
+            const botToken = process.env.TELEGRAM_BOT_TOKEN;
+            const chatId   = process.env.TELEGRAM_CHAT_ID;
+
+            if (!botToken || !chatId) { console.log('No Telegram configured'); process.exit(0); }
+
+            const emoji = status === 'success' ? '✅' : '⚠️';
+            const text = [
+              \`\${emoji} <b>Apex AI Web Studio — Autopilot Cycle</b>\`,
+              \`Status: \${status.toUpperCase()}\`,
+              \`Time: \${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}\`,
+              '',
+              '<b>📊 Pipeline Summary</b>',
+              \`Total Leads: \${summary.total_prospects || 0}\`,
+              \`🆕 Discovered: \${summary.discovered || 0}\`,
+              \`🔍 Audited: \${summary.audited || 0}\`,
+              \`🎨 Demo Ready: \${summary.demo_generated || 0}\`,
+              \`📧 Contacted: \${summary.contacted || 0}\`,
+              \`🤝 Won: \${summary.closed_won || 0}\`,
+              \`💰 Pipeline Value: \$\${(summary.pipeline_value_usd || 0).toLocaleString()}\`,
+              '',
+              \`<a href=\"\${runUrl}\">View GitHub Actions Log</a>\`
+            ].join('\n');
+
+            fetch(\`https://api.telegram.org/bot\${botToken}/sendMessage\`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', disable_web_page_preview: true })
+            }).then(r => r.json()).then(r => console.log('Telegram:', r.ok ? 'sent' : r.description))
+              .catch(e => console.warn('Telegram failed:', e.message));
+          "
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}

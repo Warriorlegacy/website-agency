@@ -11,6 +11,7 @@ import { sendEmail, composeEmail } from './lib/email_sender.js';
 import { harvestGoogleMapsLeads, autoHarvestAndIngest } from './lib/google_maps_scraper.js';
 import { placeVoiceCall } from './lib/voice_caller.js';
 import { sendClosingProposal, confirmDealWon } from './lib/closing_engine.js';
+import { isJunkBusinessName } from './lib/guardrails.js';
 import { runAutopilotCycle } from './autopilot.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -404,34 +405,44 @@ export function startPreviewServer(port = 3030) {
             return;
           }
           const imported = [];
+          const rejected = [];
           const pipeline = loadPipeline();
           // Skip header row
           for (let i = 1; i < rawLines.length; i++) {
             const cols = rawLines[i].split(',').map(c => c.replace(/^["']|["']$/g, '').trim());
             const [name, url, niche, city, owner, email, phone] = cols;
-            if (name && url) {
-              const slug = slugify(name);
-              const record = {
-                slug,
-                businessName: name,
-                url,
-                niche: niche || 'trade',
-                city: city || 'Local Area',
-                ownerName: owner || 'Business Owner',
-                ownerEmail: email || `contact@${slug}.com`,
-                phone: phone || '(555) 234-5678',
-                overallScore: 4,
-                stage: 'DISCOVERED',
-                lastAction: new Date().toISOString()
-              };
-              const exIdx = pipeline.prospects.findIndex(p => p.slug === slug);
-              if (exIdx >= 0) pipeline.prospects[exIdx] = record;
-              else pipeline.prospects.push(record);
-              imported.push(record);
+            if (!name) continue;
+
+            // Reject junk/query/chain records at the door rather than polluting the CRM.
+            const nameCheck = isJunkBusinessName(name);
+            if (nameCheck.junk) {
+              rejected.push({ name, reason: nameCheck.reason });
+              continue;
             }
+
+            const slug = slugify(name);
+            const record = {
+              slug,
+              businessName: name,
+              url: url || '',
+              niche: niche || 'trade',
+              city: city || 'Local Area',
+              // Never fabricate a contact. Unknown stays null so nothing is ever sent to a guess.
+              ownerName: owner || null,
+              ownerEmail: email || null,
+              ownerEmailSource: email ? 'csv_import' : null,
+              phone: phone || '',
+              overallScore: null,
+              stage: 'DISCOVERED',
+              lastAction: new Date().toISOString()
+            };
+            const exIdx = pipeline.prospects.findIndex(p => p.slug === slug);
+            if (exIdx >= 0) pipeline.prospects[exIdx] = record;
+            else pipeline.prospects.push(record);
+            imported.push(record);
           }
           savePipeline(pipeline);
-          sendJson(res, 200, { success: true, count: imported.length, pipeline });
+          sendJson(res, 200, { success: true, count: imported.length, rejected, pipeline });
           return;
         }
 
@@ -477,15 +488,30 @@ export function startPreviewServer(port = 3030) {
           }
 
           const dryRun = body.dryRun || false;
+          const recipient = body.to || prospectData.ownerEmail;
+          if (!recipient) {
+            // No verified public contact on record — refuse rather than guess an address.
+            sendJson(res, 422, {
+              success: false,
+              error: 'No verified owner email on record for this lead. Locate and confirm a publicly published address first (AGENTS.md rule 2).'
+            });
+            return;
+          }
           const email = composeEmail({
-            to: body.to || prospectData.ownerEmail || `contact@${slug}.com`,
+            to: recipient,
             subject: body.subject || `Quick redesign idea for ${prospectData.businessName}`,
-            body: body.body || `Hi ${prospectData.ownerName || 'there'},\n\nI noticed your website and built a quick modern redesign demo. Would love to get your thoughts!`,
+            body: body.body || `Hi ${prospectData.ownerName || 'there'},\n\n1. Mobile visitors currently can't tap-to-call you\n2. Your load time on 4G is costing you bookings\n\nI built a live redesign demo so you can see the difference rather than take my word for it:\n\n👉 ${body.demoUrl || `/demos/${slug}/index.html`}\n\nNo pitch, no pressure — keep it either way.\n\nBest,\nApex AI Web Studio\n123 Registered Business Address Line, Suite 1\n\nReply STOP and I won't follow up again.`,
             demoUrl: body.demoUrl || `/demos/${slug}/index.html`,
             agencyName: 'Apex AI Web Studio'
           });
 
-          const result = await sendEmail(email, { dryRun, leadSlug: slug });
+          const result = await sendEmail(email, {
+            dryRun,
+            leadSlug: slug,
+            observedOn: prospectData.ownerEmailSource,
+            recipientConfirmed: body.recipientConfirmed === true,
+            demoUrl: body.demoUrl || `/demos/${slug}/index.html`
+          });
           sendJson(res, 200, { success: true, result });
           return;
         }

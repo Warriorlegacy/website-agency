@@ -1,8 +1,8 @@
-/**
+﻿/**
  * scripts/lib/email_sender.js
  * Multi-Provider Email Sending Engine
  *
- * Priority: Resend API → SMTP (Nodemailer-free via raw SMTP) → Dry-run log
+ * Priority: Resend API â†’ SMTP (Nodemailer-free via raw SMTP) â†’ Dry-run log
  *
  * Features:
  *   - HTML email composition with embedded screenshot
@@ -19,12 +19,13 @@ import net from 'net';
 import tls from 'tls';
 
 import { loadAppConfig } from './config_loader.js';
+import { isSendableEmail, isOptedOut, checkOutreachCompliance } from './guardrails.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const INTERACTIONS_FILE = path.join(__dirname, '..', '..', 'interactions.json');
 
-// ─── Config ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadEmailConfig() {
   const cfg = loadAppConfig();
   return {
@@ -33,7 +34,6 @@ function loadEmailConfig() {
   };
 }
 
-// ─── Interaction Logger ──────────────────────────────────────────────────────
 function logInteraction(entry) {
   let interactions = [];
   try {
@@ -45,11 +45,14 @@ function logInteraction(entry) {
   fs.writeFileSync(INTERACTIONS_FILE, JSON.stringify(interactions, null, 2), 'utf-8');
 }
 
-// ─── HTML Email Composer ─────────────────────────────────────────────────────
+// â”€â”€â”€ HTML Email Composer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function composeEmail({ to, subject, body, demoUrl, screenshotUrl, agencyName, agencyAddress, unsubscribeText }) {
-  const safeAgency = agencyName || 'Apex AI Web Studio';
-  const safeAddress = agencyAddress || '[Your Registered Business Address]';
+  const cfg = loadAppConfig();
+  const safeAgency = agencyName || cfg.agency?.name || 'Apex AI Web Studio';
+  // Never emit an unfilled placeholder: fall back to the registered address configured for the agency.
+  const safeAddress = agencyAddress || cfg.agency?.address || '[Registered business address on file with the agency]';
   const safeUnsub = unsubscribeText || 'Reply STOP and I will never follow up again.';
+
 
   const screenshotBlock = screenshotUrl
     ? `<div style="margin: 24px 0; text-align: center;">
@@ -62,7 +65,7 @@ export function composeEmail({ to, subject, body, demoUrl, screenshotUrl, agency
   const demoButton = demoUrl
     ? `<div style="text-align: center; margin: 28px 0;">
         <a href="${demoUrl}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; text-decoration: none; padding: 14px 36px; border-radius: 8px; font-weight: 700; font-size: 16px; letter-spacing: 0.02em;">
-          👉 View Your Live Demo
+          ðŸ‘‰ View Your Live Demo
         </a>
        </div>`
     : '';
@@ -82,7 +85,7 @@ export function composeEmail({ to, subject, body, demoUrl, screenshotUrl, agency
     </div>
     <!-- Footer -->
     <div style="padding: 20px 28px; background: #f9fafb; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af; line-height: 1.6;">
-      <p>${safeAgency} · ${safeAddress}</p>
+      <p>${safeAgency} Â· ${safeAddress}</p>
       <p style="margin-top: 8px; color: #d1d5db; font-style: italic;">${safeUnsub}</p>
     </div>
   </div>
@@ -93,11 +96,11 @@ export function composeEmail({ to, subject, body, demoUrl, screenshotUrl, agency
     to,
     subject,
     html,
-    text: body + `\n\n---\n${safeAgency} · ${safeAddress}\n${safeUnsub}`
+    text: body + `\n\n---\n${safeAgency} Â· ${safeAddress}\n${safeUnsub}`
   };
 }
 
-// ─── Provider 1: Resend API ──────────────────────────────────────────────────
+// â”€â”€â”€ Provider 1: Resend API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function sendViaResend(email, apiKey, fromAddress) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -123,7 +126,7 @@ async function sendViaResend(email, apiKey, fromAddress) {
   return { provider: 'resend', messageId: data.id };
 }
 
-// ─── Provider 2: Generic SMTP (raw TLS/STARTTLS, zero npm) ───────────────────
+// â”€â”€â”€ Provider 2: Generic SMTP (raw TLS/STARTTLS, zero npm) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function sendViaSMTP(email, smtpConfig) {
   const host = smtpConfig.host || 'smtp.gmail.com';
   const port = parseInt(smtpConfig.port, 10) || 587;
@@ -268,7 +271,7 @@ async function sendViaSMTP(email, smtpConfig) {
   });
 }
 
-// ─── Provider 3: Dry Run (local log, no send) ────────────────────────────────
+// â”€â”€â”€ Provider 3: Dry Run (local log, no send) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function sendViaDryRun(email) {
   const logDir = path.join(__dirname, '..', '..', 'outreach', 'sent');
   if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
@@ -276,11 +279,11 @@ function sendViaDryRun(email) {
   const filename = `${Date.now()}-${email.to.replace(/[^a-z0-9]/gi, '_')}.html`;
   fs.writeFileSync(path.join(logDir, filename), email.html, 'utf-8');
 
-  console.log(`  📧 [DRY RUN] Email logged to outreach/sent/${filename}`);
+  console.log(`  ðŸ“§ [DRY RUN] Email logged to outreach/sent/${filename}`);
   return { provider: 'dry_run', messageId: `dry-${Date.now()}`, file: filename };
 }
 
-// ─── Master: sendEmail ───────────────────────────────────────────────────────
+// â”€â”€â”€ Master: sendEmail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 /**
  * Send an email through the configured provider.
  *
@@ -293,6 +296,41 @@ function sendViaDryRun(email) {
 export async function sendEmail(email, opts = {}) {
   const { dryRun, leadSlug } = opts;
   const { email: emailCfg, agency } = loadEmailConfig();
+
+  // â”€â”€ Guardrail gates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  const recipientCheck = isSendableEmail(email?.to, {
+    observedOn: opts.observedOn,
+    confirmed: opts.recipientConfirmed === true
+  });
+  if (!recipientCheck.ok) {
+    const err = new Error(`[GUARDRAIL] Blocked send to "${email?.to}" â€” ${recipientCheck.reason}`);
+    logInteraction({
+      lead_slug: leadSlug, action: 'send_blocked', channel: 'email',
+      direction: 'internal', reason: recipientCheck.reason, attempted_to: email?.to || null
+    });
+    throw err;
+  }
+
+  if (isOptedOut({ slug: leadSlug, email: email.to })) {
+    logInteraction({
+      lead_slug: leadSlug, action: 'send_blocked', channel: 'email',
+      direction: 'internal', reason: 'recipient on opt-out list'
+    });
+    throw new Error(`[GUARDRAIL] Blocked send â€” ${email.to} is on the opt-out list (rule 3)`);
+  }
+
+  const compliance = checkOutreachCompliance(email?.text || email?.html || '', {
+    demoUrl: opts.demoUrl,
+    requireDemo: opts.requireDemo !== false
+  });
+  if (!compliance.ok && opts.allowNonCompliant !== true) {
+    logInteraction({
+      lead_slug: leadSlug, action: 'send_blocked', channel: 'email',
+      direction: 'internal', reason: `missing: ${compliance.missing.join('; ')}`
+    });
+    throw new Error(`[GUARDRAIL] Blocked non-compliant email â€” missing: ${compliance.missing.join('; ')} (rule 3/4)`);
+  }
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   let result;
 
@@ -309,7 +347,7 @@ export async function sendEmail(email, opts = {}) {
   } else if (resendApiKey) {
     result = await sendViaResend(email, resendApiKey, emailCfg.fromAddress);
   } else {
-    console.warn('[email_sender] No email provider configured — using dry run');
+    console.warn('[email_sender] No email provider configured â€” using dry run');
     result = sendViaDryRun(email);
   }
 
@@ -330,9 +368,9 @@ export async function sendEmail(email, opts = {}) {
   return result;
 }
 
-// ─── CLI Test ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ CLI Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  console.log('\n📧 Email Sender Test — Dry Run\n');
+  console.log('\nðŸ“§ Email Sender Test â€” Dry Run\n');
   const email = composeEmail({
     to: 'test@example.com',
     subject: 'Quick redesign idea for Test Business',
@@ -343,6 +381,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     agencyAddress: 'Austin, TX'
   });
   sendEmail(email, { dryRun: true, leadSlug: 'test-business' })
-    .then(r => console.log('✅ Result:', r))
-    .catch(e => console.error('❌', e.message));
+    .then(r => console.log('âœ… Result:', r))
+    .catch(e => console.error('âŒ', e.message));
 }

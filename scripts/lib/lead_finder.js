@@ -6,7 +6,9 @@
  *   1. Google Places API   — real business data (name, phone, website, rating)
  *   2. SerpAPI             — Google Maps results
  *   3. Jina Search         — web search + Firecrawl/Jina directory scraping
- *   4. Synthetic           — last resort: realistic business names when all fail
+ *
+ * There is intentionally NO synthetic fallback: this engine only ever returns
+ * businesses that were actually found in a live source (AGENTS.md rule 1).
  *
  * ponytail: zero npm deps, stdlib fetch only
  */
@@ -14,6 +16,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { searchViaJina, scrapeViaJina, scrapeViaFirecrawl } from './scraper_client.js';
+import { isJunkBusinessName } from './guardrails.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -316,7 +319,7 @@ function parseBusinessesFromYelpMarkdown(markdown, niche, city, count) {
 
   const NOISE = /^(restaurants?|dentists?|plumbers?|lawyers?|top|best|local|near|yelp|home|all|more|search|find|open|closed|business|service|review|photo|map|filter|sort|category|add|write|see|click|page|login|sign)$/i;
   const phoneRegex = /\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/g;
-  const phones = [...(markdown.matchAll(phoneRegex))].map(m => m[0]);
+  void phoneRegex; // kept for documentation: directory phones are NOT paired to names
 
   for (const pattern of patterns) {
     let m;
@@ -328,9 +331,14 @@ function parseBusinessesFromYelpMarkdown(markdown, niche, city, count) {
       leads.push({
         businessName: raw,
         url: '',
-        phone: phones[leads.length] || '',
-        address: city, city, niche,
-        ownerName: 'Business Owner', ownerEmail: '',
+        // Phones in a directory listing are not reliably paired with a business
+        // name — leave unknown rather than attach the wrong number.
+        phone: '',
+        address: city,
+        city,
+        niche,
+        ownerName: null,
+        ownerEmail: null,
         source: 'yelp_jina',
         slug: slugifyBusiness(raw)
       });
@@ -342,66 +350,7 @@ function parseBusinessesFromYelpMarkdown(markdown, niche, city, count) {
   return leads;
 }
 
-// ─── Source 4: Synthetic (Last Resort) ───────────────────────────────────────
-const SYNTHETIC_DB = {
-  restaurant: [
-    ['Oak & Ember Bistro', '(512) 445-7832', 'oakemberbistro.com'],
-    ['Harvest Table Kitchen', '(512) 332-9148', 'harvesttablekitchen.com'],
-    ['The Blue Plate Café', '(512) 887-4231', 'blueplatecafe.com'],
-    ['Canyon Ridge Steakhouse', '(512) 664-2890', 'canyonridgesteakhouse.com'],
-    ['Solstice Farm-to-Table', '(512) 773-4512', 'solsticeft.com'],
-    ['Copper Kettle Diner', '(512) 338-6790', 'copperkettlediner.com']
-  ],
-  medical: [
-    ['Summit Dental Studio', '(512) 445-2100', 'summitdentalstudio.com'],
-    ['Lakeside Family Medicine', '(512) 332-8850', 'lakesidefamilymed.com'],
-    ['Prestige Orthodontics', '(512) 667-5523', 'prestigeortho.com'],
-    ['Clearview Eye Center', '(512) 774-3390', 'clearvieweyecenter.com'],
-    ['Beacon Health Clinic', '(512) 889-1200', 'beaconhealthclinic.com']
-  ],
-  trade: [
-    ['Summit Peak Plumbing', '(512) 445-3322', 'summitpeakplumbing.com'],
-    ['Ironclad Electric', '(512) 338-7755', 'ironcladelectric.com'],
-    ['Precision HVAC Services', '(512) 662-5544', 'precisionhvac.com'],
-    ['Apex Roofing Pros', '(512) 774-2288', 'apexroofingpros.com'],
-    ['BlueStar Landscaping', '(512) 887-6611', 'bluestarlandscaping.com']
-  ],
-  professional: [
-    ['Whitmore & Associates Law', '(512) 445-1234', 'whitmorelegal.com'],
-    ['Thornfield CPA Group', '(512) 332-4567', 'thornfieldcpa.com'],
-    ['Meridian Business Consulting', '(512) 665-7890', 'meridianconsult.com'],
-    ['Atlas Financial Planning', '(512) 774-2345', 'atlasfinancial.com'],
-    ['Sterling HR Solutions', '(512) 887-5678', 'sterlinghr.com']
-  ]
-};
-
-const OWNER_NAMES = ['Robert Miller', 'Sarah Chen', 'James Wilson', 'Maria Gonzalez', 'David Park', 'Jennifer Smith', 'Michael Torres', 'Emily Johnson'];
-
-function generateSyntheticLeads(niche, city, count) {
-  const pool = SYNTHETIC_DB[niche] || SYNTHETIC_DB.trade;
-  const results = [];
-  for (let i = 0; i < Math.min(count, pool.length); i++) {
-    const [name, phone, domain] = pool[i];
-    const cityName = city.split(',')[0].toLowerCase().replace(/\s+/g, '');
-    results.push({
-      businessName: name,
-      url: `https://www.${domain}`,
-      phone,
-      address: `${100 + i * 50} Main St, ${city}`,
-      city,
-      niche,
-      rating: (3.5 + Math.random() * 1.5).toFixed(1),
-      reviewCount: Math.floor(Math.random() * 150) + 20,
-      ownerName: OWNER_NAMES[i % OWNER_NAMES.length],
-      ownerEmail: `contact@${domain}`,
-      source: 'synthetic',
-      slug: slugifyBusiness(name),
-      isSynthetic: true
-    });
-  }
-  return results;
-}
-
+// (removed) Synthetic lead generation deleted — AGENTS.md rule 1: zero falsification.
 // ─── Master: findLeads ────────────────────────────────────────────────────────
 /**
  * Discover real local businesses for a niche + city.
@@ -424,12 +373,14 @@ export async function findLeads({ niche = 'restaurant', city = 'Austin, TX', cou
   let allLeads = [];
   const excludeSet = new Set(excludeSlugs);
 
-  // Determine which sources to try based on configured keys
+  // Determine which sources to try based on configured keys.
+  // NOTE: there is deliberately NO synthetic source. Inventing businesses,
+  // phones, ratings and owner emails is forbidden by AGENTS.md rule 1, and it
+  // risks sending outreach to people who do not exist.
   const sources = [];
   if (googleKey) sources.push('google_places');
   if (serpKey) sources.push('serpapi');
   sources.push('jina_search'); // Always try Jina Search (free)
-  sources.push('synthetic'); // Last resort
 
   for (const source of sources) {
     if (allLeads.length >= count) break;
@@ -449,11 +400,9 @@ export async function findLeads({ niche = 'restaurant', city = 'Austin, TX', cou
         case 'jina_search':
           discovered = await findViaJinaSearch(niche, city, needed + 5, { jina: jinaKey, firecrawl: scraperKeys.firecrawl });
           break;
-        case 'synthetic':
-          console.log(`  ⚠️  Using synthetic fallback for ${city}/${niche} (no real source available)`);
-          discovered = generateSyntheticLeads(niche, city, needed + 2);
-          break;
       }
+
+      discovered = discovered.filter(l => !isJunkBusinessName(l.businessName).junk);
 
       // Deduplicate + filter already-in-pipeline
       const filtered = discovered.filter(l => {

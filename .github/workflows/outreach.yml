@@ -1,0 +1,125 @@
+name: 📧 Outreach & Follow-up Engine
+
+on:
+  schedule:
+    # Runs every day at 7:00 AM UTC = 12:30 PM IST — sends during business hours
+    - cron: '0 7 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — preview emails without sending'
+        required: false
+        default: 'false'
+      slug:
+        description: 'Target specific lead by slug (leave blank for all)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  send-outreach:
+    name: 📨 Send Personalized Outreach Emails
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔑 Write config from secrets
+        run: |
+          node -e "
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
+            cfg.ai.keys.groq          = process.env.GROQ_API_KEY  || cfg.ai.keys.groq || '';
+            cfg.ai.keys.gemini        = process.env.GEMINI_API_KEY || cfg.ai.keys.gemini || '';
+            cfg.email.resendApiKey    = process.env.RESEND_API_KEY || cfg.email.resendApiKey || '';
+            cfg.email.provider        = cfg.email.resendApiKey ? 'resend' : 'smtp';
+            cfg.email.smtp.user       = process.env.SMTP_USER     || cfg.email.smtp.user || '';
+            cfg.email.smtp.pass       = process.env.SMTP_PASS     || cfg.email.smtp.pass || '';
+            cfg.scheduling.calcomApiKey = process.env.CAL_API_KEY || cfg.scheduling.calcomApiKey || '';
+            cfg.notifications.telegram.botToken = process.env.TELEGRAM_BOT_TOKEN || cfg.notifications.telegram.botToken || '';
+            cfg.notifications.telegram.chatId   = process.env.TELEGRAM_CHAT_ID   || cfg.notifications.telegram.chatId   || '';
+            fs.writeFileSync('config.json', JSON.stringify(cfg, null, 2));
+            console.log('✅ Config ready | email via:', cfg.email.provider);
+          "
+        env:
+          GROQ_API_KEY:       ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY:     ${{ secrets.RESEND_API_KEY }}
+          SMTP_USER:          ${{ secrets.SMTP_USER }}
+          SMTP_PASS:          ${{ secrets.SMTP_PASS }}
+          CAL_API_KEY:        ${{ secrets.CAL_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      - name: 🤖 Run Hermes — Advance All Ready Leads
+        run: |
+          DRY_RUN="${{ github.event.inputs.dry_run || 'false' }}"
+          SLUG="${{ github.event.inputs.slug || '' }}"
+          ARGS=""
+          [ "$DRY_RUN" = "true" ] && ARGS="$ARGS --dry-run"
+          [ -n "$SLUG" ] && ARGS="$ARGS --slug=$SLUG"
+          echo "🏛️ Running Hermes $ARGS"
+          node scripts/hermes.js $ARGS
+
+      - name: 💾 Commit Updated CRM State
+        run: |
+          git config --global user.name  "Apex AI Agency Bot"
+          git config --global user.email "bot@apexwebstudio.com"
+          git add pipeline.json interactions.json outreach/ proposals/ clients/ || true
+          if git diff --staged --quiet; then
+            echo "ℹ️ No outreach changes."
+          else
+            git commit -m "chore(outreach): 📧 automated outreach cycle — $(date -u '+%Y-%m-%d %H:%M') [skip ci]"
+            git push
+          fi
+
+      - name: 📊 Report Outreach Stats to Telegram
+        if: always()
+        run: |
+          node -e "
+            const fs = require('fs');
+            let interactions = [];
+            try { interactions = JSON.parse(fs.readFileSync('interactions.json','utf-8')); } catch {}
+            const today = new Date().toISOString().slice(0,10);
+            const todayActions = interactions.filter(i => i.timestamp && i.timestamp.startsWith(today));
+            const emails   = todayActions.filter(i => ['send_email','send_followup'].includes(i.action)).length;
+            const proposals = todayActions.filter(i => i.action === 'send_proposal').length;
+            const audits   = todayActions.filter(i => i.action === 'audit').length;
+            const demos    = todayActions.filter(i => i.action === 'generate_mvp').length;
+
+            const botToken = process.env.TELEGRAM_BOT_TOKEN;
+            const chatId   = process.env.TELEGRAM_CHAT_ID;
+            if (!botToken || !chatId || (emails + proposals + audits + demos) === 0) process.exit(0);
+
+            const text = [
+              '📧 <b>Outreach Cycle Complete</b>',
+              \`\${new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}\`,
+              '',
+              \`✉️ Emails Sent Today: <b>\${emails}</b>\`,
+              \`💼 Proposals Sent: <b>\${proposals}</b>\`,
+              \`🔍 Sites Audited: <b>\${audits}</b>\`,
+              \`🎨 Demos Generated: <b>\${demos}</b>\`,
+              '',
+              '🔗 <a href=\"https://warriorlegacy.github.io/website-agency\">Open Dashboard</a>'
+            ].join('\n');
+
+            fetch(\`https://api.telegram.org/bot\${botToken}/sendMessage\`, {
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ chat_id: chatId, text, parse_mode:'HTML', disable_web_page_preview: true })
+            }).catch(()=>{});
+          "
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}

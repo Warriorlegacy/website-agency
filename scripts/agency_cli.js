@@ -14,6 +14,12 @@ import { placeVoiceCall } from './lib/voice_caller.js';
 import { sendClosingProposal, confirmDealWon } from './lib/closing_engine.js';
 import { runAutopilotCycle } from './autopilot.js';
 import { notifyLeadsHarvested } from './lib/telegram_notifier.js';
+import { scrapeViaBrowserUse } from './lib/browser_use_scraper.js';
+import { placeVoiceCall as pipecatCall } from './lib/pipecat_caller.js';
+import { scheduleDemoShowcase, scheduleBatchShowcases } from './lib/postiz_scheduler.js';
+import { generateAuditViaLLM, generateOutreachViaLLM } from './lib/anythingllm_client.js';
+import { runClineTask } from './lib/cline_scheduler.js';
+import { loadAppConfig } from './lib/config_loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -259,6 +265,13 @@ async function main() {
       const dryRun = args.includes('--dry-run');
       const outreachFile = path.join(ROOT_DIR, 'outreach', `${slug}.md`);
 
+      const recipient = prospectData.ownerEmail;
+      if (!recipient) {
+        console.error(`❌ No verified owner email on record for [${slug}].`);
+        console.error(`   Locate a publicly published address first (AGENTS.md rule 2) and set prospects/${slug}.json -> ownerEmail + ownerEmailSource.`);
+        return;
+      }
+
       let body = `Hi ${prospectData.ownerName || 'there'},\n\nI noticed your website and built a quick redesign demo. Would love your thoughts!`;
       let subject = `Quick redesign idea for ${prospectData.businessName}`;
       if (fs.existsSync(outreachFile)) {
@@ -270,14 +283,20 @@ async function main() {
       }
 
       const email = composeEmail({
-        to: prospectData.ownerEmail || `contact@${slug}.com`,
+        to: recipient,
         subject,
         body,
         demoUrl: `http://localhost:3030/demos/${slug}/index.html`,
         agencyName: 'Apex AI Web Studio'
       });
 
-      const result = await sendEmail(email, { dryRun, leadSlug: slug });
+      const result = await sendEmail(email, {
+        dryRun,
+        leadSlug: slug,
+        observedOn: prospectData.ownerEmailSource,
+        recipientConfirmed: prospectData.ownerEmailConfirmed === true,
+        demoUrl: `http://localhost:3030/demos/${slug}/index.html`
+      });
       console.log(`\n✅ Email ${dryRun ? 'logged (dry run)' : 'sent'} via ${result.provider}`);
       break;
     }
@@ -297,6 +316,109 @@ async function main() {
         recommendedPackage: pkg
       });
       console.log(`\n✅ Proposal generated: ${result.proposalPath}`);
+      break;
+    }
+
+    // ─── FREE TOOL INTEGRATIONS ──────────────────────────────────────
+
+    case 'scrape-browser': {
+      const niche = args[1] || 'restaurant';
+      const city = args[2] || 'Austin, TX';
+      const count = parseInt(args[3] || '5', 10);
+      console.log(`\n🌐 [Browser Use] Scraping Google Maps for ${count} leads...`);
+      const leads = await scrapeViaBrowserUse({ niche, city, count });
+      const pipeline = loadPipeline();
+      for (const lead of leads) {
+        pipeline.prospects.push({
+          ...lead,
+          stage: 'DISCOVERED',
+          createdAt: new Date().toISOString(),
+          lastAction: new Date().toISOString()
+        });
+      }
+      savePipeline(pipeline);
+      console.log(`✅ Added ${leads.length} Browser Use leads to pipeline`);
+      break;
+    }
+
+    case 'call-ai': {
+      const slug = slugify(args[1]);
+      const pipeline = loadPipeline();
+      const p = pipeline.prospects.find(item => item.slug === slug);
+      if (!p) { console.error(`❌ Prospect not found: ${slug}`); return; }
+      console.log(`\n📞 [Pipecat] Calling ${p.businessName}...`);
+      const callResult = await pipecatCall(p);
+      console.log(`✅ Call ${callResult.status}: ${callResult.outcome}`);
+      if (callResult.transcript) {
+        console.log('\nTranscript:');
+        callResult.transcript.forEach(t => console.log(`  ${t.turn}: ${t.text}`));
+      }
+      break;
+    }
+
+    case 'social-post': {
+      const slug = args[1];
+      if (slug) {
+        const pipeline = loadPipeline();
+        const p = pipeline.prospects.find(item => item.slug === slug);
+        if (!p) { console.error(`❌ Prospect not found: ${slug}`); return; }
+        const demoUrl = p.demoPath || `https://warriorlegacy.github.io/website-agency/demos/${slug}/index.html`;
+        const result = await scheduleDemoShowcase({ slug, businessName: p.businessName, niche: p.niche, demoUrl, city: p.city });
+        console.log(`✅ Social post: ${result.status}`);
+      } else {
+        const pipeline = loadPipeline();
+        const demos = pipeline.prospects.filter(p => p.stage === 'DEMO_GENERATED' || p.stage === 'OUTREACH_DRAFTED');
+        const results = await scheduleBatchShowcases(demos);
+        console.log(`✅ Scheduled ${results.filter(r => r.status === 'scheduled').length}/${results.length} social posts`);
+      }
+      break;
+    }
+
+    case 'llm-audit': {
+      const url = args[1];
+      const niche = args[2] || 'trade';
+      const city = args[3] || 'Local';
+      if (!url) { console.log('Usage: node scripts/agency_cli.js llm-audit <url> [niche] [city]'); return; }
+      console.log(`\n🧠 [AnythingLLM] Auditing ${url}...`);
+      const audit = await generateAuditViaLLM({ businessName: url, url, niche, city });
+      if (audit) {
+        console.log(`✅ LLM Audit Score: ${audit.overallScore}/10`);
+        console.log(`  Design: ${audit.designScore} | Mobile: ${audit.mobileScore} | Speed: ${audit.speedScore}`);
+        console.log(`  SEO: ${audit.seoScore} | Conversion: ${audit.conversionScore}`);
+        if (audit.topIssues) console.log('  Top Issues:', audit.topIssues);
+      } else {
+        console.log('⚠️ AnythingLLM not available — using heuristic fallback');
+      }
+      break;
+    }
+
+    case 'cline-run': {
+      const prompt = args.slice(1).join(' ') || 'Run agency selfcheck';
+      console.log(`\n🤖 [Cline] Running: "${prompt}"`);
+      const result = await runClineTask(prompt);
+      console.log(`✅ Cline: ${result.status}`);
+      if (result.output) console.log(result.output.slice(0, 500));
+      break;
+    }
+
+    case 'integrations': {
+      const cfg = loadAppConfig();
+      const int = cfg.integrations || {};
+      console.log('\n🔌 FREE TOOL INTEGRATIONS STATUS:\n');
+      const tools = [
+        { name: 'Browser Use', key: 'browserUse', desc: 'Google Maps scraping via AI browser' },
+        { name: 'Pipecat', key: 'pipecat', desc: 'Real-time AI voice calling' },
+        { name: 'Postiz', key: 'postiz', desc: 'Social media scheduling' },
+        { name: 'AnythingLLM', key: 'anythingllm', desc: 'Local AI brain for audits/proposals' },
+        { name: 'Cline', key: 'cline', desc: 'Scheduled autonomous agent runs' }
+      ];
+      for (const t of tools) {
+        const cfg = int[t.key] || {};
+        const enabled = cfg.enabled ? '✅ ON' : '❌ OFF';
+        const hasKey = cfg.apiKey || cfg.cloudApiKey || cfg.dailyToken;
+        console.log(`  ${enabled}  ${t.name.padEnd(15)} ${t.desc}${hasKey ? '' : ' (no API key)'}`);
+      }
+      console.log('\nConfigure in config.json → integrations section');
       break;
     }
 
@@ -375,13 +497,17 @@ async function main() {
       console.log(`
 Available Commands:
   autopilot [--loop] [--dry-run] [--interval=15] [--force-call]          Run 24/7 Autonomous Agency Autopilot
-  scrape-maps <niche> <city> [count]                                      Auto-harvest leads from Google Maps
-  call <slug> [--simulate|--live]                                         Place AI voice cold call to owner
+  scrape-maps <niche> <city> [count]                                      Auto-harvest leads from Google Maps (OSM)
+  scrape-browser <niche> <city> [count]                                   Scrape via Browser Use (AI browser agent)
+  call <slug> [--simulate|--live]                                         Place AI voice cold call (simulation)
+  call-ai <slug>                                                          Place AI voice call via Pipecat
   close-deal <slug> [starter|growth|premium]                              Confirm deposit payment & mark CLOSED_WON
   run-all <name> <url> <niche> <city> [owner] [email] [template] [phone]   Execute end-to-end audit, demo, and outreach
   audit <name> [url] [niche] [city]                                       Run 5-point website audit only
+  llm-audit <url> [niche] [city]                                          Audit via AnythingLLM (local AI)
   demo <slug> [template]                                                  Generate modern HTML5 demo site
   outreach <slug>                                                         Draft multi-touch outreach sequence
+  social-post [slug]                                                      Schedule social media post (Postiz)
   status                                                                  Print pipeline CRM table
   set-stage <slug> <STAGE>                                                Update lead status in pipeline.json
   serve [port]                                                            Start local web preview server (default: 3030)
@@ -390,6 +516,8 @@ Available Commands:
   summary [--local]                                                       Generate daily pipeline summary
   send <slug> [--dry-run]                                                 Send outreach email for a lead
   proposal <slug> [starter|growth|premium]                                Generate proposal document
+  cline-run <prompt>                                                      Run Cline autonomous agent task
+  integrations                                                            Show free tool integration status
       `);
   }
 }

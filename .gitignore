@@ -2,3 +2,24 @@
 config.local.json
 .env
 .env.local
+
+# ─── NEVER commit config.json with live API keys to git ─────────────────
+# The GitHub Actions workflows inject secrets from GitHub Secrets at runtime.
+# config.json is only used for local development.
+# Use config.local.json for your personal local-only overrides.
+config.json
+
+# Node
+node_modules/
+*.log
+
+# Python temp files from Browser Use / Pipecat
+.browser_use_tmp.py
+.pipecat_tmp.py
+
+# Wrangler build cache
+.wrangler/
+
+# OS
+.DS_Store
+Thumbs.db

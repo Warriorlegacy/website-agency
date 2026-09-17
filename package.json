@@ -1,22 +1,30 @@
 {
   "name": "ai-website-agency",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Autonomous AI Website Redesign Agency — Scrape leads, audit, demo, outreach, close clients at scale",
   "type": "module",
   "main": "scripts/agency_cli.js",
   "scripts": {
-    "start": "node scripts/preview_server.js 3030",
-    "cli": "node scripts/agency_cli.js",
-    "status": "node scripts/agency_cli.js status",
-    "selfcheck": "node scripts/agency_cli.js selfcheck",
-    "build": "node scripts/build.js && node scripts/agency_cli.js selfcheck",
-    "dashboard": "node scripts/preview_server.js 3030",
-    "preview": "node scripts/preview_server.js 3030",
-    "auto": "node scripts/auto_runner.js",
-    "autopilot": "node scripts/autopilot.js --loop",
-    "autopilot:once": "node scripts/autopilot.js",
-    "discover": "node scripts/scraper_engine.js",
-    "run": "node scripts/agency_cli.js run-all"
+    "start":           "node scripts/preview_server.js 3030",
+    "cli":             "node scripts/agency_cli.js",
+    "status":          "node scripts/agency_cli.js status",
+    "selfcheck":       "node scripts/agency_cli.js selfcheck",
+    "build":           "node scripts/build.js && node scripts/agency_cli.js selfcheck",
+    "dashboard":       "node scripts/preview_server.js 3030",
+    "preview":         "node scripts/preview_server.js 3030",
+    "auto":            "node scripts/auto_runner.js",
+    "autopilot":       "node scripts/autopilot.js --loop",
+    "autopilot:once":  "node scripts/autopilot.js",
+    "autopilot:dry":   "node scripts/autopilot.js --dry-run",
+    "discover":        "node scripts/scraper_engine.js",
+    "run":             "node scripts/agency_cli.js run-all",
+    "hermes":          "node scripts/hermes.js",
+    "hermes:dry":      "node scripts/hermes.js --dry-run",
+    "summary":         "node scripts/agency_cli.js summary",
+    "setup-secrets":   "node scripts/setup_github_secrets.js",
+    "deploy:worker":   "npx wrangler deploy",
+    "deploy:pages":    "npx wrangler pages deploy public --project-name=apex-webstudio",
+    "deploy":          "npm run deploy:worker && npm run deploy:pages"
   },
   "keywords": [
     "ai-agency",
@@ -25,8 +33,9 @@
     "lead-scraping",
     "demo-generator",
     "outbound",
-    "autonomous"
+    "autonomous",
+    "github-actions"
   ],
-  "author": "Antigravity Agent",
+  "author": "Piyush Singh — Apex AI Web Studio",
   "license": "MIT"
 }
