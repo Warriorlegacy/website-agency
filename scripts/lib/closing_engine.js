@@ -18,17 +18,18 @@ import { generateProposal } from './proposal_generator.js';
 import { createPaymentLink } from './payment.js';
 import { sendEmail, composeEmail } from './email_sender.js';
 import { getBookingLink } from './scheduler.js';
+import { loadAppConfig } from './config_loader.js';
+import { notifyProposalDispatched, notifyDealClosedWon } from './telegram_notifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, '..', '..');
 const PIPELINE_FILE = path.join(ROOT_DIR, 'pipeline.json');
 const INTERACTIONS_FILE = path.join(ROOT_DIR, 'interactions.json');
-const CONFIG_FILE = path.join(ROOT_DIR, 'config.json');
 const CLIENTS_DIR = path.join(ROOT_DIR, 'clients');
 
 function loadConfig() {
-  try { return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8')); } catch { return {}; }
+  return loadAppConfig();
 }
 
 function loadPipeline() {
@@ -126,6 +127,10 @@ ${agencyName}`;
       proposal_url: proposal.relativePath,
       email_provider: emailResult.provider
     });
+
+    try {
+      await notifyProposalDispatched(prospect, { packageTier });
+    } catch {}
   }
 
   return {
@@ -215,6 +220,10 @@ export async function confirmDealWon(prospectSlug, paymentDetails = {}) {
     package: packageTier,
     client_folder: `clients/${prospectSlug}`
   });
+
+  try {
+    await notifyDealClosedWon(prospect, { depositPaid, packageTier });
+  } catch {}
 
   return {
     success: true,

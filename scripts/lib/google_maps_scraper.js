@@ -17,16 +17,17 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { loadAppConfig } from './config_loader.js';
+import { notifyLeadsHarvested } from './telegram_notifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, '..', '..');
-const CONFIG_FILE = path.join(ROOT_DIR, 'config.json');
 const PIPELINE_FILE = path.join(ROOT_DIR, 'pipeline.json');
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function loadConfig() {
-  try { return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8')); } catch { return {}; }
+  return loadAppConfig();
 }
 
 function loadPipeline() {
@@ -446,6 +447,9 @@ export async function autoHarvestAndIngest(opts = {}) {
     pipeline.last_updated = new Date().toISOString();
     fs.writeFileSync(PIPELINE_FILE, JSON.stringify(pipeline, null, 2), 'utf-8');
     console.log(`✅ [AUTO-HARVESTER] Ingested ${harvested.length} fresh leads into pipeline CRM!\n`);
+    try {
+      await notifyLeadsHarvested(harvested, { city: targetCities.join(', '), niche: targetNiches.join(', ') });
+    } catch {}
   } else {
     console.log(`ℹ️ [AUTO-HARVESTER] Pipeline is full or all discovered businesses already exist in CRM.\n`);
   }

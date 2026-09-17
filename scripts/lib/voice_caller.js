@@ -19,6 +19,7 @@ import { fileURLToPath } from 'url';
 import { aiComplete } from './ai_client.js';
 import { getBookingLink } from './scheduler.js';
 import { loadAppConfig } from './config_loader.js';
+import { notifyMeetingScheduled } from './telegram_notifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -257,6 +258,12 @@ Respond with JSON format:
       summary: parsed.summary || 'Simulated call completed successfully',
       transcript: transcriptText
     });
+
+    if (parsed.outcome === 'meeting_scheduled') {
+      try {
+        await notifyMeetingScheduled(prospect, parsed);
+      } catch {}
+    }
 
     return {
       provider: 'ai_simulation',

@@ -38,6 +38,8 @@ import { getBookingLink } from './lib/scheduler.js';
 import { captureScreenshot } from './lib/screenshot.js';
 import { placeVoiceCall } from './lib/voice_caller.js';
 import { sendClosingProposal, confirmDealWon } from './lib/closing_engine.js';
+import { loadAppConfig } from './lib/config_loader.js';
+import { notifyDemoGenerated } from './lib/telegram_notifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -82,7 +84,7 @@ function addInteraction(entry) {
 }
 
 function loadConfig() {
-  try { return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8')); } catch { return {}; }
+  return loadAppConfig();
 }
 
 function getLeadInteractions(slug) {
@@ -257,6 +259,9 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
         }
         addInteraction({ lead_slug: slug, action: 'generate_mvp', channel: 'system', result: demo.relativeUrl });
         log('✅', `[${businessName}] Demo generated: ${demo.relativeUrl}`);
+        try {
+          await notifyDemoGenerated(prospectData, demo.relativeUrl);
+        } catch {}
       } catch (err) {
         log('❌', `[${businessName}] Demo generation failed: ${err.message}`);
       }
