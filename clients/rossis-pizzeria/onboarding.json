@@ -1,0 +1,33 @@
+{
+  "client_slug": "rossis-pizzeria",
+  "business_name": "Rossi's Pizzeria",
+  "deal_won_date": "2026-09-17T08:46:48.975Z",
+  "package": "growth",
+  "deposit_amount_paid": 750,
+  "checklist": [
+    {
+      "task": "Send Welcome Email with Intake Form",
+      "done": true
+    },
+    {
+      "task": "Collect High-Resolution Logo & Brand Assets",
+      "done": false
+    },
+    {
+      "task": "Request Domain Registrar Access or Provide DNS A-Records",
+      "done": false
+    },
+    {
+      "task": "Finalize Custom Copy & Photo Curation",
+      "done": false
+    },
+    {
+      "task": "Deploy Staging Site to Production Domain",
+      "done": false
+    },
+    {
+      "task": "Collect Remaining 50% Final Payment Upon Handover",
+      "done": false
+    }
+  ]
+}

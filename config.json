@@ -1,0 +1,143 @@
+{
+  "ai": {
+    "provider": "groq",
+    "model": "qwen/qwen3.8-27b",
+    "customEndpoint": "",
+    "keys": {
+      "groq": "",
+      "openai": "",
+      "anthropic": "",
+      "gemini": "",
+      "openrouter": "",
+      "custom": ""
+    },
+    "fallbackProviders": ["gemini", "groq"]
+  },
+  "scraping": {
+    "primaryScraper": "jina",
+    "keys": {
+      "firecrawl": "",
+      "jina": ""
+    }
+  },
+  "leadFinder": {
+    "primarySource": "jina_search",
+    "keys": {
+      "googlePlaces": "",
+      "serpApi": ""
+    }
+  },
+  "agency": {
+    "name": "Apex AI Web Studio",
+    "owner": "Piyush Singh",
+    "email": "contact@apexwebstudio.com",
+    "phone": "+91 6202442690",
+    "whatsapp": "+916202442690",
+    "website": "https://websiteagency-brown.vercel.app",
+    "address": "Apex AI Web Studio, India"
+  },
+  "email": {
+    "resendApiKey": "",
+    "fromAddress": "Apex AI Web Studio <onboarding@resend.dev>",
+    "smtp": {
+      "host": "",
+      "port": 587,
+      "user": "",
+      "pass": "",
+      "from": ""
+    }
+  },
+  "payments": {
+    "preferredMethod": "upi",
+    "upi": {
+      "upiId": "6202442690@jio",
+      "payeeName": "Piyush Singh",
+      "whatsappNumber": "6202442690",
+      "whatsappIntl": "916202442690"
+    },
+    "razorpayKeyId": "",
+    "razorpayKeySecret": "",
+    "stripeSecretKey": "",
+    "callbackUrl": "",
+    "successUrl": "https://youragency.com/thank-you"
+  },
+  "scheduling": {
+    "calcomApiKey": "",
+    "calcomBookingUrl": "https://cal.com/piyush-usctna/15min",
+    "calcomBaseUrl": "https://api.cal.com/v2",
+    "defaultEventTypeId": null,
+    "calendlyUrl": "",
+    "timezone": "Asia/Kolkata"
+  },
+  "notifications": {
+    "telegram": {
+      "botToken": "",
+      "chatId": "8800893070"
+    }
+  },
+  "screenshot": {
+    "screenshotOneKey": "",
+    "urlboxKey": ""
+  },
+  "voiceCalling": {
+    "provider": "simulation",
+    "simulateFallback": true,
+    "voiceId": "maya",
+    "keys": {
+      "vapiApiKey": "",
+      "vapiPhoneNumberId": "",
+      "blandApiKey": "",
+      "twilioAccountSid": "",
+      "twilioAuthToken": "",
+      "twilioPhoneNumber": ""
+    }
+  },
+  "autopilot": {
+    "enabled": true,
+    "intervalMinutes": 15,
+    "minActiveTarget": 8,
+    "autoHarvest": true,
+    "autoAudit": true,
+    "autoDemo": true,
+    "autoOutreach": true,
+    "autoCall": true,
+    "autoClose": true,
+    "ignoreQuietHours": false
+  },
+  "pipeline": {
+    "targetCities": [
+      "Austin, TX",
+      "Miami, FL",
+      "Chicago, IL",
+      "Seattle, WA",
+      "Denver, CO",
+      "Nashville, TN"
+    ],
+    "targetNiches": [
+      "restaurant",
+      "medical",
+      "trade",
+      "professional",
+      "salon",
+      "fitness"
+    ],
+    "leadsPerRun": 5,
+    "scrapeDelayMs": 1500,
+    "maxRetriesPerLead": 2,
+    "pipelineValuePerLead": 1500,
+    "extractContactInfo": true,
+    "autoRunIntervalMinutes": 0
+  },
+  "_comment": {
+    "ai.provider": "groq | openai | anthropic | gemini | openrouter | custom",
+    "ai.customEndpoint": "e.g. http://localhost:11434/v1 for Ollama",
+    "scraping.primaryScraper": "jina (free) | firecrawl | direct",
+    "leadFinder.primarySource": "google_places | serpapi | jina_search",
+    "email.resendApiKey": "Get from resend.com — generous free tier",
+    "payments.razorpayKeyId": "Get from dashboard.razorpay.com",
+    "payments.stripeSecretKey": "Get from dashboard.stripe.com",
+    "scheduling.calcomApiKey": "Get from cal.com/settings/developer/api-keys",
+    "notifications.telegram": "Create bot via @BotFather, get chatId via @userinfobot",
+    "screenshot.screenshotOneKey": "Free tier at screenshotone.com"
+  }
+}

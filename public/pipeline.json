@@ -1,0 +1,79 @@
+{
+  "agency_name": "Apex AI Web Studio",
+  "version": "1.0.0",
+  "last_updated": "2026-08-31T21:06:23.915Z",
+  "pipeline_summary": {
+    "total_prospects": 4,
+    "discovered": 0,
+    "audited": 1,
+    "demo_generated": 0,
+    "outreach_drafted": 3,
+    "contacted": 0,
+    "meeting_scheduled": 0,
+    "closed_won": 0,
+    "closed_lost": 0,
+    "pipeline_value_usd": 6000
+  },
+  "prospects": [
+    {
+      "slug": "rossis-pizzeria",
+      "businessName": "Rossi's Pizzeria",
+      "url": "http://example.com/rossi",
+      "niche": "restaurant",
+      "city": "Austin, TX",
+      "ownerName": "Marco Rossi",
+      "ownerEmail": "marco@rossispizza.com",
+      "phone": "(512) 555-0199",
+      "overallScore": 3,
+      "stage": "OUTREACH_DRAFTED",
+      "demoPath": "/demos/rossis-pizzeria/index.html",
+      "outreachPath": "/outreach/rossis-pizzeria.md",
+      "lastAction": "2026-08-31T20:44:00.140Z"
+    },
+    {
+      "slug": "bright-smile-dental",
+      "businessName": "Bright Smile Dental",
+      "url": "http://example.com/brightdental",
+      "niche": "medical",
+      "city": "Miami, FL",
+      "ownerName": "Dr. Sarah Adams",
+      "ownerEmail": "sarah@brightsmilemiami.com",
+      "phone": "(305) 555-0182",
+      "overallScore": 3,
+      "stage": "OUTREACH_DRAFTED",
+      "demoPath": "/demos/bright-smile-dental/index.html",
+      "outreachPath": "/outreach/bright-smile-dental.md",
+      "lastAction": "2026-08-31T20:44:07.277Z"
+    },
+    {
+      "slug": "vance-sterling-law",
+      "businessName": "Vance & Sterling Law",
+      "url": "http://example.com/vancelaw",
+      "niche": "professional",
+      "city": "Chicago, IL",
+      "ownerName": "Arthur Vance",
+      "ownerEmail": "avance@vancestlaw.com",
+      "phone": "(312) 555-0190",
+      "overallScore": 3,
+      "stage": "OUTREACH_DRAFTED",
+      "demoPath": "/demos/vance-sterling-law/index.html",
+      "outreachPath": "/outreach/vance-sterling-law.md",
+      "lastAction": "2026-08-31T20:44:13.807Z"
+    },
+    {
+      "slug": "apex-electrical-solutions",
+      "businessName": "Apex Electrical Solutions",
+      "url": "http://example.com/apexelectric",
+      "niche": "trade",
+      "city": "Seattle, WA",
+      "ownerName": "James Wilson",
+      "ownerEmail": "james@apexelectric.test",
+      "phone": "(555) 000-0000",
+      "overallScore": 3,
+      "stage": "AUDITED",
+      "demoPath": "/demos/apex-electrical-solutions/index.html",
+      "outreachPath": "/outreach/apex-electrical-solutions.md",
+      "lastAction": "2026-08-31T21:06:23.915Z"
+    }
+  ]
+}

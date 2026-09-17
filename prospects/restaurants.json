@@ -1,0 +1,57 @@
+{
+  "businessName": "Restaurants",
+  "slug": "restaurants",
+  "url": "https://restaurants.com",
+  "niche": "restaurant",
+  "city": "Austin, TX",
+  "ownerName": "Business Owner",
+  "ownerEmail": "contact@restaurants.com",
+  "phone": "(555) 000-0000",
+  "auditDate": "2026-09-01T06:36:43.601Z",
+  "liveSiteDetected": false,
+  "engine": "Heuristic Rules Engine",
+  "overallScore": 3,
+  "dimensions": {
+    "design": {
+      "score": 3,
+      "problems": [
+        "Visual hierarchy lacks modern trust signals and high-converting value pillars.",
+        "Legacy aesthetics decrease credibility for high-ticket clients."
+      ],
+      "quickFix": "Deploy modern glassmorphic layout with responsive typography and trust badges."
+    },
+    "mobile": {
+      "score": 3,
+      "problems": [
+        "Missing responsive viewport tag; loads shrunk desktop layout on phones.",
+        "No sticky tap-to-call action bar for smartphone visitors."
+      ],
+      "quickFix": "Add responsive CSS containers and a fixed bottom mobile calling bar."
+    },
+    "speed": {
+      "score": 4,
+      "problems": [
+        "Uncompressed images and legacy scripts slow down initial page load.",
+        "High DOM depth increases mobile interaction latency."
+      ],
+      "quickFix": "Optimize assets and deliver clean static HTML/CSS for sub-second load times."
+    },
+    "seo": {
+      "score": 3,
+      "problems": [
+        "Missing geo-targeted meta description and keyword clustering for Austin, TX.",
+        "Missing primary semantic <h1> heading."
+      ],
+      "quickFix": "Inject Schema.org LocalBusiness JSON-LD and geo-aligned H1 headings."
+    },
+    "conversion": {
+      "score": 2,
+      "problems": [
+        "Phone numbers are unclickable plain text, losing mobile calls.",
+        "Missing an instant quote or consultation booking trigger above the fold."
+      ],
+      "quickFix": "Add one-touch click-to-call buttons and an express consultation request form."
+    }
+  },
+  "biggestOpportunity": "By deploying a modern, mobile-responsive layout with sticky tap-to-call and verified local badges, Restaurants can capture an estimated 25%–40% more inbound customer leads in Austin, TX."
+}

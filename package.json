@@ -1,0 +1,32 @@
+{
+  "name": "ai-website-agency",
+  "version": "2.0.0",
+  "description": "Autonomous AI Website Redesign Agency — Scrape leads, audit, demo, outreach, close clients at scale",
+  "type": "module",
+  "main": "scripts/agency_cli.js",
+  "scripts": {
+    "start": "node scripts/preview_server.js 3030",
+    "cli": "node scripts/agency_cli.js",
+    "status": "node scripts/agency_cli.js status",
+    "selfcheck": "node scripts/agency_cli.js selfcheck",
+    "build": "node scripts/build.js && node scripts/agency_cli.js selfcheck",
+    "dashboard": "node scripts/preview_server.js 3030",
+    "preview": "node scripts/preview_server.js 3030",
+    "auto": "node scripts/auto_runner.js",
+    "autopilot": "node scripts/autopilot.js --loop",
+    "autopilot:once": "node scripts/autopilot.js",
+    "discover": "node scripts/scraper_engine.js",
+    "run": "node scripts/agency_cli.js run-all"
+  },
+  "keywords": [
+    "ai-agency",
+    "client-acquisition",
+    "automated-audit",
+    "lead-scraping",
+    "demo-generator",
+    "outbound",
+    "autonomous"
+  ],
+  "author": "Antigravity Agent",
+  "license": "MIT"
+}

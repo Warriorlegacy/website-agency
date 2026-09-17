@@ -1,0 +1,4 @@
+.vercel
+config.local.json
+.env
+.env.local

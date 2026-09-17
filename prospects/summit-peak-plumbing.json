@@ -1,0 +1,58 @@
+{
+  "businessName": "Summit Peak Plumbing",
+  "slug": "summit-peak-plumbing",
+  "url": "http://example.com/summit",
+  "niche": "trade",
+  "city": "Denver, CO",
+  "ownerName": "Robert Miller",
+  "ownerEmail": "robert@summitplumbing.test",
+  "phone": "(303) 555-0144",
+  "auditDate": "2026-09-17T08:51:44.855Z",
+  "liveSiteDetected": true,
+  "scrapeSource": "jina",
+  "engine": "Heuristic Engine",
+  "overallScore": 3,
+  "dimensions": {
+    "design": {
+      "score": 4,
+      "problems": [
+        "Visual hierarchy lacks modern trust signals and conversion-focused elements.",
+        "No clear value proposition above the fold visible within 5 seconds of landing."
+      ],
+      "quickFix": "Deploy a modern single-column layout with hero section, social proof badges, and clear CTA buttons."
+    },
+    "mobile": {
+      "score": 2,
+      "problems": [
+        "Missing viewport meta tag — site loads as a zoomed-out desktop page on phones.",
+        "No sticky bottom bar for immediate click-to-call on mobile devices."
+      ],
+      "quickFix": "Add responsive breakpoints and a fixed mobile CTA bar with one-tap calling."
+    },
+    "speed": {
+      "score": 6,
+      "problems": [
+        "Uncompressed images and render-blocking scripts delay page load beyond 3 seconds.",
+        "Large unused CSS/JS bundles increase Time to Interactive."
+      ],
+      "quickFix": "Switch to static HTML/CSS delivery with lazy-loaded images and deferred scripts."
+    },
+    "seo": {
+      "score": 3,
+      "problems": [
+        "Missing meta description — Google replaces it with random page content, reducing CTR.",
+        "No H1 tag — critical for search engine understanding of page topic."
+      ],
+      "quickFix": "Add LocalBusiness Schema.org JSON-LD markup and optimize H1 for \"trade Denver, CO\"."
+    },
+    "conversion": {
+      "score": 2,
+      "problems": [
+        "Phone numbers are plain text — unclickable on mobile, losing dozens of calls per month.",
+        "No above-fold quote form or consultation booking widget to capture visitor intent."
+      ],
+      "quickFix": "Add one primary CTA button (call or book) in the hero and a short 3-field inquiry form."
+    }
+  },
+  "biggestOpportunity": "By deploying a modern mobile-first site with click-to-call and a local SEO foundation, Summit Peak Plumbing could capture 25–40% more inbound leads from Denver, CO searchers — turning their website from a brochure into a lead generation engine."
+}

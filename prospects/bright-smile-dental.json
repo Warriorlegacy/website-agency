@@ -1,0 +1,61 @@
+{
+  "businessName": "Bright Smile Dental",
+  "slug": "bright-smile-dental",
+  "url": "http://example.com/brightdental",
+  "niche": "medical",
+  "city": "Miami, FL",
+  "ownerName": "Dr. Sarah Adams",
+  "ownerEmail": "sarah@brightsmilemiami.com",
+  "phone": "(305) 555-0182",
+  "auditDate": "2026-08-31T20:44:06.812Z",
+  "liveSiteDetected": false,
+  "overallScore": 3,
+  "dimensions": {
+    "design": {
+      "score": 3,
+      "status": "Critical Outdated",
+      "problems": [
+        "Visual layout lacks modern glassmorphism / contemporary hierarchy, lowering instant brand trust.",
+        "Missing high-resolution retina assets and responsive badge proofing."
+      ],
+      "quickFix": "Deploy a clean, mobile-first design with high-contrast typography, clear value pillars, and trust badges."
+    },
+    "mobile": {
+      "score": 3,
+      "status": "Needs Urgent Fix",
+      "problems": [
+        "Missing responsive viewport tag; page renders as a shrunk desktop view on smartphones.",
+        "Navigation menu lacks a native sticky tap-to-call action bar for mobile users."
+      ],
+      "quickFix": "Add responsive container breakpoints and an instant sticky bottom call/booking bar for mobile visitors."
+    },
+    "speed": {
+      "score": 4,
+      "status": "Sub-optimal",
+      "problems": [
+        "Uncompressed image assets and render-blocking scripts delay First Contentful Paint (FCP).",
+        "Heavy legacy DOM payload leads to high interaction latency on cellular networks."
+      ],
+      "quickFix": "Utilize zero-dependency static HTML/CSS delivery with optimized web fonts for sub-500ms load times."
+    },
+    "seo": {
+      "score": 3,
+      "status": "Unoptimized",
+      "problems": [
+        "Missing localized meta description and target keyword clusters for \"medical in Miami, FL\".",
+        "Missing primary <h1> semantic heading tag."
+      ],
+      "quickFix": "Inject Schema.org LocalBusiness JSON-LD markup and geo-optimized H1 and title tags for Miami, FL."
+    },
+    "conversion": {
+      "score": 2,
+      "status": "High Leakage",
+      "problems": [
+        "Phone numbers are plain unclickable text; mobile users cannot tap-to-call immediately.",
+        "No frictionless quote request modal or instant booking trigger above the fold."
+      ],
+      "quickFix": "Add one-touch click-to-call buttons in the hero section and a dedicated consultation booking flow."
+    }
+  },
+  "biggestOpportunity": "By adding a sticky mobile tap-to-call button and a modern high-trust hero section tailored for Miami, FL, Bright Smile Dental can capture an estimated 25%–40% more inbound customer inquiries each month."
+}

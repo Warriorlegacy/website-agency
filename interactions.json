@@ -1,0 +1,115 @@
+[
+  {
+    "lead_slug": "rossis-pizzeria",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:08:57.691Z"
+  },
+  {
+    "lead_slug": "bright-smile-dental",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:08:57.698Z"
+  },
+  {
+    "lead_slug": "vance-sterling-law",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:08:57.708Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "action": "dry_run:generate_mvp",
+    "channel": "system",
+    "reason": "Audit complete — generating demo site",
+    "timestamp": "2026-09-17T08:08:57.715Z"
+  },
+  {
+    "lead_slug": "restaurants",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:08:57.724Z"
+  },
+  {
+    "lead_slug": "what-are-the-best-restaurants-with-outdoor-seating",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:08:57.731Z"
+  },
+  {
+    "lead_slug": "summit-peak-plumbing",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 115,
+    "summary": "Robert Miller, owner of Summit Peak Plumbing, agreed to review a pre-built website demo after Alex from Apex AI Web Studio addressed his concerns about time and cost, offering a flat $750 package.",
+    "transcript": "ALEX: Good morning, Robert. My name is Alex, and I'm a sales consultant with Apex AI Web Studio. I was doing some research on local businesses in Denver and came across Summit Peak Plumbing. You've got fantastic 4.7-star reviews, which is really impressive! I also noticed your current website might not be fully showcasing that excellence, so we actually took the liberty of building a quick, modern demo site specifically for Summit Peak Plumbing to show you what's possible.\nOWNER: Hmm, okay. Robert Miller here. Thanks for the compliment, but I'm pretty swamped today, Alex. What exactly is this about, and how much is this 'demo' going to cost me? I get calls like this all the time.\nALEX: Absolutely, Robert, I understand you're busy, and I appreciate you taking my call. To answer your questions: we found you through online searches, looking for highly-rated local businesses with potential for a website refresh. The demo itself is completely free, no obligation whatsoever. Our goal is just to show you what a modern, mobile-friendly site could look like for Summit Peak Plumbing. If you like it, our full package for a site like this is a flat $750, all-inclusive. It's designed to be quick and affordable for busy owners like yourself. I can send you the link right now, it's live at http://localhost:3030/demos/summit-peak-plumbing/index.html.\nOWNER: A flat $750, huh? That's... surprisingly reasonable. Okay, Alex, I'm intrigued. Send me that link. I can't promise to look at it right this second, but I'll definitely take a look later this afternoon when things calm down. What's the best way to get that link?",
+    "timestamp": "2026-09-17T08:46:09.667Z"
+  },
+  {
+    "lead_slug": "rossis-pizzeria",
+    "action": "deal_closed_won",
+    "channel": "payment_engine",
+    "direction": "inbound",
+    "deposit_amount": 750,
+    "package": "growth",
+    "client_folder": "clients/rossis-pizzeria",
+    "timestamp": "2026-09-17T08:46:48.987Z"
+  },
+  {
+    "lead_slug": "bright-smile-dental",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:47:04.728Z"
+  },
+  {
+    "lead_slug": "vance-sterling-law",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:47:04.753Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "action": "dry_run:generate_mvp",
+    "channel": "system",
+    "reason": "Audit complete — generating demo site",
+    "timestamp": "2026-09-17T08:47:04.781Z"
+  },
+  {
+    "lead_slug": "restaurants",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:47:04.792Z"
+  },
+  {
+    "lead_slug": "what-are-the-best-restaurants-with-outdoor-seating",
+    "action": "dry_run:send_email",
+    "channel": "system",
+    "reason": "Outreach drafted — sending initial email",
+    "timestamp": "2026-09-17T08:47:04.808Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "action": "dry_run:audit",
+    "channel": "system",
+    "reason": "New lead — running 5-dimension audit",
+    "timestamp": "2026-09-17T08:47:04.824Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "action": "dry_run:audit",
+    "channel": "system",
+    "reason": "New lead — running 5-dimension audit",
+    "timestamp": "2026-09-17T08:47:04.835Z"
+  }
+]

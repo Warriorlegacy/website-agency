@@ -1,0 +1,53 @@
+name: 24/7 Autonomous Agency Autopilot
+
+on:
+  schedule:
+    # Runs every 2 hours continuously in the cloud (even when your PC is turned off)
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+    # Allows manually triggering an autonomous cycle from GitHub UI with one click
+
+permissions:
+  contents: write
+
+jobs:
+  autopilot-cycle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run 24/7 Autopilot Cycle
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          CAL_API_KEY: ${{ secrets.CAL_API_KEY }}
+          VAPI_API_KEY: ${{ secrets.VAPI_API_KEY }}
+          BLAND_API_KEY: ${{ secrets.BLAND_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          echo "🚀 Starting Cloud Autonomous Agency Cycle..."
+          node scripts/autopilot.js --once
+
+      - name: Commit & Push Updated CRM Data
+        run: |
+          git config --global user.name "Apex AI Agency Bot"
+          git config --global user.email "bot@apexwebstudio.com"
+          git add pipeline.json interactions.json prospects/ demos/ outreach/ proposals/ clients/ reports/ || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit in this cycle."
+          else
+            git commit -m "chore(autopilot): autonomous pipeline cycle update [skip ci]"
+            git push
+            echo "✅ Successfully synced updated CRM pipeline back to repository."
+          fi
