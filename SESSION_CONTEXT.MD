@@ -39,12 +39,16 @@ Apex AI Web Studio operates on a **"Show Don't Tell"** consultative model for lo
 | **Hermes Orchestrator Integration (`scripts/hermes.js`)** | ✅ Built | Central autonomous AI engine evaluating lead states and triggering next pipeline actions including voice calls and deal closing. |
 | **Interactions Audit Log (`interactions.json`)** | ✅ Built | Structured event ledger recording timestamps, triggers, decisions, call transcripts, and outcomes. |
 | **Reply Classifier (`scripts/lib/reply_classifier.js`)** | ✅ Built | AI intent classification for incoming replies (`interested`, `objection`, `unsubscribe`, `out_of_office`). |
-| **Email Sending Engine (`scripts/lib/email_sender.js`)** | ✅ Built | Production email dispatcher with Resend API, SMTP fallback, and dry-run safety modes. |
+| **Email Sending Engine (`scripts/lib/email_sender.js`)** | ✅ Verified | Direct Gmail SMTP with STARTTLS (Port 587) via `rajpiyush092@gmail.com` + Resend API fallback. Tested live and verified. |
+| **Cloud Demo Hosting (GitHub Pages)** | ✅ Live | All client redesign demos hosted publicly at `https://warriorlegacy.github.io/website-agency/` with root agency portal. |
+| **Dual PDF & MD Delivery Engine (`scripts/lib/pdf_generator.js`)** | ✅ Built | Zero-npm pure JS PDF 1.4 compiler generating formatted executive reports and dispatching to Telegram (`@APEXweb_STUDIO_BOT`). |
+| **24/7 Cloud Cron (`cron-job.org`)** | ✅ Active | Webcron Job ID `8461816` triggering repository dispatches 6x daily (08, 11, 14, 17, 20, 23 IST) + GitHub Actions runner. |
+| **Payment Rails (`scripts/lib/closing_engine.js`)** | ✅ Built | Multi-rail checkout: UPI (`6202442690@jio`), PayPal (`paypal.me/signhify`), Bank Wire (`JIOP0000001`), WhatsApp (`+91 6202442690`). |
 | **Screenshot Engine (`scripts/lib/screenshot.js`)** | ✅ Built | Automated visual demo capture supporting ScreenshotOne, urlbox, and responsive SVG mockups. |
 | **Proposal Generator (`scripts/lib/proposal_generator.js` & `templates/proposal.html`)** | ✅ Built | Glassmorphic interactive client proposals featuring 3 pricing tiers and deposit checkout links. |
 | **Payment Integrations (`scripts/lib/payment.js`)** | ✅ Built | Razorpay and Stripe payment link generation for 50% upfront deposits. |
 | **Meeting Scheduler (`scripts/lib/scheduler.js`)** | ✅ Built | Cal.com API integration and Calendly direct booking link generator. |
-| **Daily Summary Bot (`scripts/daily_summary.js`)** | ✅ Built | Pipeline digest notifier supporting Telegram Bot API with Markdown file fallback. |
+| **Daily Summary Bot (`scripts/daily_summary.js`)** | ✅ Built | Pipeline digest notifier supporting Telegram Bot API with Markdown & PDF document delivery. |
 | **6 Niche Templates (`templates/`)** | ✅ Built | Trade/Contractor, Medical/Dental, Restaurant/Cafe, Professional/Legal, Salon/Beauty, and Fitness/Gym. |
 | **Master CLI (`scripts/agency_cli.js`)** | ✅ Updated | 16 unified CLI commands including `autopilot`, `scrape-maps`, `call`, and `close-deal`. |
 | **Preview Server & API (`scripts/preview_server.js`)** | ✅ Updated | 23 REST API endpoints + Server-Sent Events live log streaming. |
