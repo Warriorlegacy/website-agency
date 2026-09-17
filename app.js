@@ -14,12 +14,19 @@ const state = {
   isLoading: false
 };
 
-// API Client
+// API Client — auto-detects local vs cloud
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? ''
+  : 'https://apex-webstudio-api.piyushrajsingh092.workers.dev';
+
 const api = {
   async getPipeline() {
     try {
-      const res = await fetch('/api/pipeline');
-      if (res.ok) return await res.json();
+      const res = await fetch(`${API_BASE}/api/prospects`);
+      if (res.ok) {
+        const data = await res.json();
+        return { agency_name: "Apex AI Web Studio", prospects: data.prospects || [], pipeline_summary: {} };
+      }
     } catch {}
     try {
       const fallback = await fetch('/pipeline.json');
@@ -29,12 +36,12 @@ const api = {
   },
 
   async getProspect(slug) {
-    const res = await fetch(`/api/prospect/${slug}`);
+    const res = await fetch(`${API_BASE}/api/prospects/${slug}`);
     return await res.json();
   },
 
   async runAudit(data) {
-    const res = await fetch('/api/audit', {
+    const res = await fetch(`${API_BASE}/api/audit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...data, apiKey: state.groqApiKey })
@@ -43,7 +50,7 @@ const api = {
   },
 
   async generateDemo(data) {
-    const res = await fetch('/api/generate-demo', {
+    const res = await fetch(`${API_BASE}/api/demo`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -52,7 +59,7 @@ const api = {
   },
 
   async generateOutreach(data) {
-    const res = await fetch('/api/generate-outreach', {
+    const res = await fetch(`${API_BASE}/api/outreach`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -61,34 +68,32 @@ const api = {
   },
 
   async runAll(data) {
-    const res = await fetch('/api/run-all', {
+    const res = await fetch(`${API_BASE}/api/prospects`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, apiKey: state.groqApiKey })
+      body: JSON.stringify({ ...data, stage: 'DISCOVERED' })
     });
     return await res.json();
   },
 
   async updateStage(slug, stage) {
-    const res = await fetch('/api/update-stage', {
-      method: 'POST',
+    const res = await fetch(`${API_BASE}/api/prospects/${slug}`, {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug, stage })
+      body: JSON.stringify({ stage })
     });
     return await res.json();
   },
 
   async deleteProspect(slug) {
-    const res = await fetch('/api/delete-prospect', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug })
+    const res = await fetch(`${API_BASE}/api/prospects/${slug}`, {
+      method: 'DELETE'
     });
     return await res.json();
   },
 
   async importCsv(csvText) {
-    const res = await fetch('/api/import-csv', {
+    const res = await fetch(`${API_BASE}/api/prospects`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ csvText })
@@ -302,7 +307,7 @@ async function renderOutreach() {
   if (selector) selector.value = p.slug;
 
   const firstName = p.ownerName && p.ownerName !== 'Business Owner' ? p.ownerName.split(' ')[0] : 'there';
-  const demoUrl = `http://localhost:3030/demos/${p.slug}/index.html`;
+  const demoUrl = `${API_BASE}/demos/${p.slug}/index.html`;
 
   let subject = `Quick redesign idea for ${p.businessName}`;
   let body = '';
