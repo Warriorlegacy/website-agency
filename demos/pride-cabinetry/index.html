@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pride Cabinetry — Expert Plumbing & Mechanical Services in Denver, CO</title>
+  <meta name="description" content="Pride Cabinetry provides fast, certified, and 5-star Plumbing & Mechanical Services services across Denver, CO and surrounding areas. Call (555) 234-5678 for 24/7 rapid dispatch.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(22, 27, 39, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.25);
+      --accent-blue: #3b82f6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius: 16px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    
+    /* Top Urgency Banner */
+    .top-bar { background: linear-gradient(90deg, #b45309, #d97706); padding: 8px 16px; text-align: center; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    
+    /* Navigation */
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 5%; max-width: 1280px; margin: 0 auto; }
+    .logo { font-size: 1.4rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: #fff; display: flex; align-items: center; gap: 10px; }
+    .logo-badge { background: var(--accent); color: #000; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 900; }
+    .nav-cta { background: var(--accent); color: #000; padding: 10px 22px; border-radius: 99px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 20px var(--accent-glow); transition: all 0.2s; }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+    
+    /* Hero */
+    .hero { padding: 60px 5% 80px; max-width: 1280px; margin: 0 auto; text-align: center; position: relative; }
+    .hero-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 6px 16px; border-radius: 99px; font-size: 0.85rem; font-weight: 600; color: #fbbf24; margin-bottom: 24px; }
+    .hero h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-family: 'Space Grotesk', sans-serif; font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.5px; }
+    .hero h1 span { background: linear-gradient(135deg, #fbbf24, #f59e0b, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 680px; margin: 0 auto 36px; }
+    .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 48px; }
+    .btn-primary { background: var(--accent); color: #000; font-weight: 800; font-size: 1.05rem; padding: 14px 32px; border-radius: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px var(--accent-glow); transition: transform 0.2s; }
+    .btn-primary:hover { transform: scale(1.03); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: #fff; font-weight: 600; font-size: 1.05rem; padding: 14px 28px; border-radius: 12px; text-decoration: none; }
+    
+    /* Proof Bar */
+    .trust-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; max-width: 1000px; margin: 0 auto; }
+    .trust-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 18px; text-align: center; backdrop-filter: blur(12px); }
+    .trust-num { font-size: 1.8rem; font-weight: 800; color: #fbbf24; font-family: 'Space Grotesk', sans-serif; }
+    .trust-label { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Services Grid */
+    .section { padding: 80px 5%; max-width: 1280px; margin: 0 auto; }
+    .section-head { text-align: center; margin-bottom: 50px; }
+    .section-subtitle { color: var(--accent); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1.5px; margin-bottom: 8px; }
+    .section-title { font-size: clamp(1.8rem, 3vw, 2.5rem); font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+    
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .service-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 32px; backdrop-filter: blur(12px); transition: border-color 0.2s, transform 0.2s; position: relative; }
+    .service-card:hover { border-color: rgba(245, 158, 11, 0.4); transform: translateY(-4px); }
+    .service-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(245, 158, 11, 0.1); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px; }
+    .service-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; }
+    .service-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 18px; }
+    .service-link { color: var(--accent); font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    
+    /* Why Choose Us */
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .feature-box { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 24px; display: flex; gap: 16px; align-items: flex-start; }
+    .feature-check { color: #22c55e; font-size: 1.3rem; line-height: 1; }
+    
+    /* Reviews */
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .review-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 28px; backdrop-filter: blur(12px); }
+    .stars { color: #f59e0b; margin-bottom: 14px; font-size: 1.1rem; }
+    .review-text { font-size: 0.95rem; color: #cbd5e1; margin-bottom: 18px; font-style: italic; }
+    .reviewer { font-weight: 700; font-size: 0.9rem; color: #fff; }
+    .reviewer-meta { font-size: 0.8rem; color: var(--text-muted); }
+    
+    /* Estimate Modal Trigger / Fast Lead Form */
+    .cta-banner { background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(59, 130, 246, 0.15)); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 24px; padding: 50px 5%; text-align: center; margin: 40px auto 80px; max-width: 1100px; }
+    .cta-banner h2 { font-size: 2.2rem; font-family: 'Space Grotesk', sans-serif; margin-bottom: 14px; }
+    .cta-banner p { color: var(--text-muted); max-width: 600px; margin: 0 auto 30px; }
+    
+    /* Sticky Mobile Call Bar */
+    .mobile-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(9, 10, 15, 0.95); backdrop-filter: blur(16px); border-top: 1px solid var(--card-border); padding: 12px 16px; display: none; justify-content: space-between; align-items: center; z-index: 999; }
+    .mobile-call { flex: 1; background: #22c55e; color: #000; text-align: center; padding: 14px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 1rem; margin-right: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .mobile-quote { flex: 1; background: var(--accent); color: #000; text-align: center; padding: 14px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 1rem; }
+    
+    /* Footer */
+    footer { border-top: 1px solid var(--card-border); padding: 40px 5% 60px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+    .preview-badge { display: inline-block; background: rgba(59, 130, 246, 0.1); border: 1px dashed #3b82f6; color: #60a5fa; padding: 6px 16px; border-radius: 8px; font-size: 0.75rem; margin-top: 20px; }
+    
+    @media (max-width: 768px) {
+      .mobile-bar { display: flex; }
+      body { padding-bottom: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Urgency Dispatch Banner -->
+  <div class="top-bar">
+    ⚡ 24/7 Rapid Emergency Response across Denver, CO & Surrounding Areas
+  </div>
+
+  <!-- Header -->
+  <nav>
+    <div class="logo">
+      <span class="logo-badge">PRO</span>
+      Pride Cabinetry
+    </div>
+    <a href="tel:(555) 234-5678" class="nav-cta">
+      📞 Call (555) 234-5678
+    </a>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-pill">
+      ⭐ Rated #1 Plumbing & Mechanical Services in Denver, CO
+    </div>
+    <h1>
+      Reliable & Fast <span>Plumbing & Mechanical Services</span> You Can Count On
+    </h1>
+    <p>
+      Serving Denver, CO homeowners and businesses with transparent upfront pricing, certified master technicians, and a 100% satisfaction guarantee.
+    </p>
+    <div class="hero-actions">
+      <a href="tel:(555) 234-5678" class="btn-primary">
+        📞 Tap to Call: (555) 234-5678
+      </a>
+      <a href="#services" class="btn-secondary">
+        Explore Services & Pricing
+      </a>
+    </div>
+
+    <!-- Trust Numbers -->
+    <div class="trust-bar">
+      <div class="trust-card">
+        <div class="trust-num">4.9 ★</div>
+        <div class="trust-label">Over 250+ Verified Reviews</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-num">15+ Yrs</div>
+        <div class="trust-label">Serving Local Denver, CO Families</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-num">45 Min</div>
+        <div class="trust-label">Average Emergency Arrival</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-num">100%</div>
+        <div class="trust-label">Licensed & Insured Warranty</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Services Grid -->
+  <section class="section" id="services">
+    <div class="section-head">
+      <div class="section-subtitle">What We Do</div>
+      <h2 class="section-title">Professional Plumbing & Mechanical Services Services</h2>
+    </div>
+    <div class="services-grid">
+      
+      <div class="service-card">
+        <div class="service-icon">⚡</div>
+        <h3>Emergency 24/7 Repairs</h3>
+        <p>Rapid response for urgent pipe bursts, water leaks, and heating failures.</p>
+      </div>
+    
+
+      <div class="service-card">
+        <div class="service-icon">🛠️</div>
+        <h3>System Installation & Upgrades</h3>
+        <p>High-efficiency modern equipment installations with guaranteed parts & labor warranty.</p>
+      </div>
+    
+
+      <div class="service-card">
+        <div class="service-icon">🔍</div>
+        <h3>Comprehensive Safety Inspection</h3>
+        <p>Preventative diagnostic checks using video cameras and pressure testing.</p>
+      </div>
+    
+
+      <div class="service-card">
+        <div class="service-icon">🛡️</div>
+        <h3>Maintenance & Servicing</h3>
+        <p>Scheduled seasonal tune-ups to keep your home running smoothly all year round.</p>
+      </div>
+    
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="section" style="background: rgba(255,255,255,0.01);">
+    <div class="section-head">
+      <div class="section-subtitle">The Pride Cabinetry Difference</div>
+      <h2 class="section-title">Why Denver, CO Chooses Us</h2>
+    </div>
+    <div class="features">
+      <div class="feature-box">
+        <div class="feature-check">✓</div>
+        <div>
+          <h4>Upfront Fixed Estimates</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">No surprise invoices or hidden trip charges. You approve the quote before we touch a tool.</p>
+        </div>
+      </div>
+      <div class="feature-box">
+        <div class="feature-check">✓</div>
+        <div>
+          <h4>Licensed & Background-Checked</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Every technician is drug-tested, certified, and arrives in full uniform with clean boot covers.</p>
+        </div>
+      </div>
+      <div class="feature-box">
+        <div class="feature-check">✓</div>
+        <div>
+          <h4>Same-Day & 24/7 Emergency Dispatch</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Fully stocked service trucks ready to fix most emergencies in a single visit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-subtitle">Real Customer Feedback</div>
+      <h2 class="section-title">What Our Denver, CO Neighbors Say</h2>
+    </div>
+    <div class="reviews-grid">
+      
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Arrived within 30 minutes on a Sunday morning! Fixed our burst pipe quickly and charged exactly what was quoted. Extremely professional."</p>
+      <div class="reviewer">Sarah Jenkins</div>
+      <div class="reviewer-meta">Homeowner · Denver, CO</div>
+    </div>
+  
+
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Top-notch work. Cleaned up everything afterwards and explained the whole repair clearly. The only contractor we trust now."</p>
+      <div class="reviewer">David Miller</div>
+      <div class="reviewer-meta">Local Business Owner · Denver, CO</div>
+    </div>
+  
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <h2>Need Fast, Reliable Plumbing & Mechanical Services in Denver, CO?</h2>
+    <p>Speak directly with a certified technician right now. No automated phone trees.</p>
+    <a href="tel:(555) 234-5678" class="btn-primary" style="font-size: 1.2rem; padding: 18px 40px;">
+      📞 Call Now: (555) 234-5678
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p><strong>Pride Cabinetry</strong> · Licensed, Bonded & Insured · Denver, CO</p>
+    <p style="margin-top: 6px;">Email: contact@pride-cabinetry.com · Phone: (555) 234-5678</p>
+    <div class="preview-badge">
+      ⚡ Modern Redesign Preview Scaffolded by Apex AI Web Studio
+    </div>
+  </footer>
+
+  <!-- Sticky Mobile Quick Action Bar -->
+  <div class="mobile-bar">
+    <a href="tel:(555) 234-5678" class="mobile-call">📞 Tap to Call</a>
+    <a href="tel:(555) 234-5678" class="mobile-quote">Get Fast Quote</a>
+  </div>
+
+
+<script>
+  // Interactive Demo Script
+  document.addEventListener('DOMContentLoaded', () => {
+    // Add Click listener to any non-tel CTA
+    document.querySelectorAll('a[href="#services"], a[href="#menu"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
