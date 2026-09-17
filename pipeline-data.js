@@ -1,1 +1,1 @@
-window.__PIPELINE_DATA__ = {"total_prospects":9,"discovered":0,"audited":0,"demo_generated":0,"outreach_drafted":0,"contacted":7,"meeting_scheduled":0,"closed_won":2,"closed_lost":0,"pipeline_value_usd":13500};
+window.__PIPELINE_DATA__ = {"total_prospects":10,"discovered":0,"audited":0,"demo_generated":0,"outreach_drafted":0,"contacted":10,"meeting_scheduled":0,"closed_won":0,"closed_lost":0,"pipeline_value_usd":15000};
