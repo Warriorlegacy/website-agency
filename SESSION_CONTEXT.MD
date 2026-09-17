@@ -291,15 +291,57 @@ To operate with complete autonomy and zero human intervention, the agency archit
 
 | Component | Required Key / Provider | Current Status | Purpose in Zero-Touch Automation |
 |-----------|-------------------------|----------------|----------------------------------|
+| **Outbound Cold Email (Gmail SMTP)** | `GMAIL_USER` & `GMAIL_PASS` | ✅ Active & Verified (`rajpiyush092@gmail.com`) | Zero-dependency STARTTLS (Port 587) engine sending cold emails directly into client inboxes with no sandbox domain lock. |
+| **Transactional Email (Fallback)** | `RESEND_API_KEY` | ✅ Active (`re_...`) | Fallback email delivery engine. |
 | **High-Speed AI Reasoning** | `GROQ_API_KEY` | ✅ Active (`gsk_...`) | Sub-second LLM decisions, lead scoring, and reply classification (`qwen/qwen3.8-27b`). |
 | **Failover Multi-Modal AI** | `GEMINI_API_KEY` | ✅ Active (`AQ...`) | Deep website audit analysis, visual critique, and backup LLM (`gemini-2.5-flash`). |
-| **AI Voice Outbound Calling** | `VAPI_API_KEY` & `VAPI_ASSISTANT_ID` | ✅ Active (`5425...` / `65e7...`) | Places outbound AI cold calls, handles objections, checks calendar availability. *Note: Dialing real external phone lines requires an active phone number in Vapi dashboard.* |
-| **Transactional Cold Email** | `RESEND_API_KEY` | ✅ Active (`re_...`) | Dispatches 3-touch personalized outreach. *Note: Sending to external business domains requires domain verification at resend.com/domains.* |
+| **AI Voice Outbound Calling** | `VAPI_API_KEY` & `VAPI_ASSISTANT_ID` | ✅ Active (`5425...` / `65e7...`) | Places outbound AI cold calls, handles objections, checks calendar availability. *Note: Real PSTN dialing requires adding a phone number in Vapi dashboard.* |
 | **Discovery Scheduler** | `CAL_API_KEY` | ✅ Active (`cal_...`) | Real-time calendar slot booking via `cal.com/piyush-usctna/15min`. |
 | **Real-Time Telegram Reporter**| `TELEGRAM_BOT_TOKEN` & `CHAT_ID`| ✅ Active (`8333...` / `8800893070`) | Real-time text alerts + document file delivery on every workflow run. |
 | **Google Places API Key** *(Optional)* | Google Cloud `places.googleapis.com` | 🟡 Recommended for Google Maps | Direct official Google Maps search (ratings, reviews, place IDs, owner websites). |
 | **Jina AI API Key** *(Optional)* | `jina.ai` (Free tier) | 🟡 Recommended for Web Search | Free deep web reader & decision-maker search (`s.jina.ai`). |
 | **Hunter.io / Apollo Key** *(Optional)* | `hunter.io` / `apollo.io` (Free tier) | ⚪ Optional Enrichment | Finding verified personal emails of business owners. |
+
+---
+
+## 14. Direct Outbound Cold Email Engine (Gmail SMTP + STARTTLS Port 587)
+
+To solve external cold email delivery without requiring paid domain verification or sandbox locks (such as Resend's `onboarding@resend.dev` restriction), Apex AI Web Studio features a built-in, zero-npm asynchronous SMTP client (`scripts/lib/email_sender.js`):
+
+- **Sender Account:** `rajpiyush092@gmail.com`
+- **Authentication:** Google App Password (`qnbdjbyttyfagudo` under application "Apex AI")
+- **Protocol:** Standard SMTP over `STARTTLS` on submission port `587` (`smtp.gmail.com`)
+- **Handshake Flow:**
+  1. TCP connection established to `smtp.gmail.com:587`.
+  2. Greet server with `EHLO localhost` and receive capabilities (`250-STARTTLS`).
+  3. Send `STARTTLS` and upgrade raw TCP stream to secure TLS via `tls.connect`.
+  4. Greet server again with `EHLO localhost` over TLS.
+  5. Authenticate via `AUTH LOGIN` with base64-encoded username and app password (`235 2.7.0 Accepted`).
+  6. Transmit RFC 5322 formatted MIME message with HTML body, live demo preview button, and CAN-SPAM compliant opt-out footer.
+- **Verification:**
+  - Live test message sent to `rajpiyush092@gmail.com` returned `200 OK` (`messageId: smtp-1789647821929`).
+  - Recorded in `interactions.json`.
+- **Cloud Runner Synchronization:**
+  - `GMAIL_USER`, `GMAIL_PASS`, `SMTP_USER`, and `SMTP_PASS` added to GitHub repository secrets using GitHub CLI.
+  - Exported into `.github/workflows/autopilot.yml` so all 6x daily scheduled cloud cron runs can send live cold outreach autonomously.
+
+---
+
+## 15. Public Cloud Demo Hosting Infrastructure (GitHub Pages)
+
+Prospects can view their custom redesign demos immediately via 100% free, high-performance static hosting on GitHub Pages:
+
+- **Agency Showcase Portal:** [https://warriorlegacy.github.io/website-agency/](https://warriorlegacy.github.io/website-agency/)
+- **Live Client Demo Demos:**
+  - **First Watch (Restaurant/Cafe):** [https://warriorlegacy.github.io/website-agency/demos/first-watch/index.html](https://warriorlegacy.github.io/website-agency/demos/first-watch/index.html)
+  - **Arby's (Restaurant):** [https://warriorlegacy.github.io/website-agency/demos/arbys/index.html](https://warriorlegacy.github.io/website-agency/demos/arbys/index.html)
+  - **Pride Cabinetry (Trade/Contractor):** [https://warriorlegacy.github.io/website-agency/demos/pride-cabinetry/index.html](https://warriorlegacy.github.io/website-agency/demos/pride-cabinetry/index.html)
+  - **Rossi's Pizzeria (Restaurant):** [https://warriorlegacy.github.io/website-agency/demos/rossis-pizzeria/index.html](https://warriorlegacy.github.io/website-agency/demos/rossis-pizzeria/index.html)
+  - **Bright Smile Dental (Medical/Dental):** [https://warriorlegacy.github.io/website-agency/demos/bright-smile-dental/index.html](https://warriorlegacy.github.io/website-agency/demos/bright-smile-dental/index.html)
+- **Integration Across the Stack:**
+  - The central URL helper `getPublicDemoUrl(slug)` in `scripts/lib/config_loader.js` dynamically generates these public URLs.
+  - Embedded into all outgoing cold emails, interactive proposals, Telegram alerts, and AI voice call scripts.
+
 
 
 
