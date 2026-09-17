@@ -1,13 +1,13 @@
 {
   "agency_name": "Apex AI Web Studio",
   "version": "1.0.0",
-  "last_updated": "2026-09-17T09:57:08.601Z",
+  "last_updated": "2026-09-17T10:06:06.774Z",
   "pipeline_summary": {
     "total_prospects": 9,
     "discovered": 0,
-    "audited": 3,
-    "demo_generated": 1,
-    "outreach_drafted": 4,
+    "audited": 0,
+    "demo_generated": 3,
+    "outreach_drafted": 5,
     "contacted": 0,
     "meeting_scheduled": 0,
     "closed_won": 1,
@@ -73,10 +73,10 @@
       "ownerEmail": "james@apexelectric.test",
       "phone": "(555) 000-0000",
       "overallScore": 3,
-      "stage": "DEMO_GENERATED",
+      "stage": "OUTREACH_DRAFTED",
       "demoPath": "/demos/apex-electrical-solutions/index.html",
       "outreachPath": "/outreach/apex-electrical-solutions.md",
-      "lastAction": "2026-09-17T09:56:51.657Z"
+      "lastAction": "2026-09-17T10:06:06.539Z"
     },
     {
       "slug": "restaurants",
@@ -122,12 +122,13 @@
       "reviewCount": 42,
       "ownerName": "Business Owner",
       "ownerEmail": "contact@bella-napoli-trattoria.com",
-      "stage": "AUDITED",
+      "stage": "DEMO_GENERATED",
       "source": "simulated_local",
       "opportunityHook": "No website listed on Google Maps profile",
       "createdAt": "2026-09-17T08:45:49.876Z",
-      "lastAction": "2026-09-17T09:57:00.582Z",
-      "overallScore": 3
+      "lastAction": "2026-09-17T10:06:06.771Z",
+      "overallScore": 3,
+      "demoPath": "/demos/bella-napoli-trattoria/index.html"
     },
     {
       "slug": "blue-harbor-seafood-bar",
@@ -141,12 +142,13 @@
       "reviewCount": 57,
       "ownerName": "Business Owner",
       "ownerEmail": "contact@blue-harbor-seafood-bar.com",
-      "stage": "AUDITED",
+      "stage": "DEMO_GENERATED",
       "source": "simulated_local",
       "opportunityHook": "No website listed on Google Maps profile",
       "createdAt": "2026-09-17T08:45:49.881Z",
-      "lastAction": "2026-09-17T09:57:01.920Z",
-      "overallScore": 2
+      "lastAction": "2026-09-17T10:06:06.773Z",
+      "overallScore": 2,
+      "demoPath": "/demos/blue-harbor-seafood-bar/index.html"
     },
     {
       "slug": "cornerstone-artisan-bakery",
@@ -160,12 +162,13 @@
       "reviewCount": 72,
       "ownerName": "Business Owner",
       "ownerEmail": "contact@cornerstone-artisan-bakery.com",
-      "stage": "AUDITED",
+      "stage": "DEMO_GENERATED",
       "source": "simulated_local",
       "opportunityHook": "No website listed on Google Maps profile",
       "createdAt": "2026-09-17T09:56:51.305Z",
-      "lastAction": "2026-09-17T09:57:08.600Z",
-      "overallScore": 3
+      "lastAction": "2026-09-17T10:06:06.774Z",
+      "overallScore": 3,
+      "demoPath": "/demos/cornerstone-artisan-bakery/index.html"
     }
   ]
 }

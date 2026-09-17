@@ -222,5 +222,68 @@
     "summary": "Robert Miller agreed to review the pre-built website demo sent via link after learning it was a flat $750 package.",
     "transcript": "ALEX: Hi, this is Alex with Apex AI Web Studio. I’m calling about your online presence for Summit Peak Plumbing. I know you’re busy, so I’ll be brief: I’ve built a quick, modern demo of what your site could look like to help you win more Denver jobs. Do you have thirty seconds?\nOWNER: I’m in the middle of a job here. What is this about? And how did you even find my number? I’m not really in the market for a new website right now.\nALEX: I found you through your 4.7-star rating on local directories; you’re clearly doing great work, but your current site looks a bit dated compared to your reputation. I’m not selling a long-term contract today. I’ve already built a live demo specifically for you. It’s a flat $750 package if you like it, but first, I just want you to see it. Can I send the link now?\nOWNER: A flat $750? That’s cheaper than I expected, but I don’t have time to sit through a sales pitch. If it’s already built, just send me the link. If it looks good, I’ll look at it tonight. If not, we’re done.\nALEX: Understood. I’m sending the link to http://localhost:3030/demos/summit-peak-plumbing/index.html right now. It’s fully functional and tailored to your services. If you have any questions after you check it out, just reply to the email. Thanks for your time, Robert.\nOWNER: Copy that. I’ll take a look later. Thanks, Alex. Goodbye.",
     "timestamp": "2026-09-17T10:04:56.068Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-09-17T10:06:06.539Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/bella-napoli-trattoria/index.html",
+    "timestamp": "2026-09-17T10:06:06.771Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/blue-harbor-seafood-bar/index.html",
+    "timestamp": "2026-09-17T10:06:06.773Z"
+  },
+  {
+    "lead_slug": "cornerstone-artisan-bakery",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/cornerstone-artisan-bakery/index.html",
+    "timestamp": "2026-09-17T10:06:06.774Z"
+  },
+  {
+    "lead_slug": "restaurants",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 115,
+    "summary": "Owner agreed to review the pre-built website demo after hearing about the flat $750 price point.",
+    "transcript": "OWNER: I'm busy, what is this about?\nALEX: Hi Jordan, this is Alex from Apex AI Web Studio. I noticed your restaurant in Austin has a great 4.7-star rating, but your current website looks a bit outdated. I’ve already built a modern demo specifically for your business to show you how it could look. Do you have ten minutes to see it?\nOWNER: How did you find me? And what’s the cost? I don’t have time for a long sales pitch.\nALEX: I found you through local business directories. It’s a flat $750 package, no hidden fees. Since I’ve already built the demo, you can just click the link I’m sending you now to see the live site. It takes less than a minute to review.\nOWNER: Okay, send it over. If it looks good, I’ll take a look when I’m not in the kitchen.",
+    "timestamp": "2026-09-17T10:06:07.712Z"
+  },
+  {
+    "lead_slug": "what-are-the-best-restaurants-with-outdoor-seating",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "meeting_scheduled",
+    "duration_sec": 115,
+    "summary": "The business owner, Jordan, initially cautious and busy, agreed to review a pre-built website demo after Alex explained the $750 flat package and proposed a follow-up meeting if interested.",
+    "transcript": "ALEX: Hi Jordan, this is Alex from Apex AI Web Studio. I'm calling about 'What are the best restaurants with outdoor seating?' We've actually put together a quick, live demo of a modern website specifically for your business.\nOWNER: Alex, I'm pretty swamped right now, and honestly, I don't recall contacting you. What exactly is this regarding, and how did you even get my number?\nALEX: Apologies for catching you at a busy moment, Jordan. We noticed your current website could use an update, and our team specializes in creating modern, AI-powered sites. We built a live, interactive demo for 'What are the best restaurants with outdoor seating?' showcasing a sleek design and better functionality. We offer this as a flat $750 package. I can send you the link right now, or if you have just two minutes, I can quickly walk you through the highlights.\nOWNER: A live demo, huh? $750 for a website I haven't even discussed seems a bit much, and I'm still curious how you found us. But I am always looking for ways to improve. Okay, send over the link to that demo. I'll take a look tonight, and if it genuinely impresses me, let's schedule a quick 10-minute chat tomorrow to discuss it further.",
+    "timestamp": "2026-09-17T10:06:17.887Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 115,
+    "summary": "Owner agreed to review the pre-built website demo link sent via email after hearing the flat-rate pricing.",
+    "transcript": "ALEX: Hi, this is Alex from Apex AI Web Studio. I’m calling because I noticed Bella Napoli Trattoria has a fantastic 4.8-star rating in Austin, but you don’t have a website yet. I’ve actually built a custom demo for you and wanted to share it. Do you have a quick minute?\nOWNER: I’m in the middle of service, so I’m pretty busy. What is this about? And how did you even find us?\nALEX: I completely understand, Jordan. I’ll be brief. We found you through local business directories. We’ve created a modern, mobile-friendly website specifically for Bella Napoli. It’s a flat $750 package, no monthly fees, and I can send you the live link right now so you can check it on your phone in ten seconds.\nOWNER: Fifty... no, seven-fifty? That’s not bad. I’m skeptical about these demos, but if it’s just a link, I can look at it later. Send it over. I’ll give it a quick review tonight.\nALEX: Perfect. I’m sending the link to your email now. It’s a fully functional demo with your menu and photos. If you like what you see, we can hop on a 10-minute call next week to finalize. Thanks for your time, Jordan!",
+    "timestamp": "2026-09-17T10:06:19.000Z"
   }
 ]
