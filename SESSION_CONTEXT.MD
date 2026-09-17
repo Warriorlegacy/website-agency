@@ -241,8 +241,11 @@ The agency is deployed and actively running in the cloud for **100% free** using
   - `GEMINI_API_KEY`: Automatic failover LLM (`gemini-2.5-flash`)
   - `RESEND_API_KEY`: Verified email delivery engine
   - `CAL_API_KEY`: Cal.com API v2 meeting scheduler
+  - `VAPI_API_KEY`: Vapi.ai private API key for AI voice calling
+  - `VAPI_ASSISTANT_ID`: SIGNHIFY Outbound Agent (`65e7ac0a-6c30-43f1-b947-d1b27dc8cafc`)
   - `TELEGRAM_BOT_TOKEN`: APEX_STUDIO bot dispatcher
   - `TELEGRAM_CHAT_ID`: Direct notification recipient (`8800893070`)
+- **Automated Telegram Workflow Reports:** Dispatches a complete, rich HTML report to Piyush's Telegram on **every single workflow run** (run timing, pipeline health, scraped leads, generated demos, voice calls & outcomes, proposals, UPI ID `6202442690@jio`, and WhatsApp link), with an automated failure alert step if any step fails.
 
 ### How to Trigger or Monitor Cloud Runs
 - **Web UI:** Go to [Actions tab on GitHub](https://github.com/Warriorlegacy/website-agency/actions) -> `24/7 Autonomous Agency Autopilot` -> `Run workflow`.
