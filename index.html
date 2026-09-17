@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex AI Web Studio — Autonomous Agency Command Center</title>
+<meta name="description" content="Autonomous website redesign agency pipeline — discover, audit, demo, and close local business clients at scale with AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ─── Design Tokens ────────────────────────────────────────────────────────── */
+  :root {
+    --bg: #050509;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.14);
+    --text: #e8eaf0;
+    --muted: rgba(232,234,240,0.45);
+    --accent: #6366f1;
+    --accent2: #8b5cf6;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --cyan: #06b6d4;
+    --font: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── Ambient Background ────────────────────────────────────────────────────── */
+  .ambient {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(99,102,241,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(139,92,246,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 70%);
+  }
+
+  /* ─── Layout ────────────────────────────────────────────────────────────────── */
+  .app { position: relative; z-index: 1; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+  /* ─── Header ────────────────────────────────────────────────────────────────── */
+  header {
+    border-bottom: 1px solid var(--border);
+    background: rgba(5,5,9,0.8);
+    backdrop-filter: blur(20px);
+    position: sticky; top: 0; z-index: 100;
+    padding: 0 24px;
+  }
+  .header-inner {
+    max-width: 1400px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; gap: 24px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 16px; font-weight: 700; color: #fff;
+    letter-spacing: -0.3px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .header-stats {
+    display: flex; gap: 20px; align-items: center;
+  }
+  .stat-chip {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 12px;
+  }
+  .stat-chip strong { color: var(--text); font-weight: 600; }
+  .stat-chip.green strong { color: var(--green); }
+  .stat-chip.amber strong { color: var(--amber); }
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green); flex-shrink: 0;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* ─── Main Layout ────────────────────────────────────────────────────────────── */
+  .main {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* ─── Sidebar ────────────────────────────────────────────────────────────────── */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 24px 20px;
+    display: flex; flex-direction: column; gap: 24px;
+    background: rgba(255,255,255,0.01);
+    overflow-y: auto; max-height: calc(100vh - 64px);
+  }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .panel-title {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .panel-title::before { content: ''; width: 12px; height: 1px; background: var(--muted); }
+
+  /* Run Controls */
+  .form-group { margin-bottom: 14px; }
+  label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+  input, select {
+    width: 100%; padding: 10px 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-family: var(--font); font-size: 13px;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus { border-color: var(--accent); background: rgba(99,102,241,0.06); }
+  select option { background: #1a1a2e; }
+
+  .btn-run {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; border: none; border-radius: var(--radius-sm);
+    padding: 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: var(--font);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: opacity 0.2s, transform 0.15s;
+    position: relative; overflow: hidden;
+  }
+  .btn-run:hover { opacity: 0.92; transform: translateY(-1px); }
+  .btn-run:active { transform: translateY(0); }
+  .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-run .shimmer {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: shimmer 2.5s infinite;
+  }
+  @keyframes shimmer { to { transform: translateX(100%); } }
+
+  .btn-secondary {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); border-radius: var(--radius-sm); padding: 10px;
+    font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--border-bright); background: rgba(255,255,255,0.04); }
+
+  /* Stage Summary */
+  .stage-rows { display: flex; flex-direction: column; gap: 8px; }
+  .stage-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px; padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.02);
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .stage-row:hover { border-color: var(--border); }
+  .stage-name { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+  .stage-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .stage-count { font-weight: 700; font-size: 15px; color: var(--text); }
+
+  /* Assets Carousel */
+  .carousel-wrap { position: relative; overflow: hidden; border-radius: var(--radius-sm); }
+  .carousel-track {
+    display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .carousel-slide {
+    min-width: 100%; position: relative;
+  }
+  .carousel-slide img {
+    width: 100%; aspect-ratio: 9/14; object-fit: cover;
+    border-radius: var(--radius-sm); display: block;
+  }
+  .carousel-nav {
+    display: flex; justify-content: center; gap: 6px; margin-top: 10px;
+  }
+  .carousel-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border-bright); border: none; cursor: pointer;
+    padding: 0; transition: background 0.2s, transform 0.2s;
+  }
+  .carousel-dot.active { background: var(--accent); transform: scale(1.4); }
+  .carousel-label {
+    position: absolute; bottom: 10px; left: 0; right: 0;
+    text-align: center; font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    padding: 4px 10px; margin: 0 20px; border-radius: 20px;
+  }
+
+  /* ─── Main Content ────────────────────────────────────────────────────────────── */
+  .content {
+    display: flex; flex-direction: column;
+    overflow-y: auto; max-height: calc(100vh - 64px);
+  }
+
+  /* Kanban */
+  .kanban-header {
+    padding: 20px 24px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .kanban-title { font-size: 18px; font-weight: 700; }
+  .kanban-actions { display: flex; gap: 10px; }
+  .btn-icon {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); border-radius: var(--radius-sm);
+    padding: 7px 12px; font-size: 12px; font-weight: 500;
+    cursor: pointer; font-family: var(--font);
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.2s;
+  }
+  .btn-icon:hover { border-color: var(--border-bright); color: var(--text); }
+
+  .kanban-board {
+    padding: 20px 24px;
+    display: flex; gap: 14px;
+    overflow-x: auto;
+    flex: 1;
+    align-items: flex-start;
+  }
+  .kanban-board::-webkit-scrollbar { height: 5px; }
+  .kanban-board::-webkit-scrollbar-track { background: transparent; }
+  .kanban-board::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
+  .kanban-col {
+    min-width: 220px; max-width: 220px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .col-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .col-label {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .col-count {
+    font-size: 12px; font-weight: 700; color: var(--text);
+    background: rgba(255,255,255,0.06); border-radius: 10px;
+    padding: 1px 8px;
+  }
+
+  .lead-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .lead-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .lead-card:hover { border-color: var(--border-bright); transform: translateY(-2px); background: rgba(255,255,255,0.035); }
+  .lead-card:hover::before { opacity: 1; }
+  .lead-name { font-size: 13px; font-weight: 600; margin-bottom: 5px; line-height: 1.35; }
+  .lead-meta { font-size: 11px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+  .lead-badge {
+    display: inline-block; padding: 2px 7px; border-radius: 10px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .lead-score {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 8px;
+  }
+  .score-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; margin: 0 8px; }
+  .score-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+  .score-val { font-size: 11px; font-weight: 600; color: var(--muted); font-family: var(--mono); }
+  .lead-actions {
+    display: flex; gap: 6px; margin-top: 10px;
+  }
+  .btn-xs {
+    font-size: 10px; font-weight: 600; padding: 4px 8px;
+    border-radius: 6px; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); cursor: pointer; font-family: var(--font);
+    transition: all 0.15s;
+  }
+  .btn-xs:hover { border-color: var(--accent); color: var(--accent); background: rgba(99,102,241,0.08); }
+  .btn-xs.advance { border-color: var(--green); color: var(--green); }
+  .btn-xs.advance:hover { background: rgba(16,185,129,0.08); }
+
+  /* Empty state */
+  .col-empty {
+    border: 1px dashed var(--border); border-radius: var(--radius);
+    padding: 20px 14px; text-align: center;
+    font-size: 12px; color: var(--muted);
+    opacity: 0.6;
+  }
+
+  /* ─── Log Console ─────────────────────────────────────────────────────────────── */
+  .log-section { padding: 0 24px 24px; }
+  .log-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .log-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .log-console {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    height: 220px; overflow-y: auto;
+    font-family: var(--mono); font-size: 12px;
+    line-height: 1.6;
+  }
+  .log-console::-webkit-scrollbar { width: 4px; }
+  .log-console::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+  .log-line { display: flex; gap: 10px; padding: 2px 0; }
+  .log-ts { color: rgba(255,255,255,0.2); flex-shrink: 0; }
+  .log-icon { flex-shrink: 0; }
+  .log-msg { color: var(--text); word-break: break-all; }
+  .log-msg.error { color: #f87171; }
+  .log-msg.success { color: var(--green); }
+  .log-msg.info { color: var(--cyan); }
+
+  /* ─── Modal ─────────────────────────────────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(5,5,9,0.85); backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    padding: 24px;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: #0e0e18; border: 1px solid var(--border-bright);
+    border-radius: 20px; padding: 32px;
+    max-width: 580px; width: 100%;
+    max-height: 80vh; overflow-y: auto;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-header { display: flex; align-items: start; justify-content: space-between; margin-bottom: 24px; }
+  .modal-title { font-size: 20px; font-weight: 700; }
+  .modal-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .btn-close {
+    background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px;
+    padding: 4px; transition: color 0.2s;
+  }
+  .btn-close:hover { color: var(--text); }
+
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .detail-field label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
+  .detail-field p { font-size: 14px; font-weight: 500; }
+
+  .outreach-preview {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px;
+    font-size: 12px; font-family: var(--mono); color: var(--muted);
+    max-height: 200px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 20px;
+  }
+  .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-modal {
+    padding: 10px 18px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font);
+    transition: all 0.2s; border: 1px solid transparent;
+  }
+  .btn-modal.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .btn-modal.primary:hover { opacity: 0.88; }
+  .btn-modal.ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
+  .btn-modal.ghost:hover { border-color: var(--border-bright); }
+
+  /* ─── Score Colors ───────────────────────────────────────────────────────────── */
+  .score-1,.score-2,.score-3 { background: var(--red); }
+  .score-4,.score-5,.score-6 { background: var(--amber); }
+  .score-7,.score-8,.score-9,.score-10 { background: var(--green); }
+
+  /* Niche badges */
+  .badge-restaurant { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .badge-medical { background: rgba(6,182,212,0.15); color: var(--cyan); }
+  .badge-trade { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+  .badge-professional { background: rgba(139,92,246,0.15); color: #c4b5fd; }
+
+  /* Stage dot colors */
+  .dot-discovered { background: var(--muted); }
+  .dot-audited { background: var(--cyan); }
+  .dot-demo { background: var(--accent); }
+  .dot-outreach { background: var(--amber); }
+  .dot-contacted { background: #f97316; }
+  .dot-meeting { background: #a855f7; }
+  .dot-won { background: var(--green); }
+  .dot-lost { background: var(--red); }
+
+  /* ─── Notification Toast ─────────────────────────────────────────────────────── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4);
+    color: var(--green); border-radius: 12px; padding: 12px 20px;
+    font-size: 13px; font-weight: 600;
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    max-width: 320px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.error { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: #f87171; }
+
+  /* ─── Responsive ─────────────────────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+    .header-stats { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="app">
+
+  <!-- ─── Header ─────────────────────────────────────────────────────────────── -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span>Apex AI Web Studio</span>
+      </div>
+      <div class="header-stats">
+        <div class="stat-chip">
+          <div class="live-dot"></div>
+          Autonomous
+        </div>
+        <div class="stat-chip green">
+          Pipeline Value: <strong id="hdr-value">$0</strong>
+        </div>
+        <div class="stat-chip amber">
+          Leads: <strong id="hdr-total">0</strong>
+        </div>
+        <div class="stat-chip">
+          Won: <strong id="hdr-won">0</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── Main ────────────────────────────────────────────────────────────────── -->
+  <div class="main">
+
+    <!-- ─── Sidebar ─────────────────────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <!-- Run Controls -->
+      <div class="panel">
+        <div class="panel-title">🚀 Auto Pipeline</div>
+        <div class="form-group">
+          <label for="sel-niche">Target Niche</label>
+          <select id="sel-niche">
+            <option value="">All Niches</option>
+            <option value="restaurant">🍕 Restaurant</option>
+            <option value="medical">🦷 Medical / Dental</option>
+            <option value="trade">🔧 Trade / Contractor</option>
+            <option value="professional">⚖️ Professional / Legal</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sel-city">Target City</label>
+          <select id="sel-city">
+            <option value="">All Cities (Config)</option>
+            <option value="Austin, TX">Austin, TX</option>
+            <option value="Miami, FL">Miami, FL</option>
+            <option value="Chicago, IL">Chicago, IL</option>
+            <option value="Seattle, WA">Seattle, WA</option>
+            <option value="Denver, CO">Denver, CO</option>
+            <option value="Nashville, TN">Nashville, TN</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inp-leads">Leads Per Run</label>
+          <input type="number" id="inp-leads" value="3" min="1" max="20">
+        </div>
+        <button class="btn-run" id="btn-run" onclick="runPipeline()">
+          <div class="shimmer"></div>
+          <span id="btn-run-text">⚡ Run Autonomous Pipeline</span>
+        </button>
+        <div style="margin-top:10px; display:flex; gap:8px;">
+          <button class="btn-secondary" onclick="exportCsv()" style="flex:1">📥 Export CSV</button>
+          <button class="btn-secondary" onclick="refreshPipeline()" style="flex:1">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <!-- Stage Summary -->
+      <div class="panel">
+        <div class="panel-title">📊 Pipeline Summary</div>
+        <div class="stage-rows" id="stage-summary">
+          <div class="stage-row"><div class="stage-name"><div class="stage-dot dot-discovered"></div>Discovered</div><div class="stage-count" id="cnt-DISCOVERED">—</div></div>
+          <div class="stage-row"><div class="stage-name"><div class="stage-dot dot-audited"></div>Audited</div><div class="stage-count" id="cnt-AUDITED">—</div></div>
+          <div class="stage-row"><div class="stage-name"><div class="stage-dot dot-demo"></div>Demo Generated</div><div class="stage-count" id="cnt-DEMO_GENERATED">—</div></div>
+          <div class="stage-row"><div class="stage-name"><div class="stage-dot dot-outreach"></div>Outreach Drafted</div><div class="stage-count" id="cnt-OUTREACH_DRAFTED">—</div></div>
+          <div class="stage-row"><div class="stage-name"><div class="stage-dot dot-contacted"></div>Contacted</div><div class="stage-count" id="cnt-CONTACTED">—</div></div>
+          <div class="stage-row"><div class="stage-name"><div class="stage-dot dot-meeting"></div>Meeting Scheduled</div><div class="stage-count" id="cnt-MEETING_SCHEDULED">—</div></div>
+          <div class="stage-row"><div class="stage-name"><div class="stage-dot dot-won"></div>Closed Won 🏆</div><div class="stage-count" id="cnt-CLOSED_WON">—</div></div>
+          <div class="stage-row"><div class="stage-name"><div class="stage-dot dot-lost"></div>Closed Lost</div><div class="stage-count" id="cnt-CLOSED_LOST">—</div></div>
+        </div>
+      </div>
+
+      <!-- Assets Carousel -->
+      <div class="panel">
+        <div class="panel-title">🛠️ Tools We Ship With</div>
+        <div class="carousel-wrap">
+          <div class="carousel-track" id="carousel-track">
+            <!-- Slides injected by JS -->
+          </div>
+          <div class="carousel-nav" id="carousel-nav"></div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ─── Content ─────────────────────────────────────────────────────────── -->
+    <div class="content">
+
+      <div class="kanban-header">
+        <div class="kanban-title">Lead Pipeline</div>
+        <div class="kanban-actions">
+          <button class="btn-icon" onclick="openAddModal()">+ Add Lead</button>
+        </div>
+      </div>
+
+      <!-- Kanban Board -->
+      <div class="kanban-board" id="kanban-board">
+        <!-- Columns injected by JS -->
+      </div>
+
+      <!-- Live Log Console -->
+      <div class="log-section">
+        <div class="log-header">
+          <div class="log-title">
+            <span>🖥️</span> Live Pipeline Console
+            <div class="live-dot" id="log-dot" style="opacity:0.3"></div>
+          </div>
+          <button class="btn-icon" onclick="clearLog()">Clear</button>
+        </div>
+        <div class="log-console" id="log-console">
+          <div class="log-line">
+            <span class="log-ts">--:--:--</span>
+            <span class="log-icon">💡</span>
+            <span class="log-msg info">Dashboard connected. Click "Run Autonomous Pipeline" to start sourcing leads.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── Lead Detail Modal ────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Lead Name</div>
+        <div class="modal-subtitle" id="modal-subtitle">Niche · City</div>
+      </div>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="detail-grid" id="modal-details"></div>
+    <div id="modal-outreach-section" style="display:none">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Outreach Draft</div>
+      <div class="outreach-preview" id="modal-outreach"></div>
+    </div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- ─── Toast ────────────────────────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<script>
+// ─── Asset Carousel Setup ────────────────────────────────────────────────────
+const ASSET_FILES = [
+  { file: 'assets/photo_1_2026-09-01_00-09-45.jpg', label: 'assistant-ui' },
+  { file: 'assets/photo_2_2026-09-01_00-09-45.jpg', label: 'tailark templates' },
+  { file: 'assets/photo_3_2026-09-01_00-09-46.jpg', label: 'reactbits effects' },
+  { file: 'assets/photo_4_2026-09-01_00-09-46.jpg', label: 'shadcn/ui' },
+  { file: 'assets/photo_5_2026-09-01_00-09-46.jpg', label: 'driver.js tours' },
+  { file: 'assets/photo_6_2026-09-01_00-09-46.jpg', label: 'the stack' },
+  { file: 'assets/photo_7_2026-09-01_00-09-46.jpg', label: 'framer motion' },
+  { file: 'assets/photo_8_2026-09-01_00-09-46.jpg', label: 'lucide + tanstack' },
+  { file: 'assets/photo_9_2026-09-01_00-09-46.jpg', label: 'tool tip 9' },
+  { file: 'assets/photo_10_2026-09-01_00-09-46.jpg', label: 'tool tip 10' }
+];
+
+let carouselIdx = 0;
+function buildCarousel() {
+  const track = document.getElementById('carousel-track');
+  const nav = document.getElementById('carousel-nav');
+  track.innerHTML = ASSET_FILES.map((a, i) => `
+    <div class="carousel-slide">
+      <img src="${a.file}" alt="${a.label}" loading="${i === 0 ? 'eager' : 'lazy'}">
+      <div class="carousel-label">${a.label}</div>
+    </div>
+  `).join('');
+  nav.innerHTML = ASSET_FILES.map((_, i) =>
+    `<button class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goSlide(${i})" aria-label="Slide ${i+1}"></button>`
+  ).join('');
+}
+function goSlide(idx) {
+  carouselIdx = idx;
+  document.getElementById('carousel-track').style.transform = `translateX(-${idx * 100}%)`;
+  document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+function nextSlide() { goSlide((carouselIdx + 1) % ASSET_FILES.length); }
+buildCarousel();
+setInterval(nextSlide, 4500);
+
+// ─── Pipeline State ──────────────────────────────────────────────────────────
+let pipelineData = { prospects: [], pipeline_summary: {} };
+
+const STAGES = [
+  { key: 'DISCOVERED',        label: 'Discovered',      dot: 'dot-discovered' },
+  { key: 'AUDITED',           label: 'Audited',         dot: 'dot-audited' },
+  { key: 'DEMO_GENERATED',    label: 'Demo Ready',      dot: 'dot-demo' },
+  { key: 'OUTREACH_DRAFTED',  label: 'Outreach Ready',  dot: 'dot-outreach' },
+  { key: 'CONTACTED',         label: 'Contacted',       dot: 'dot-contacted' },
+  { key: 'MEETING_SCHEDULED', label: 'Meeting Set',     dot: 'dot-meeting' },
+  { key: 'CLOSED_WON',        label: '🏆 Closed Won',   dot: 'dot-won' },
+  { key: 'CLOSED_LOST',       label: 'Closed Lost',     dot: 'dot-lost' }
+];
+
+const STAGE_NEXT = {
+  DISCOVERED: 'AUDITED', AUDITED: 'DEMO_GENERATED',
+  DEMO_GENERATED: 'OUTREACH_DRAFTED', OUTREACH_DRAFTED: 'CONTACTED',
+  CONTACTED: 'MEETING_SCHEDULED', MEETING_SCHEDULED: 'CLOSED_WON'
+};
+
+function nicheClass(n) {
+  const m = { restaurant:'badge-restaurant', medical:'badge-medical', trade:'badge-trade', professional:'badge-professional' };
+  return m[n] || 'badge-trade';
+}
+
+function scoreClass(s) {
+  if (!s) return '';
+  if (s <= 3) return 'score-1';
+  if (s <= 6) return 'score-4';
+  return 'score-7';
+}
+
+function renderKanban() {
+  const board = document.getElementById('kanban-board');
+  board.innerHTML = STAGES.map(stage => {
+    const cards = pipelineData.prospects.filter(p => p.stage === stage.key);
+    const cardHtml = cards.length === 0
+      ? `<div class="col-empty">No leads here yet</div>`
+      : cards.map(p => {
+          const score = p.overallScore || null;
+          const scoreW = score ? Math.round((score / 10) * 100) : 0;
+          const nextStage = STAGE_NEXT[p.stage];
+          return `
+          <div class="lead-card" onclick="openLead('${p.slug}')">
+            <div class="lead-name">${p.businessName}</div>
+            <div class="lead-meta">
+              <span class="lead-badge ${nicheClass(p.niche)}">${p.niche || 'trade'}</span>
+              ${p.city ? `<span style="color:var(--muted)">${p.city.split(',')[0]}</span>` : ''}
+            </div>
+            ${score ? `
+            <div class="lead-score">
+              <span class="score-val">${score}/10</span>
+              <div class="score-bar"><div class="score-fill ${scoreClass(score)}" style="width:${scoreW}%"></div></div>
+            </div>` : ''}
+            <div class="lead-actions" onclick="event.stopPropagation()">
+              ${p.demoPath ? `<button class="btn-xs" onclick="window.open('${p.demoPath}','_blank')">👀 Demo</button>` : ''}
+              ${nextStage ? `<button class="btn-xs advance" onclick="advanceLead('${p.slug}','${nextStage}')">→ Advance</button>` : ''}
+              <button class="btn-xs" style="margin-left:auto;color:var(--red);border-color:rgba(239,68,68,0.3)" onclick="deleteLead('${p.slug}')">✕</button>
+            </div>
+          </div>`;
+        }).join('');
+    return `
+    <div class="kanban-col">
+      <div class="col-header">
+        <div class="col-label"><div class="stage-dot ${stage.dot}"></div>${stage.label}</div>
+        <div class="col-count">${cards.length}</div>
+      </div>
+      ${cardHtml}
+    </div>`;
+  }).join('');
+
+  // Update header stats
+  const s = pipelineData.pipeline_summary || {};
+  document.getElementById('hdr-value').textContent = `$${(s.pipeline_value_usd || 0).toLocaleString()}`;
+  document.getElementById('hdr-total').textContent = s.total_prospects || 0;
+  document.getElementById('hdr-won').textContent = s.closed_won || 0;
+
+  // Update sidebar stage counts
+  STAGES.forEach(st => {
+    const el = document.getElementById(`cnt-${st.key}`);
+    if (el) el.textContent = (pipelineData.prospects.filter(p => p.stage === st.key).length) || '0';
+  });
+}
+
+async function refreshPipeline() {
+  try {
+    const res = await fetch('/api/pipeline');
+    if (!res.ok) throw new Error('Server not responding');
+    pipelineData = await res.json();
+    renderKanban();
+  } catch (e) {
+    appendLog({ icon: '⚠️', msg: 'Could not load pipeline: ' + e.message });
+  }
+}
+
+// ─── Lead Actions ────────────────────────────────────────────────────────────
+async function advanceLead(slug, newStage) {
+  const res = await fetch('/api/update-stage', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ slug, stage: newStage })
+  });
+  if (res.ok) { showToast(`✅ Advanced to ${newStage}`); await refreshPipeline(); }
+}
+
+async function deleteLead(slug) {
+  if (!confirm(`Remove lead "${slug}" from pipeline?`)) return;
+  const res = await fetch('/api/delete-prospect', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ slug })
+  });
+  if (res.ok) { showToast('🗑️ Lead removed'); await refreshPipeline(); }
+}
+
+// ─── Modal ───────────────────────────────────────────────────────────────────
+let currentLead = null;
+async function openLead(slug) {
+  try {
+    const res = await fetch(`/api/prospect/${slug}`);
+    if (!res.ok) throw new Error('Not found');
+    const data = await res.json();
+    const p = data.prospect;
+    currentLead = p;
+
+    document.getElementById('modal-title').textContent = p.businessName;
+    document.getElementById('modal-subtitle').textContent = `${p.niche} · ${p.city} · Stage: ${p.stage}`;
+
+    document.getElementById('modal-details').innerHTML = [
+      { label: 'Owner', val: p.ownerName || '—' },
+      { label: 'Email', val: p.ownerEmail || '—' },
+      { label: 'Phone', val: p.phone || '—' },
+      { label: 'Website', val: p.url ? `<a href="${p.url}" target="_blank" style="color:var(--accent)">${p.url}</a>` : '—' },
+      { label: 'Audit Score', val: p.overallScore ? `${p.overallScore}/10` : '—' },
+      { label: 'Last Action', val: p.lastAction ? new Date(p.lastAction).toLocaleString() : '—' }
+    ].map(f => `<div class="detail-field"><label>${f.label}</label><p>${f.val}</p></div>`).join('');
+
+    if (p.outreachMarkdown) {
+      document.getElementById('modal-outreach').textContent = p.outreachMarkdown.slice(0, 1200) + (p.outreachMarkdown.length > 1200 ? '\n...' : '');
+      document.getElementById('modal-outreach-section').style.display = 'block';
+    } else {
+      document.getElementById('modal-outreach-section').style.display = 'none';
+    }
+
+    const nextStage = STAGE_NEXT[p.stage];
+    const actions = [];
+    if (p.demoPath) actions.push(`<button class="btn-modal primary" onclick="window.open('${p.demoPath}','_blank')">👀 View Demo</button>`);
+    if (nextStage) actions.push(`<button class="btn-modal ghost" onclick="advanceLead('${p.slug}','${nextStage}');closeModal()">→ Advance to ${nextStage}</button>`);
+    actions.push(`<button class="btn-modal ghost" onclick="closeModal()">Close</button>`);
+    document.getElementById('modal-actions').innerHTML = actions.join('');
+
+    document.getElementById('modal').classList.add('open');
+  } catch (e) {
+    showToast('Could not load lead details', true);
+  }
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal')) return;
+  document.getElementById('modal').classList.remove('open');
+}
+
+function openAddModal() {
+  const name = prompt('Business Name:');
+  const url = prompt('Website URL (or leave blank):') || 'https://example.com';
+  const niche = prompt('Niche (restaurant/medical/trade/professional):') || 'trade';
+  const city = prompt('City:') || 'Austin, TX';
+  if (!name) return;
+  fetch('/api/run-all', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ businessName: name, url, niche, city })
+  }).then(r => r.json()).then(d => {
+    if (d.success) { showToast(`✅ ${name} processed!`); refreshPipeline(); }
+    else showToast(d.error || 'Error', true);
+  });
+}
+
+// ─── Run Pipeline ────────────────────────────────────────────────────────────
+function runPipeline() {
+  const btn = document.getElementById('btn-run');
+  const txtEl = document.getElementById('btn-run-text');
+  btn.disabled = true;
+  txtEl.textContent = '⏳ Running...';
+
+  const body = {
+    leads: document.getElementById('inp-leads').value || 3
+  };
+  const city = document.getElementById('sel-city').value;
+  const niche = document.getElementById('sel-niche').value;
+  if (city) body.city = city;
+  if (niche) body.niche = niche;
+
+  fetch('/api/run', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  }).then(r => r.json()).then(d => {
+    showToast(d.msg || '🚀 Pipeline running!');
+    // Poll pipeline every 3s for 60s
+    let polls = 0;
+    const iv = setInterval(() => {
+      refreshPipeline();
+      if (++polls >= 20) {
+        clearInterval(iv);
+        btn.disabled = false;
+        txtEl.textContent = '⚡ Run Autonomous Pipeline';
+      }
+    }, 3000);
+  }).catch(e => {
+    showToast('Server not running. Start with: npm run preview', true);
+    btn.disabled = false;
+    txtEl.textContent = '⚡ Run Autonomous Pipeline';
+  });
+}
+
+// ─── Export CSV ──────────────────────────────────────────────────────────────
+function exportCsv() { window.open('/api/export-csv', '_blank'); }
+
+// ─── SSE Log Stream ───────────────────────────────────────────────────────────
+const logConsole = document.getElementById('log-console');
+const logDot = document.getElementById('log-dot');
+
+function appendLog({ ts, icon, msg }) {
+  const timeStr = ts ? new Date(ts).toLocaleTimeString() : '--:--:--';
+  let cls = 'log-msg';
+  if (icon === '❌' || (msg && msg.toLowerCase().includes('error'))) cls += ' error';
+  else if (icon === '✅') cls += ' success';
+  else if (icon === '🔍' || icon === '💡' || icon === '🚀') cls += ' info';
+
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-ts">${timeStr}</span><span class="log-icon">${icon || '·'}</span><span class="${cls}">${msg || ''}</span>`;
+  logConsole.appendChild(line);
+  logConsole.scrollTop = logConsole.scrollHeight;
+}
+
+function clearLog() { logConsole.innerHTML = ''; }
+
+function connectSSE() {
+  const es = new EventSource('/api/logs');
+  es.onopen = () => { logDot.style.opacity = '1'; };
+  es.onmessage = (e) => {
+    try {
+      const d = JSON.parse(e.data);
+      appendLog(d);
+      // Refresh pipeline on important events
+      if (d.icon === '✅' || d.icon === '🏁') refreshPipeline();
+    } catch {
+      appendLog({ icon: '·', msg: e.data });
+    }
+  };
+  es.onerror = () => {
+    logDot.style.opacity = '0.3';
+    // Retry after 5s
+    setTimeout(connectSSE, 5000);
+  };
+}
+connectSSE();
+
+// ─── Toast ───────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = isError ? 'error show' : 'show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+refreshPipeline();
+setInterval(refreshPipeline, 30000);
+</script>
+</body>
+</html>
