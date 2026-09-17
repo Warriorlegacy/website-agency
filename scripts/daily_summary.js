@@ -16,7 +16,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dns from 'dns';
-import { loadAppConfig } from './lib/config_loader.js';
+import { loadAppConfig, getPublicDemoUrl } from './lib/config_loader.js';
 import { sendTelegramDocument, sendTelegramReportPackage } from './lib/telegram_notifier.js';
 
 try {
@@ -108,16 +108,24 @@ function generateStats() {
   };
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 // ─── Format Summary ──────────────────────────────────────────────────────────
 function formatSummary(stats) {
   const stageEmojis = {
-    'DISCOVERED': '🔍',
-    'AUDITED': '📊',
-    'DEMO_GENERATED': '🎨',
+    'CLOSED_WON': '🏆',
+    'MEETING_SCHEDULED': '📅',
     'OUTREACH_DRAFTED': '✉️',
     'CONTACTED': '📤',
-    'MEETING_SCHEDULED': '📅',
-    'CLOSED_WON': '🏆',
+    'DEMO_GENERATED': '🎨',
+    'AUDITED': '📊',
+    'DISCOVERED': '🔍',
     'CLOSED_LOST': '❌'
   };
 
@@ -126,6 +134,18 @@ function formatSummary(stats) {
     .join('\n');
 
   const deltaEmoji = stats.today.totalActions >= stats.yesterday.totalActions ? '📈' : '📉';
+
+  const pipeline = loadPipeline();
+  const leadsLines = (pipeline.prospects || []).map((p, idx) => {
+    const contact = p.ownerName && p.ownerName !== 'Business Owner' ? p.ownerName : 'Owner';
+    const email = p.ownerEmail ? p.ownerEmail : 'Pending discovery';
+    const phone = p.phone || 'N/A';
+    const loc = p.city ? ` (${p.city})` : '';
+    const demo = p.demoPath ? `\n     Demo: ${getPublicDemoUrl(p.slug)}` : '';
+    return `  ${idx + 1}. ${stageEmojis[p.stage] || '•'} ${p.businessName}${loc} [${p.stage}]\n     Contact: ${contact} | Email: ${email} | Phone: ${phone}${demo}`;
+  }).join('\n\n');
+
+  const leadsSection = leadsLines.length > 0 ? `\n\n━━ Leads & Verified Emails (${pipeline.prospects.length}) ━━━\n${leadsLines}` : '';
 
   return `📊 Daily Agency Summary — ${stats.date}
 
@@ -146,7 +166,7 @@ ${stageLines}
 
 ━━ Wins ━━━━━━━━━━━━━━━━━━━━━━
 🏆 Closed Won: ${stats.conversion.closedWon}
-❌ Closed Lost: ${stats.conversion.closedLost}
+❌ Closed Lost: ${stats.conversion.closedLost}${leadsSection}
 
 —
 Powered by Apex AI Web Studio 🚀`;
@@ -154,11 +174,43 @@ Powered by Apex AI Web Studio 🚀`;
 
 function formatMarkdownReport(stats) {
   const summary = formatSummary(stats);
+  const pipeline = loadPipeline();
+  const leads = pipeline.prospects || [];
+
+  const tableRows = leads.map((p, idx) => {
+    const contact = p.ownerName && p.ownerName !== 'Business Owner' ? p.ownerName : 'Owner';
+    const email = p.ownerEmail ? `\`${p.ownerEmail}\`` : '_Pending discovery_';
+    const phone = p.phone ? `\`${p.phone}\`` : '_N/A_';
+    const demoUrl = p.demoPath ? getPublicDemoUrl(p.slug) : 'N/A';
+    return `| ${idx + 1} | **${p.businessName}** | ${contact} | ${email} | ${phone} | ${p.city || 'Local'} | ${p.niche || 'general'} | ${p.stage} | [View Demo](${demoUrl}) |`;
+  }).join('\n');
+
+  const leadCards = leads.map((p, idx) => `
+### ${idx + 1}. ${p.businessName}
+- **Contact Person:** ${p.ownerName || 'Business Owner'}
+- **Verified Email:** ${p.ownerEmail || 'Pending discovery'}
+- **Phone:** ${p.phone || 'N/A'}
+- **Location:** ${p.city || 'Local Area'}
+- **Niche:** ${p.niche || 'general'}
+- **Funnel Stage:** ${p.stage}
+- **Live Demo Link:** ${p.demoPath ? getPublicDemoUrl(p.slug) : 'N/A'}
+- **Source:** ${p.ownerEmailSource || p.source || 'Public Listing'}
+`).join('\n---\n');
+
   return `# Daily Agency Report — ${stats.date}
 
 \`\`\`
 ${summary}
 \`\`\`
+
+## Complete Leads Contact Directory & Emails (${leads.length})
+
+| # | Business Name | Contact Person | Email | Phone | Location | Niche | Stage | Demo |
+|---|---|---|---|---|---|---|---|---|
+${tableRows}
+
+## Itemized Lead Contact Profiles
+${leadCards}
 
 ## Raw Stats
 \`\`\`json
@@ -167,9 +219,8 @@ ${JSON.stringify(stats, null, 2)}
 `;
 }
 
-// ─── Telegram Sender ─────────────────────────────────────────────────────────
-// ─── Telegram Sender ─────────────────────────────────────────────────────────
-async function sendTelegram(message, config, parseMode = 'HTML', retries = 3) {
+// ─── Telegram Sender (with Auto-Chunking for Long Messages) ──────────────────
+async function sendTelegramChunk(message, config, parseMode = 'HTML', retries = 3) {
   const botToken = config.notifications?.telegram?.botToken || process.env.TELEGRAM_BOT_TOKEN;
   const chatId = config.notifications?.telegram?.chatId || process.env.TELEGRAM_CHAT_ID;
   if (!botToken || !chatId) throw new Error('Telegram bot not configured');
@@ -204,10 +255,48 @@ async function sendTelegram(message, config, parseMode = 'HTML', retries = 3) {
   throw lastErr;
 }
 
+async function sendTelegram(message, config, parseMode = 'HTML', retries = 3) {
+  if (!message) return;
+  if (message.length <= 4000) {
+    return await sendTelegramChunk(message, config, parseMode, retries);
+  }
+
+  const parts = [];
+  const blocks = message.split('\n\n');
+  let cur = '';
+
+  for (const b of blocks) {
+    if (b.length > 3900) {
+      if (cur) {
+        parts.push(cur.trim());
+        cur = '';
+      }
+      for (let i = 0; i < b.length; i += 3900) {
+        parts.push(b.slice(i, i + 3900).trim());
+      }
+    } else if ((cur + '\n\n' + b).length > 3900) {
+      if (cur) parts.push(cur.trim());
+      cur = b;
+    } else {
+      cur = cur ? `${cur}\n\n${b}` : b;
+    }
+  }
+  if (cur.trim()) parts.push(cur.trim());
+
+  let lastRes = null;
+  for (let i = 0; i < parts.length; i++) {
+    const chunkText = parts.length > 1 ? `[Part ${i + 1}/${parts.length}]\n${parts[i]}` : parts[i];
+    lastRes = await sendTelegramChunk(chunkText, config, parseMode, retries);
+    if (i < parts.length - 1) await new Promise(r => setTimeout(r, 600));
+  }
+  return lastRes;
+}
+
 // ─── Master: sendWorkflowRunReport ──────────────────────────────────────────
 export async function sendWorkflowRunReport(cycleReport = {}) {
   const config = loadConfig();
   const stats = generateStats();
+  const pipeline = loadPipeline();
   const now = new Date();
   const istTime = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
   const isCloud = !!process.env.GITHUB_ACTIONS;
@@ -237,19 +326,43 @@ export async function sendWorkflowRunReport(cycleReport = {}) {
 
   let actionsList = [];
   if (newLeads.length > 0) {
-    actionsList.push(`• 🚜 <b>Scraped Leads (${newLeads.length}):</b>\n` + newLeads.map(l => `   ↳ <i>${l.businessName || l.name}</i> (${l.city || 'Austin, TX'} • ${l.niche || 'business'})`).join('\n'));
+    actionsList.push(`• 🚜 <b>Scraped Leads (${newLeads.length}):</b>\n` + newLeads.map(l => {
+      const email = l.ownerEmail || l.email ? ` • 📧 <code>${escapeHtml(l.ownerEmail || l.email)}</code>` : '';
+      const phone = l.phone ? ` • 📞 <code>${escapeHtml(l.phone)}</code>` : '';
+      return `   ↳ <b>${escapeHtml(l.businessName || l.name)}</b> (${escapeHtml(l.city || 'Local')} • ${escapeHtml(l.niche || 'business')})${phone}${email}`;
+    }).join('\n'));
   }
   if (demos.length > 0) {
-    actionsList.push(`• 🎨 <b>Demo Sites Generated (${demos.length}):</b>\n` + demos.map(d => `   ↳ <i>${d.businessName || d.name}</i>`).join('\n'));
+    actionsList.push(`• 🎨 <b>Demo Sites Generated (${demos.length}):</b>\n` + demos.map(d => `   ↳ <i>${escapeHtml(d.businessName || d.name)}</i>`).join('\n'));
   }
   if (calls.length > 0) {
-    actionsList.push(`• 🎙️ <b>Voice Calls Placed (${calls.length}):</b>\n` + calls.map(c => `   ↳ <i>${c.businessName}</i> → <b>${c.outcome}</b>`).join('\n'));
+    actionsList.push(`• 🎙️ <b>Voice Calls Placed (${calls.length}):</b>\n` + calls.map(c => `   ↳ <i>${escapeHtml(c.businessName)}</i> → <b>${escapeHtml(c.outcome)}</b>`).join('\n'));
   }
   if (proposals.length > 0) {
-    actionsList.push(`• 💼 <b>Closing Proposals Dispatched (${proposals.length}):</b>\n` + proposals.map(p => `   ↳ <i>${p.businessName}</i> ($750 Growth tier)`).join('\n'));
+    actionsList.push(`• 💼 <b>Closing Proposals Dispatched (${proposals.length}):</b>\n` + proposals.map(p => `   ↳ <i>${escapeHtml(p.businessName)}</i> ($750 Growth tier)`).join('\n'));
   }
 
   const actionsText = actionsList.length > 0 ? actionsList.join('\n\n') : '• <i>Funnel monitored — all leads maintained in follow-up sequence.</i>';
+
+  // Format ALL leads in pipeline with complete contact details and verified emails
+  const allLeads = pipeline.prospects || [];
+  const leadsDirectoryHtml = allLeads.map((p, idx) => {
+    const stageIcon = stageIcons[p.stage] || '•';
+    const emailBadge = p.ownerEmail ? `<code>${escapeHtml(p.ownerEmail)}</code>` : '<i>Pending discovery</i>';
+    const phoneBadge = p.phone ? `<code>${escapeHtml(p.phone)}</code>` : '<i>N/A</i>';
+    const contactName = p.ownerName && p.ownerName !== 'Business Owner' ? p.ownerName : 'Decision Maker';
+    const demoUrl = p.demoPath ? getPublicDemoUrl(p.slug) : null;
+    const demoLink = demoUrl ? `<a href="${demoUrl}">Live Demo</a>` : '<i>Pending</i>';
+    const location = p.city || 'Local';
+    const niche = p.niche || 'general';
+
+    return `${idx + 1}. ${stageIcon} <b>${escapeHtml(p.businessName)}</b> [${p.stage}]\n` +
+           `   👤 <b>Contact:</b> ${escapeHtml(contactName)}\n` +
+           `   📧 <b>Email:</b> ${emailBadge}\n` +
+           `   📞 <b>Phone:</b> ${phoneBadge}\n` +
+           `   📍 <b>Location:</b> ${escapeHtml(location)} (${escapeHtml(niche)})\n` +
+           `   🌐 <b>Demo:</b> ${demoLink}`;
+  }).join('\n\n');
 
   const message = `🚀 <b>APEX AI WEB STUDIO — WORKFLOW RUN REPORT</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -258,16 +371,18 @@ export async function sendWorkflowRunReport(cycleReport = {}) {
 ⚡ <b>Status:</b> 🟢 <b>CYCLE COMPLETE & CRM SYNCED</b>
 
 📊 <b>CURRENT PIPELINE SNAPSHOT:</b>
-• <b>Total Leads:</b> ${stats.total}
-• <b>Active In Funnel:</b> ${stats.active}
-• <b>Pipeline Value:</b> $${stats.conversion.pipelineValue.toLocaleString()}
-• <b>Revenue Closed:</b> $${stats.conversion.wonValue.toLocaleString()}
+• <b>Total Leads:</b> ${stats.total} (${stats.active} active)
+• <b>Pipeline Value:</b> $${stats.conversion.pipelineValue.toLocaleString()} USD
+• <b>Revenue Closed:</b> $${stats.conversion.wonValue.toLocaleString()} USD
 
 📈 <b>Funnel Stages:</b>
 ${stageLines}
 
 ⚡ <b>ACTIONS IN THIS RUN:</b>
 ${actionsText}
+
+📋 <b>LEADS DIRECTORY & CONTACT EMAILS (${allLeads.length}):</b>
+${leadsDirectoryHtml}
 
 💳 <b>DIRECT PAYMENT & VERIFICATION:</b>
 • <b>UPI (India):</b> <code>6202442690@jio</code> (Piyush Singh)
@@ -290,6 +405,29 @@ ${actionsText}
   // Compile and attach complete workflow run report as both Markdown and PDF document files
   try {
     const baseFilename = `workflow_run_${stats.date}_${Date.now()}`;
+    const leadsMarkdownTable = allLeads.map((p, idx) => {
+      const contactName = p.ownerName && p.ownerName !== 'Business Owner' ? p.ownerName : 'Decision Maker';
+      const email = p.ownerEmail ? `\`${p.ownerEmail}\`` : '_Pending discovery_';
+      const phone = p.phone ? `\`${p.phone}\`` : '_N/A_';
+      const demoUrl = p.demoPath ? getPublicDemoUrl(p.slug) : 'N/A';
+      return `| ${idx + 1} | **${p.businessName}** | ${contactName} | ${email} | ${phone} | ${p.city || 'Local'} | ${p.niche || 'general'} | ${p.stage} | [View Demo](${demoUrl}) |`;
+    }).join('\n');
+
+    const leadsDetailCards = allLeads.map((p, idx) => `
+### ${idx + 1}. ${p.businessName}
+- **Decision-Maker / Contact:** ${p.ownerName || 'Business Owner'}
+- **Verified Email:** ${p.ownerEmail || 'Pending discovery'}
+- **Email Public Source:** ${p.ownerEmailSource || 'Direct crawl / public listing'}
+- **Phone Number:** ${p.phone || 'N/A'}
+- **Location:** ${p.city || 'Local Area'}
+- **Niche / Industry:** ${p.niche || 'general'}
+- **Audit Overall Score:** ${p.overallScore || 'N/A'}/10
+- **Funnel Stage:** ${p.stage}
+- **Current Website:** ${p.url || 'None detected'}
+- **Interactive Demo URL:** ${p.demoPath ? getPublicDemoUrl(p.slug) : 'Pending generation'}
+- **Last Action:** ${p.lastAction || 'N/A'}
+`).join('\n---\n');
+
     const docContent = `# Apex AI Web Studio — Workflow Execution Report
 **Execution Timestamp:** ${istTime} IST  
 **Runner:** ${runner}  
@@ -311,12 +449,25 @@ ${Object.entries(stats.stages).map(([st, cnt]) => `${st.padEnd(20)}: ${cnt}`).jo
 
 ---
 
-## 2. Actions Executed in This Run
+## 2. Complete Leads Contact Directory & Verified Emails (${allLeads.length})
+
+| # | Business Name | Decision-Maker | Email | Phone | Location | Niche | Stage | Live Demo |
+|---|---|---|---|---|---|---|---|---|
+${leadsMarkdownTable}
+
+---
+
+## 3. Actions Executed in This Run
 ${actionsText.replace(/<[^>]+>/g, '')}
 
 ---
 
-## 3. Active Payment Rails & Verification
+## 4. Itemized Prospect Dossiers & Verification
+${leadsDetailCards}
+
+---
+
+## 5. Active Payment Rails & Verification
 - **UPI (India):** \`6202442690@jio\` (Piyush Singh)
 - **PayPal Global (International):** https://paypal.me/signhify
 - **Direct Bank Wire:**
@@ -368,6 +519,15 @@ export async function generateDailySummary(opts = {}) {
   try {
     await sendTelegram(summary, config);
     console.log('✅ Summary sent to Telegram');
+
+    await sendTelegramReportPackage({
+      baseFilename: `daily_summary_${stats.date}`,
+      title: `Daily Agency Summary — ${stats.date}`,
+      subtitle: `${stats.total} Total Leads · ${stats.active} Active`,
+      content: report,
+      captionPrefix: 'Daily Digest'
+    });
+    console.log('✅ Daily summary PDF & Markdown report delivered to Telegram');
   } catch (err) {
     console.warn(`⚠️  Telegram failed: ${err.message}`);
     console.log('\n📊 Summary (local):\n');

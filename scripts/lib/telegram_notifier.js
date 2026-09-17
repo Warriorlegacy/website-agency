@@ -20,10 +20,18 @@ try {
   dns.setDefaultResultOrder('ipv4first');
 } catch {}
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 /**
  * Core send helper for text messages
  */
-export async function sendTelegramAlert(htmlMessage, retries = 2) {
+async function sendSingleTelegramAlert(text, retries = 2) {
   const config = loadAppConfig();
   const botToken = config.notifications?.telegram?.botToken || process.env.TELEGRAM_BOT_TOKEN;
   const chatId = config.notifications?.telegram?.chatId || process.env.TELEGRAM_CHAT_ID;
@@ -39,7 +47,7 @@ export async function sendTelegramAlert(htmlMessage, retries = 2) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text: htmlMessage,
+          text,
           parse_mode: 'HTML',
           disable_web_page_preview: true
         })
@@ -62,6 +70,44 @@ export async function sendTelegramAlert(htmlMessage, retries = 2) {
     }
   }
   return false;
+}
+
+export async function sendTelegramAlert(htmlMessage, retries = 2) {
+  if (!htmlMessage) return false;
+  if (htmlMessage.length <= 4000) {
+    return await sendSingleTelegramAlert(htmlMessage, retries);
+  }
+
+  const parts = [];
+  const blocks = htmlMessage.split('\n\n');
+  let cur = '';
+
+  for (const b of blocks) {
+    if (b.length > 3900) {
+      if (cur) {
+        parts.push(cur.trim());
+        cur = '';
+      }
+      for (let i = 0; i < b.length; i += 3900) {
+        parts.push(b.slice(i, i + 3900).trim());
+      }
+    } else if ((cur + '\n\n' + b).length > 3900) {
+      if (cur) parts.push(cur.trim());
+      cur = b;
+    } else {
+      cur = cur ? `${cur}\n\n${b}` : b;
+    }
+  }
+  if (cur.trim()) parts.push(cur.trim());
+
+  let success = true;
+  for (let i = 0; i < parts.length; i++) {
+    const chunkText = parts.length > 1 ? `[Part ${i + 1}/${parts.length}]\n${parts[i]}` : parts[i];
+    const ok = await sendSingleTelegramAlert(chunkText, retries);
+    if (!ok) success = false;
+    if (i < parts.length - 1) await new Promise(r => setTimeout(r, 600));
+  }
+  return success;
 }
 
 /**
@@ -158,31 +204,47 @@ export async function notifyLeadsHarvested(leads = [], meta = {}) {
   const niche = meta.niche || leads[0]?.niche || 'Local Businesses';
   const dateStr = new Date().toISOString().split('T')[0];
 
-  const leadList = leads.slice(0, 5).map(l => {
-    const phone = l.phone ? ` • 📞 <code>${l.phone}</code>` : '';
-    const rating = l.rating ? ` (${l.rating}⭐)` : '';
-    return `• 🏢 <b>${l.businessName}</b>${rating}${phone}\n   <i>${l.opportunityHook || 'No modern mobile website listed'}</i>`;
+  const leadList = leads.map((l, idx) => {
+    const contact = l.ownerName && l.ownerName !== 'Business Owner' ? l.ownerName : 'Decision Maker';
+    const email = l.ownerEmail || l.email ? `<code>${escapeHtml(l.ownerEmail || l.email)}</code>` : '<i>Pending discovery</i>';
+    const phone = l.phone ? `<code>${escapeHtml(l.phone)}</code>` : '<i>N/A</i>';
+    const address = l.address || l.city || city;
+    const rating = l.rating ? ` ⭐ ${l.rating}` : '';
+    return `${idx + 1}. 🏢 <b>${escapeHtml(l.businessName)}</b>${rating}\n` +
+           `   👤 <b>Contact:</b> ${escapeHtml(contact)}\n` +
+           `   📧 <b>Email:</b> ${email}\n` +
+           `   📞 <b>Phone:</b> ${phone}\n` +
+           `   📍 <b>Address:</b> ${escapeHtml(address)}\n` +
+           `   🎯 <b>Opportunity:</b> <i>${escapeHtml(l.opportunityHook || 'Needs modern mobile website')}</i>`;
   }).join('\n\n');
 
-  const extra = count > 5 ? `\n<i>...and ${count - 5} more qualified leads</i>` : '';
-
-  const message = `🚜 <b>NEW LEADS HARVESTED FROM GOOGLE MAPS</b>
+  const message = `🚜 <b>NEW LEADS HARVESTED & VERIFIED</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 <b>Category:</b> ${niche.toUpperCase()} in ${city}
-📥 <b>Qualified Leads:</b> ${count} high-opportunity prospects
+🎯 <b>Category:</b> ${escapeHtml(niche.toUpperCase())} in ${escapeHtml(city)}
+📥 <b>Qualified Leads:</b> ${count} prospects with complete contact details
 
-${leadList}${extra}
+${leadList}
 
-⚡ <i>Full scraped dataset document attached below.</i>`;
+⚡ <i>Complete dataset documents (MD & PDF) attached below.</i>`;
 
   await sendTelegramAlert(message);
 
   // Generate & deliver full scraped leads markdown document
+  const tableRows = leads.map((l, idx) => {
+    const contact = l.ownerName && l.ownerName !== 'Business Owner' ? l.ownerName : 'Decision Maker';
+    const email = l.ownerEmail || l.email ? `\`${l.ownerEmail || l.email}\`` : '_Pending discovery_';
+    const phone = l.phone ? `\`${l.phone}\`` : '_N/A_';
+    return `| ${idx + 1} | **${l.businessName}** | ${contact} | ${email} | ${phone} | ${l.city || city} | ${l.niche || niche} |`;
+  }).join('\n');
+
   const docRows = leads.map((l, idx) => {
     return `### ${idx + 1}. ${l.businessName}
 - **Category / Niche:** ${l.niche || niche}
 - **City / Market:** ${l.city || city}
 - **Address:** ${l.address || 'Local market'}
+- **Decision Maker / Contact:** ${l.ownerName || 'Business Owner'}
+- **Verified Contact Email:** ${l.ownerEmail || l.email || 'Pending public discovery'}
+- **Email Source:** ${l.ownerEmailSource || l.source || 'Public Web Crawl'}
 - **Phone:** ${l.phone || 'N/A'}
 - **Rating:** ${l.rating || 'N/A'} ⭐ (${l.reviewCount || 0} reviews)
 - **Current URL:** ${l.url || 'None (No website detected)'}
@@ -198,6 +260,15 @@ ${leadList}${extra}
 
 ---
 
+## Leads Contact Directory & Verified Emails
+
+| # | Business Name | Contact Person | Email | Phone | Location | Niche |
+|---|---|---|---|---|---|---|
+${tableRows}
+
+---
+
+## Detailed Lead Profiles
 ${docRows}
 
 ---
@@ -219,12 +290,18 @@ ${docRows}
  */
 export async function notifyDemoGenerated(prospect, demoUrl) {
   if (!prospect) return;
+  const contact = prospect.ownerName && prospect.ownerName !== 'Business Owner' ? prospect.ownerName : 'Decision Maker';
+  const emailBadge = prospect.ownerEmail ? `<code>${escapeHtml(prospect.ownerEmail)}</code>` : '<i>Pending verification</i>';
+  const phoneBadge = prospect.phone ? `<code>${escapeHtml(prospect.phone)}</code>` : '<i>N/A</i>';
+
   const message = `🎨 <b>MODERN DEMO SITE GENERATED</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🏢 <b>Business:</b> ${prospect.businessName} (${prospect.city} • ${prospect.niche})
+🏢 <b>Business:</b> ${escapeHtml(prospect.businessName)} (${escapeHtml(prospect.city || 'Local')} • ${escapeHtml(prospect.niche || 'business')})
 🌐 <b>Live Demo:</b> ${demoUrl || `http://localhost:3030/demos/${prospect.slug}/index.html`}
+👤 <b>Decision-Maker:</b> ${escapeHtml(contact)}
+📧 <b>Contact Email:</b> ${emailBadge}
+📱 <b>Phone:</b> ${phoneBadge}
 ⭐ <b>Rating:</b> ${prospect.rating || 4.5} stars (${prospect.reviewCount || 10} reviews)
-📱 <b>Phone:</b> <code>${prospect.phone || 'N/A'}</code>
 
 ✉️ <i>Hyper-personalized 3-touch outreach sequence drafted. Documents attached below.</i>`;
 
@@ -233,9 +310,11 @@ export async function notifyDemoGenerated(prospect, demoUrl) {
   const docContent = `# Demo Website Specification — ${prospect.businessName}
 **Generated:** ${new Date().toISOString()}  
 **Business Name:** ${prospect.businessName}  
+**Decision-Maker / Contact:** ${contact}  
+**Contact Email:** ${prospect.ownerEmail || 'Pending verification'}  
+**Phone:** ${prospect.phone || 'N/A'}  
 **City:** ${prospect.city}  
 **Niche:** ${prospect.niche}  
-**Phone:** ${prospect.phone || 'N/A'}  
 **Live Demo Preview:** ${demoUrl || `http://localhost:3030/demos/${prospect.slug}/index.html`}  
 
 ## Built Features & Optimizations
@@ -260,14 +339,18 @@ export async function notifyDemoGenerated(prospect, demoUrl) {
  */
 export async function notifyMeetingScheduled(prospect, details = {}) {
   if (!prospect) return;
+  const contact = prospect.ownerName && prospect.ownerName !== 'Business Owner' ? prospect.ownerName : 'Owner';
+  const emailBadge = prospect.ownerEmail ? `<code>${escapeHtml(prospect.ownerEmail)}</code>` : '<i>N/A</i>';
+  const phoneBadge = prospect.phone ? `<code>${escapeHtml(prospect.phone)}</code>` : '<i>N/A</i>';
+
   const message = `📅 <b>MEETING / DEMO REVIEW SCHEDULED!</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🏢 <b>Client:</b> ${prospect.businessName}
-👤 <b>Decision Maker:</b> ${prospect.ownerName || 'Owner'}
-📞 <b>Phone:</b> <code>${prospect.phone || 'N/A'}</code>
-📧 <b>Email:</b> ${prospect.ownerEmail || 'N/A'}
+🏢 <b>Client:</b> ${escapeHtml(prospect.businessName)} (${escapeHtml(prospect.city || 'Local')} • ${escapeHtml(prospect.niche || 'business')})
+👤 <b>Decision Maker:</b> ${escapeHtml(contact)}
+📧 <b>Contact Email:</b> ${emailBadge}
+📞 <b>Phone:</b> ${phoneBadge}
 🎙️ <b>Channel:</b> AI Voice Pre-Sales Consultant
-📋 <b>Notes:</b> ${details.summary || 'Agreed to review demo and walkthrough proposal'}
+📋 <b>Notes:</b> ${escapeHtml(details.summary || 'Agreed to review demo and walkthrough proposal')}
 
 🔗 <a href="https://cal.com/piyush-usctna/15min">View Cal.com Booking Calendar</a>`;
 
@@ -276,9 +359,9 @@ export async function notifyMeetingScheduled(prospect, details = {}) {
   const docContent = `# Discovery Meeting & Demo Review Brief — ${prospect.businessName}
 **Scheduled Time:** ${new Date().toISOString()}  
 **Client:** ${prospect.businessName}  
-**Contact:** ${prospect.ownerName || 'Owner'}  
+**Decision-Maker:** ${contact}  
+**Contact Email:** ${prospect.ownerEmail || 'N/A'}  
 **Phone:** ${prospect.phone || 'N/A'}  
-**Email:** ${prospect.ownerEmail || 'N/A'}  
 **Booking Link:** https://cal.com/piyush-usctna/15min  
 
 ## Call Notes & Pre-Discovery
@@ -292,7 +375,7 @@ ${details.summary || 'Client agreed to live demo walkthrough and proposal review
   return await sendTelegramReportPackage({
     baseFilename: `meeting_${prospect.slug}`,
     title: `Meeting & Demo Review Brief — ${prospect.businessName}`,
-    subtitle: prospect.ownerName || 'Decision Maker',
+    subtitle: contact,
     content: docContent,
     captionPrefix: 'Meeting Brief'
   });
@@ -306,10 +389,16 @@ export async function notifyProposalDispatched(prospect, opts = {}) {
   const pkg = opts.packageTier || 'growth';
   const amountUSD = pkg === 'starter' ? 375 : (pkg === 'premium' ? 1500 : 750);
   const amountINR = (amountUSD * 83.33).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const contact = prospect.ownerName && prospect.ownerName !== 'Business Owner' ? prospect.ownerName : 'Business Owner';
+  const emailBadge = prospect.ownerEmail ? `<code>${escapeHtml(prospect.ownerEmail)}</code>` : '<i>N/A</i>';
+  const phoneBadge = prospect.phone ? `<code>${escapeHtml(prospect.phone)}</code>` : '<i>N/A</i>';
 
   const message = `💼 <b>CLOSING PROPOSAL DISPATCHED</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🏢 <b>Prospect:</b> ${prospect.businessName}
+🏢 <b>Prospect:</b> ${escapeHtml(prospect.businessName)} (${escapeHtml(prospect.city || 'Local')} • ${escapeHtml(prospect.niche || 'business')})
+👤 <b>Decision-Maker:</b> ${escapeHtml(contact)}
+📧 <b>Contact Email:</b> ${emailBadge}
+📞 <b>Phone:</b> ${phoneBadge}
 📦 <b>Package:</b> ${pkg.toUpperCase()} (50% Deposit: ₹${amountINR} / $${amountUSD} USD)
 📄 <b>Proposal Link:</b> http://localhost:3030/proposals/${prospect.slug}.html
 
@@ -326,6 +415,9 @@ export async function notifyProposalDispatched(prospect, opts = {}) {
   const docContent = `# Client Website Proposal — ${prospect.businessName}
 **Date:** ${new Date().toLocaleDateString()}  
 **Client:** ${prospect.businessName} (${prospect.city})  
+**Decision-Maker / Contact:** ${contact}  
+**Contact Email:** ${prospect.ownerEmail || 'N/A'}  
+**Phone:** ${prospect.phone || 'N/A'}  
 **Package:** ${pkg.toUpperCase()}  
 **Contract Value:** $${amountUSD * 2} USD  
 **50% Deposit Required:** ₹${amountINR} ($${amountUSD} USD)  
@@ -374,14 +466,19 @@ export async function notifyDealClosedWon(prospect, opts = {}) {
   const packageTier = opts.packageTier || 'growth';
   const totalContract = depositPaid * 2;
   const depositINR = (depositPaid * 83.33).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const contact = prospect.ownerName && prospect.ownerName !== 'Business Owner' ? prospect.ownerName : 'Owner';
+  const emailBadge = prospect.ownerEmail ? `<code>${escapeHtml(prospect.ownerEmail)}</code>` : '<i>Verified on record</i>';
+  const phoneBadge = prospect.phone ? `<code>${escapeHtml(prospect.phone)}</code>` : '<i>Phone verified</i>';
 
   const message = `🎉 🏆 <b>CLIENT DEAL CLOSED WON!</b> 🏆 🎉
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🏢 <b>Client:</b> <b>${prospect.businessName}</b>
+🏢 <b>Client:</b> <b>${escapeHtml(prospect.businessName)}</b> (${escapeHtml(prospect.city || 'Local')} • ${escapeHtml(prospect.niche || 'business')})
+👤 <b>Contact:</b> ${escapeHtml(contact)}
+📧 <b>Verified Email:</b> ${emailBadge}
+📞 <b>Phone:</b> ${phoneBadge}
 📦 <b>Package:</b> ${packageTier.toUpperCase()}
 💰 <b>50% Deposit Secured:</b> ₹${depositINR} ($${depositPaid} USD)
 💵 <b>Total Contract Value:</b> $${totalContract} USD
-👤 <b>Contact:</b> ${prospect.ownerName || 'Owner'} (${prospect.phone || 'Phone verified'})
 
 📁 <b>Kickoff Deliverables Generated:</b>
 • <code>clients/${prospect.slug}/kickoff_brief.md</code>
@@ -395,6 +492,9 @@ export async function notifyDealClosedWon(prospect, opts = {}) {
 **Status:** CLOSED_WON  
 **Date Closed:** ${new Date().toISOString()}  
 **Client:** ${prospect.businessName} (${prospect.city})  
+**Decision-Maker / Contact:** ${contact}  
+**Verified Email:** ${prospect.ownerEmail || 'On record'}  
+**Phone:** ${prospect.phone || 'N/A'}  
 **Package:** ${packageTier.toUpperCase()}  
 **Deposit Secured:** ₹${depositINR} ($${depositPaid} USD)  
 **Total Value:** $${totalContract} USD  

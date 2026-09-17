@@ -154,7 +154,7 @@
       "deepgramApiKey": ""
     },
     "postiz": {
-      "enabled": false,
+      "enabled": true,
       "apiUrl": "http://localhost:3000",
       "apiKey": "",
       "integrationIds": []
