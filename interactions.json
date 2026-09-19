@@ -1042,5 +1042,107 @@
     "proposal_url": "/proposals/hammons-family-dental.html",
     "email_provider": "smtp",
     "timestamp": "2026-09-19T17:30:33.801Z"
+  },
+  {
+    "lead_slug": "chinatown",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T19:43:55.919Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T19:43:56.568Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T19:43:57.220Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T19:43:57.480Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T19:43:57.811Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T19:43:58.702Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T19:43:59.043Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789847040778",
+    "to": "jane@thundercloud.com",
+    "subject": "Website Redesign Proposal & Next Steps for Thundercloud Subs",
+    "timestamp": "2026-09-19T19:44:00.779Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Thundercloud%20Subs",
+    "proposal_url": "/proposals/thundercloud-subs.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T19:44:00.780Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789847044583",
+    "to": "info@northcenterchamber.com",
+    "subject": "Website Redesign Proposal & Next Steps for Lincoln Square Orthodontics",
+    "timestamp": "2026-09-19T19:44:04.583Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Lincoln%20Square%20Orthodontics",
+    "proposal_url": "/proposals/lincoln-square-orthodontics.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T19:44:04.584Z"
   }
 ]
