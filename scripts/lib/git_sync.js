@@ -36,7 +36,17 @@ const STAGE_ORDER = [
 
 function runCmd(cmd, opts = {}) {
   try {
-    return execSync(cmd, { cwd: ROOT_DIR, encoding: 'utf-8', stdio: 'pipe', ...opts }).trim();
+    return execSync(cmd, {
+      cwd: ROOT_DIR,
+      encoding: 'utf-8',
+      stdio: 'pipe',
+      env: {
+        ...process.env,
+        GIT_EDITOR: 'true',
+        GIT_TERMINAL_PROMPT: '0'
+      },
+      ...opts
+    }).trim();
   } catch (err) {
     const errorMsg = err.stderr ? err.stderr.toString().trim() : err.message;
     throw new Error(`Command failed [${cmd}]: ${errorMsg}`);
@@ -133,14 +143,33 @@ export async function syncAndPush(opts = {}) {
     hasStaged = false;
   }
 
-  if (!hasStaged) {
-    console.log('ℹ️ [GitSync] No changes to commit.');
-    return { committed: false, pushed: false };
+  let committed = false;
+  if (hasStaged) {
+    // 3. Commit locally
+    runCmd(`git commit -m "${commitMessage.replace(/"/g, '\\"')}"`);
+    console.log(`✅ [GitSync] Local commit created: "${commitMessage}"`);
+    committed = true;
   }
 
-  // 3. Commit locally
-  runCmd(`git commit -m "${commitMessage.replace(/"/g, '\\"')}"`);
-  console.log(`✅ [GitSync] Local commit created: "${commitMessage}"`);
+  // Check if we have unpushed commits ahead of upstream
+  let isAhead = false;
+  try {
+    const aheadCount = runCmd('git rev-list @{u}..HEAD --count');
+    isAhead = parseInt(aheadCount, 10) > 0;
+  } catch {
+    // Fallback: check status for ahead message
+    try {
+      const statusOut = runCmd('git status');
+      isAhead = statusOut.includes('Your branch is ahead of');
+    } catch {
+      isAhead = true;
+    }
+  }
+
+  if (!committed && !isAhead) {
+    console.log('ℹ️ [GitSync] No changes to commit or push.');
+    return { committed: false, pushed: false };
+  }
 
   // 4. Resilient Push Loop with Rebase
   let attempt = 0;
@@ -150,23 +179,35 @@ export async function syncAndPush(opts = {}) {
     attempt++;
     try {
       console.log(`🚀 [GitSync] Pushing to remote (Attempt ${attempt}/${maxRetries})...`);
-      // Try pull --rebase first
+      // Try pull --rebase with autostash first
       try {
-        runCmd('git pull --rebase origin main --strategy-option=theirs');
+        runCmd('git pull --rebase --autostash origin main --strategy-option=theirs');
       } catch (pullErr) {
-        console.warn(`  ⚠️ Rebase conflict encountered: ${pullErr.message}. Resolving pipeline.json...`);
-        // If conflict in pipeline.json, merge in memory and resolve
-        if (fs.existsSync(PIPELINE_FILE)) {
-          try {
-            const remotePipelineRaw = runCmd('git show origin/main:pipeline.json');
-            const remotePipeline = JSON.parse(remotePipelineRaw);
-            const localPipeline = JSON.parse(fs.readFileSync(PIPELINE_FILE, 'utf-8'));
-            const merged = mergePipelines(localPipeline, remotePipeline);
-            fs.writeFileSync(PIPELINE_FILE, JSON.stringify(merged, null, 2), 'utf-8');
-            runCmd('git add pipeline.json');
-            runCmd('git rebase --continue');
-          } catch {
-            runCmd('git rebase --abort');
+        console.warn(`  ⚠️ Rebase conflict encountered: ${pullErr.message}. Checking rebase status...`);
+        const isRebasing = fs.existsSync(path.join(ROOT_DIR, '.git', 'rebase-merge')) ||
+                           fs.existsSync(path.join(ROOT_DIR, '.git', 'rebase-apply'));
+        if (isRebasing) {
+          if (fs.existsSync(PIPELINE_FILE)) {
+            try {
+              let remotePipelineRaw = '';
+              try {
+                remotePipelineRaw = runCmd('git show :3:pipeline.json');
+              } catch {
+                remotePipelineRaw = runCmd('git show origin/main:pipeline.json');
+              }
+              const remotePipeline = JSON.parse(remotePipelineRaw);
+              const localPipeline = JSON.parse(fs.readFileSync(PIPELINE_FILE, 'utf-8'));
+              const merged = mergePipelines(localPipeline, remotePipeline);
+              fs.writeFileSync(PIPELINE_FILE, JSON.stringify(merged, null, 2), 'utf-8');
+              runCmd('git add pipeline.json');
+              runCmd('git -c core.editor=true rebase --continue');
+            } catch (mergeErr) {
+              console.warn(`  ⚠️ Conflict auto-merge failed: ${mergeErr.message}. Aborting rebase...`);
+              try { runCmd('git rebase --abort'); } catch {}
+              throw mergeErr;
+            }
+          } else {
+            try { runCmd('git rebase --abort'); } catch {}
           }
         }
       }
