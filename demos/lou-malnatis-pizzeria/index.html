@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lou Malnati's Pizzeria — Authentic Cuisine & Dining in Chicago, IL</title>
+  <meta name="description" content="Experience handcrafted dishes, fresh local ingredients, and warm hospitality at Lou Malnati's Pizzeria in Chicago, IL. View our menu and order online or reserve a table.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0c0a;
+      --card-bg: rgba(28, 25, 23, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #ea580c;
+      --accent-glow: rgba(234, 88, 12, 0.25);
+      --gold: #f59e0b;
+      --text: #fafaf9;
+      --text-muted: #a8a29e;
+      --radius: 16px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    
+    /* Announcement Bar */
+    .top-bar { background: linear-gradient(90deg, #9a3412, #c2410c); padding: 8px 16px; text-align: center; font-size: 0.85rem; font-weight: 700; color: #fff; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    
+    /* Navigation */
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; max-width: 1280px; margin: 0 auto; }
+    .logo { font-size: 1.5rem; font-weight: 700; font-family: 'Playfair Display', serif; color: #fff; letter-spacing: 0.5px; }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .nav-btn { background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 99px; font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: transform 0.2s; box-shadow: 0 4px 20px var(--accent-glow); }
+    .nav-btn:hover { transform: translateY(-2px); }
+    
+    /* Hero */
+    .hero { padding: 60px 5% 80px; max-width: 1200px; margin: 0 auto; text-align: center; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(234, 88, 12, 0.12); border: 1px solid rgba(234, 88, 12, 0.3); padding: 6px 16px; border-radius: 99px; font-size: 0.85rem; font-weight: 600; color: #fb923c; margin-bottom: 20px; }
+    .hero h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); font-family: 'Playfair Display', serif; font-weight: 700; line-height: 1.15; margin-bottom: 20px; }
+    .hero h1 span { color: #fb923c; font-style: italic; }
+    .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 36px; }
+    .hero-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 48px; }
+    .btn-main { background: var(--accent); color: #fff; font-weight: 700; font-size: 1.05rem; padding: 14px 32px; border-radius: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 10px 30px var(--accent-glow); }
+    .btn-outline { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: #fff; font-weight: 600; font-size: 1.05rem; padding: 14px 28px; border-radius: 12px; text-decoration: none; }
+    
+    /* Info Highlights */
+    .info-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; max-width: 1000px; margin: 0 auto; }
+    .info-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 20px; text-align: center; }
+    .info-icon { font-size: 1.5rem; margin-bottom: 6px; }
+    .info-title { font-weight: 700; font-size: 1rem; color: #fff; }
+    .info-desc { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Menu Section */
+    .section { padding: 80px 5%; max-width: 1280px; margin: 0 auto; }
+    .section-head { text-align: center; margin-bottom: 50px; }
+    .section-sub { color: var(--accent); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+    .section-title { font-size: clamp(2rem, 3.5vw, 2.8rem); font-family: 'Playfair Display', serif; font-weight: 700; }
+    
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+    .menu-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+    .menu-item:hover { transform: translateY(-4px); border-color: rgba(234, 88, 12, 0.4); }
+    .item-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .item-name { font-size: 1.15rem; font-weight: 700; color: #fff; }
+    .item-price { font-size: 1.15rem; font-weight: 800; color: #fb923c; font-family: 'Space Grotesk', sans-serif; }
+    .item-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 14px; }
+    .item-badge { display: inline-block; background: rgba(245, 158, 11, 0.1); color: var(--gold); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; }
+
+    /* Reviews */
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .review-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 28px; }
+    .stars { color: #f59e0b; margin-bottom: 12px; }
+    .review-text { font-style: italic; color: #e7e5e4; font-size: 0.95rem; margin-bottom: 16px; }
+    .reviewer-name { font-weight: 700; font-size: 0.9rem; color: #fff; }
+
+    /* Order / Reserve CTA */
+    .order-box { background: linear-gradient(135deg, rgba(234, 88, 12, 0.2), rgba(28, 25, 23, 0.8)); border: 1px solid rgba(234, 88, 12, 0.3); border-radius: 24px; padding: 50px 5%; text-align: center; max-width: 1000px; margin: 40px auto 80px; }
+    .order-box h2 { font-size: 2.4rem; font-family: 'Playfair Display', serif; margin-bottom: 12px; }
+    .order-box p { color: var(--text-muted); max-width: 600px; margin: 0 auto 30px; font-size: 1.05rem; }
+
+    /* Sticky Mobile Bar */
+    .mobile-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(13, 12, 10, 0.95); backdrop-filter: blur(16px); border-top: 1px solid var(--card-border); padding: 12px 16px; display: none; justify-content: space-between; align-items: center; z-index: 999; }
+    .mobile-call { flex: 1; background: var(--accent); color: #fff; text-align: center; padding: 14px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 1rem; margin-right: 8px; }
+    .mobile-menu { flex: 1; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--card-border); color: #fff; text-align: center; padding: 14px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 1rem; }
+
+    footer { border-top: 1px solid var(--card-border); padding: 40px 5% 60px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+    .preview-badge { display: inline-block; background: rgba(234, 88, 12, 0.1); border: 1px dashed var(--accent); color: #fb923c; padding: 6px 16px; border-radius: 8px; font-size: 0.75rem; margin-top: 20px; }
+
+    @media (max-width: 768px) {
+      .mobile-bar { display: flex; }
+      body { padding-bottom: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    🍕 Dine-In · Curbside Takeout · Fast Local Delivery in Chicago, IL
+  </div>
+
+  <nav>
+    <div class="logo">Lou Malnati's Pizzeria</div>
+    <div class="nav-actions">
+      <a href="tel:(555) 234-5678" class="nav-btn">📞 Call: (555) 234-5678</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-tag">✨ Made Fresh Daily in Chicago, IL</div>
+    <h1>Delicious Authentic Food, <span>Handcrafted</span> with Love</h1>
+    <p>Join us for an unforgettable dining experience or enjoy your favorites delivered hot and fresh to your doorstep.</p>
+    <div class="hero-btns">
+      <a href="tel:(555) 234-5678" class="btn-main">📞 Order for Pickup / Delivery</a>
+      <a href="#menu" class="btn-outline">View Full Menu</a>
+    </div>
+
+    <div class="info-bar">
+      <div class="info-card">
+        <div class="info-icon">📍</div>
+        <div class="info-title">Location</div>
+        <div class="info-desc">Downtown Chicago, IL</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">⏰</div>
+        <div class="info-title">Hours</div>
+        <div class="info-desc">Tue-Sun: 11am – 10pm</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">⭐</div>
+        <div class="info-title">Top Rated</div>
+        <div class="info-desc">4.8 Stars (400+ Reviews)</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="menu">
+    <div class="section-head">
+      <div class="section-sub">Popular Dishes</div>
+      <h2 class="section-title">Chef's Signature Selections</h2>
+    </div>
+    <div class="menu-grid">
+      
+      <div class="menu-item">
+        <div>
+          <div class="item-header">
+            <span class="item-name">Wood-Fired Signature Pizzas</span>
+            <span class="item-price">$18 – $24</span>
+          </div>
+          <p class="item-desc">Slow-fermented artisan dough, San Marzano tomato sauce, and imported fresh mozzarella.</p>
+        </div>
+        <span class="item-badge">Chef's Special</span>
+      </div>
+    
+
+      <div class="menu-item">
+        <div>
+          <div class="item-header">
+            <span class="item-name">Handcrafted Fresh Pastas</span>
+            <span class="item-price">$19 – $28</span>
+          </div>
+          <p class="item-desc">Daily hand-rolled ribbons of pasta tossed in rich slow-simmered sauces.</p>
+        </div>
+        <span class="item-badge">Chef's Special</span>
+      </div>
+    
+
+      <div class="menu-item">
+        <div>
+          <div class="item-header">
+            <span class="item-name">Farm-Fresh Salads & Antipasti</span>
+            <span class="item-price">$12 – $16</span>
+          </div>
+          <p class="item-desc">Locally sourced heirloom produce, cured meats, and extra virgin olive oils.</p>
+        </div>
+        <span class="item-badge">Chef's Special</span>
+      </div>
+    
+
+      <div class="menu-item">
+        <div>
+          <div class="item-header">
+            <span class="item-name">Artisan Desserts & Gelato</span>
+            <span class="item-price">$8 – $12</span>
+          </div>
+          <p class="item-desc">Classic house-made tiramisu, cannoli, and seasonal Italian fruit gelatos.</p>
+        </div>
+        <span class="item-badge">Chef's Special</span>
+      </div>
+    
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-sub">Customer Love</div>
+      <h2 class="section-title">What Our Guests Say</h2>
+    </div>
+    <div class="reviews-grid">
+      
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Without a doubt the best crust and authentic flavors in town! Perfect atmosphere and incredible service every single visit."</p>
+      <div class="reviewer">Elena Rostova</div>
+      <div class="reviewer-meta">Food Enthusiast · Chicago, IL</div>
+    </div>
+  
+
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Ordered takeout on a Friday night—it arrived piping hot and tasted like a 5-star restaurant meal. A true neighborhood gem."</p>
+      <div class="reviewer">Marcus Vance</div>
+      <div class="reviewer-meta">Verified Patron · Chicago, IL</div>
+    </div>
+  
+    </div>
+  </section>
+
+  <div class="order-box">
+    <h2>Ready for Lunch or Dinner Tonight?</h2>
+    <p>Call directly to place an order or reserve your table in advance.</p>
+    <a href="tel:(555) 234-5678" class="btn-main" style="font-size: 1.2rem; padding: 18px 40px;">
+      📞 Call to Order: (555) 234-5678
+    </a>
+  </div>
+
+  <footer>
+    <p><strong>Lou Malnati's Pizzeria</strong> · Chicago, IL</p>
+    <p style="margin-top: 6px;">Email: jdoe@loumalnatis.com · Phone: (555) 234-5678</p>
+    <div class="preview-badge">
+      ⚡ Modern Redesign Preview Scaffolded by Apex AI Web Studio
+    </div>
+  </footer>
+
+  <div class="mobile-bar">
+    <a href="tel:(555) 234-5678" class="mobile-call">📞 Call to Order</a>
+    <a href="#menu" class="mobile-menu">View Menu</a>
+  </div>
+
+
+<script>
+  // Interactive Demo Script
+  document.addEventListener('DOMContentLoaded', () => {
+    // Add Click listener to any non-tel CTA
+    document.querySelectorAll('a[href="#services"], a[href="#menu"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
