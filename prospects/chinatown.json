@@ -1,0 +1,53 @@
+{
+  "businessName": "Chinatown",
+  "slug": "chinatown",
+  "niche": "restaurant",
+  "city": "Austin, TX",
+  "address": "Austin TX",
+  "ownerName": "Business Owner",
+  "ownerEmail": "2712chinatown@gmail.com",
+  "ownerEmailSource": "https://maps.google.com/?q=Chinatown%20Austin%2C%20TX",
+  "source": "osm_overpass_live",
+  "phone": "",
+  "overallScore": 3,
+  "dimensions": {
+    "design": {
+      "score": 3,
+      "problems": [
+        "Unresponsive layout",
+        "Low visual hierarchy"
+      ],
+      "quickFix": "Deploy modern CSS grid"
+    },
+    "mobile": {
+      "score": 2,
+      "problems": [
+        "No viewport meta",
+        "Unclickable buttons"
+      ],
+      "quickFix": "Full mobile responsive viewport"
+    },
+    "speed": {
+      "score": 4,
+      "problems": [
+        "Uncompressed assets"
+      ],
+      "quickFix": "Lightning CDN caching"
+    },
+    "seo": {
+      "score": 3,
+      "problems": [
+        "Missing meta descriptions"
+      ],
+      "quickFix": "Local schema tags"
+    },
+    "conversion": {
+      "score": 3,
+      "problems": [
+        "No tap-to-call mobile CTA"
+      ],
+      "quickFix": "Sticky direct booking bar"
+    }
+  },
+  "biggestOpportunity": "Transform Chinatown's digital presence with a modern responsive site in Austin, TX."
+}

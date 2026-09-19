@@ -21,6 +21,10 @@ on:
   repository_dispatch:
     types: [autopilot-trigger, cronjob-trigger]
 
+concurrency:
+  group: crm-pipeline-lock
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
@@ -117,26 +121,6 @@ jobs:
           echo "🚀 Running: node scripts/autopilot.js $ARGS"
           node scripts/autopilot.js $ARGS
 
-      - name: 💾 Commit & Push CRM Data Updates
-        if: always()
-        run: |
-          git config --global user.name  "Apex AI Agency Bot"
-          git config --global user.email "bot@apexwebstudio.com"
-
-          # Stage all CRM data files (ignore config.json with secrets)
-          git add pipeline.json interactions.json \
-            prospects/ demos/ outreach/ proposals/ \
-            clients/ reports/ || true
-
-          if git diff --staged --quiet; then
-            echo "ℹ️ No CRM changes in this cycle."
-          else
-            CYCLE_TIME=$(date -u "+%Y-%m-%d %H:%M UTC")
-            git commit -m "chore(autopilot): 🤖 autonomous cycle — $CYCLE_TIME [skip ci]"
-            git push
-            echo "✅ CRM pipeline synced to repository."
-          fi
-
       - name: 🏗️ Prepare Public Demo & Dashboard Assets
         if: always()
         run: |
@@ -150,6 +134,13 @@ jobs:
             mkdir -p public/proposals
             cp -r proposals/* public/proposals/ 2>/dev/null || true
           fi
+
+      - name: 💾 Commit & Sync CRM Data Updates
+        if: always()
+        run: |
+          git config --global user.name  "Apex AI Agency Bot"
+          git config --global user.email "bot@apexwebstudio.com"
+          node scripts/lib/git_sync.js "chore(autopilot): 🤖 autonomous cycle — $(date -u '+%Y-%m-%d %H:%M UTC') [skip ci]"
 
       - name: 🌐 Deploy Updated Demos & Dashboard to GitHub Pages
         if: always()

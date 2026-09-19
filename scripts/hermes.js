@@ -535,10 +535,72 @@ async function executeAction(prospect, decision, pipeline, dryRun = false) {
   }
 }
 
+// ─── Autonomous Demo Reconciler (Self-Healing) ──────────────────────────────
+export function reconcileDemos(pipeline, dryRun = false) {
+  let reconciled = 0;
+  const demosDir = path.join(ROOT_DIR, 'demos');
+  const publicDemosDir = path.join(ROOT_DIR, 'public', 'demos');
+  if (!fs.existsSync(demosDir)) fs.mkdirSync(demosDir, { recursive: true });
+  if (!fs.existsSync(publicDemosDir)) fs.mkdirSync(publicDemosDir, { recursive: true });
+
+  for (const prospect of pipeline.prospects || []) {
+    if (!prospect.slug && prospect.businessName) {
+      prospect.slug = slugify(prospect.businessName);
+    }
+    const slug = prospect.slug;
+    if (!slug) continue;
+
+    const demoFile = path.join(demosDir, slug, 'index.html');
+    const publicDemoFile = path.join(publicDemosDir, slug, 'index.html');
+
+    const fileExists = fs.existsSync(demoFile);
+    const publicExists = fs.existsSync(publicDemoFile);
+
+    if (!fileExists || !publicExists || !prospect.demoPath) {
+      if (dryRun) {
+        log('🛠️', `[DRY RUN] Would reconcile demo site for [${prospect.businessName}] (${slug})`);
+        continue;
+      }
+      try {
+        const prospectFile = path.join(PROSPECTS_DIR, `${slug}.json`);
+        let prospectData = prospect;
+        if (fs.existsSync(prospectFile)) {
+          try {
+            prospectData = { ...JSON.parse(fs.readFileSync(prospectFile, 'utf-8')), ...prospect };
+          } catch {}
+        }
+        const demo = generateDemoSite(prospectData);
+        prospect.demoPath = demo.relativeUrl;
+
+        // Ensure mirrored in public/demos
+        const targetPublicDir = path.join(publicDemosDir, slug);
+        if (!fs.existsSync(targetPublicDir)) fs.mkdirSync(targetPublicDir, { recursive: true });
+        fs.copyFileSync(demo.demoPath, path.join(targetPublicDir, 'index.html'));
+
+        reconciled++;
+        log('🛠️', `[Self-Healing] Successfully reconciled demo for [${prospect.businessName}] -> ${demo.relativeUrl}`);
+      } catch (err) {
+        log('⚠️', `[Self-Healing] Failed to reconcile demo for [${prospect.businessName}]: ${err.message}`);
+      }
+    }
+  }
+
+  if (reconciled > 0 && !dryRun) {
+    savePipeline(pipeline);
+  }
+  return reconciled;
+}
+
 // ─── Main Loop ───────────────────────────────────────────────────────────────
 async function runHermes(opts = {}) {
   const { dryRun = false, targetSlug = null } = opts;
   const pipeline = loadPipeline();
+
+  // Self-Healing Phase: Verify and restore any missing demo websites across entire CRM
+  const reconciledCount = reconcileDemos(pipeline, dryRun);
+  if (reconciledCount > 0) {
+    log('🛠️', `Hermes self-healed ${reconciledCount} missing demo websites before progression.`);
+  }
 
   log('🏛️', `Hermes started — ${pipeline.prospects.length} leads in pipeline${dryRun ? ' [DRY RUN]' : ''}`);
 

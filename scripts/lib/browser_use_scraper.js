@@ -17,6 +17,7 @@ import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { slugify } from '../audit_engine.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -230,18 +231,22 @@ export async function scrapeViaBrowserUse(opts = {}) {
       try {
         const leads = JSON.parse(stdout.trim());
         console.log(`  🎯 Browser Use found ${leads.length} real businesses`);
-        resolve(leads.map(l => ({
-          businessName: l.businessName || l.name || '',
-          url: l.url || l.website || '',
-          phone: l.phone || '',
-          email: l.email || null,
-          address: l.address || city,
-          city,
-          niche,
-          rating: l.rating ?? null,
-          reviewCount: l.reviewCount ?? l.reviews ?? null,
-          source: l.source || 'browser_use'
-        })).filter(l => l.businessName));
+        resolve(leads.map(l => {
+          const name = l.businessName || l.name || '';
+          return {
+            slug: slugify(name),
+            businessName: name,
+            url: l.url || l.website || '',
+            phone: l.phone || '',
+            email: l.email || null,
+            address: l.address || city,
+            city,
+            niche,
+            rating: l.rating ?? null,
+            reviewCount: l.reviewCount ?? l.reviews ?? null,
+            source: l.source || 'browser_use'
+          };
+        }).filter(l => l.businessName && l.slug));
       } catch (e) {
         console.warn(`  ⚠️ Browser Use parse error: ${e.message}`);
         resolve([]);

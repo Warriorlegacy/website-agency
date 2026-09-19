@@ -19,6 +19,10 @@ on:
         required: false
         default: '3'
 
+concurrency:
+  group: crm-pipeline-lock
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
@@ -96,21 +100,7 @@ jobs:
           echo "🏛️ Running Hermes to advance newly discovered leads..."
           node scripts/agency_cli.js hermes || true
 
-      - name: 💾 Commit New Leads to Repository
-        run: |
-          git config --global user.name  "Apex AI Agency Bot"
-          git config --global user.email "bot@apexwebstudio.com"
-          git add pipeline.json interactions.json prospects/ demos/ outreach/ || true
-          if git diff --staged --quiet; then
-            echo "ℹ️ No new leads harvested today."
-          else
-            COUNT=$(git diff --staged --name-only | grep -c "prospects/" || echo "0")
-            git commit -m "feat(leads): 🌾 harvested $COUNT fresh leads — $(date -u '+%Y-%m-%d') [skip ci]"
-            git push
-          fi
-
       - name: 🏗️ Prepare Public Demo & Dashboard Assets
-        if: always()
         run: |
           node scripts/build.js || true
           if [ -d demos ]; then
@@ -122,6 +112,12 @@ jobs:
             mkdir -p public/proposals
             cp -r proposals/* public/proposals/ 2>/dev/null || true
           fi
+
+      - name: 💾 Commit & Sync CRM to Repository
+        run: |
+          git config --global user.name  "Apex AI Agency Bot"
+          git config --global user.email "bot@apexwebstudio.com"
+          node scripts/lib/git_sync.js "feat(leads): 🌾 harvested fresh leads & demos — $(date -u '+%Y-%m-%d %H:%M UTC') [skip ci]"
 
       - name: 🌐 Deploy Updated Demos to GitHub Pages
         if: always()

@@ -1,0 +1,53 @@
+{
+  "businessName": "South Gables Dental",
+  "slug": "south-gables-dental",
+  "niche": "medical",
+  "city": "Miami, FL",
+  "address": "4950 South Le Jeune Road, Miami FL",
+  "ownerName": "Business Owner",
+  "ownerEmail": "info@southgablesdental.com",
+  "ownerEmailSource": "https://maps.google.com/?q=South%20Gables%20Dental%20Miami%2C%20FL",
+  "source": "osm_overpass_live",
+  "phone": "+1-305-665-1263",
+  "overallScore": 3,
+  "dimensions": {
+    "design": {
+      "score": 3,
+      "problems": [
+        "Unresponsive layout",
+        "Low visual hierarchy"
+      ],
+      "quickFix": "Deploy modern CSS grid"
+    },
+    "mobile": {
+      "score": 2,
+      "problems": [
+        "No viewport meta",
+        "Unclickable buttons"
+      ],
+      "quickFix": "Full mobile responsive viewport"
+    },
+    "speed": {
+      "score": 4,
+      "problems": [
+        "Uncompressed assets"
+      ],
+      "quickFix": "Lightning CDN caching"
+    },
+    "seo": {
+      "score": 3,
+      "problems": [
+        "Missing meta descriptions"
+      ],
+      "quickFix": "Local schema tags"
+    },
+    "conversion": {
+      "score": 3,
+      "problems": [
+        "No tap-to-call mobile CTA"
+      ],
+      "quickFix": "Sticky direct booking bar"
+    }
+  },
+  "biggestOpportunity": "Transform South Gables Dental's digital presence with a modern responsive site in Miami, FL."
+}
