@@ -942,5 +942,105 @@
     "proposal_url": "/proposals/krosno-inc.html",
     "email_provider": "smtp",
     "timestamp": "2026-09-19T16:52:55.093Z"
+  },
+  {
+    "lead_slug": "rossis-pizzeria",
+    "action": "move_to_nurture",
+    "channel": "system",
+    "reason": "Lead has received 2 outbound touches with no reply for 49 hours. While the 3-touch threshold isn't strictly met, the 48-hour no-contact rule prevents immediate follow-up, and the lead is unresponsive. Moving to nurture is the appropriate next step to pause active outreach while keeping the lead in the pipeline.",
+    "timestamp": "2026-09-19T17:30:26.810Z"
+  },
+  {
+    "lead_slug": "bright-smile-dental",
+    "action": "move_to_nurture",
+    "channel": "system",
+    "reason": "3+ touches (4 total) with no reply recorded, triggering the rule to move to nurture.",
+    "timestamp": "2026-09-19T17:30:27.163Z"
+  },
+  {
+    "lead_slug": "vance-sterling-law",
+    "action": "move_to_nurture",
+    "channel": "system",
+    "reason": "3+ touches (4 total) with no reply recorded, triggering the rule to move to nurture.",
+    "timestamp": "2026-09-19T17:30:27.511Z"
+  },
+  {
+    "lead_slug": "omni-dental-group",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T17:30:29.719Z"
+  },
+  {
+    "lead_slug": "chinatown",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T17:30:30.287Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T17:30:30.802Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T17:30:31.251Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T17:30:31.750Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T17:30:32.314Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-19T17:30:32.565Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789839033800",
+    "to": "dr.hammons@hammonsfamilydental.com",
+    "subject": "Website Redesign Proposal & Next Steps for Hammons Family Dental",
+    "timestamp": "2026-09-19T17:30:33.800Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Hammons%20Family%20Dental",
+    "proposal_url": "/proposals/hammons-family-dental.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T17:30:33.801Z"
   }
 ]

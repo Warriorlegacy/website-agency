@@ -1,18 +1,18 @@
 {
   "agency_name": "Apex AI Web Studio",
   "version": "1.0.0",
-  "last_updated": "2026-09-19T16:52:39.040Z",
+  "last_updated": "2026-09-19T17:30:32.566Z",
   "pipeline_summary": {
     "total_prospects": 22,
     "discovered": 0,
     "audited": 0,
     "demo_generated": 0,
     "outreach_drafted": 0,
-    "contacted": 12,
-    "meeting_scheduled": 6,
+    "contacted": 8,
+    "meeting_scheduled": 7,
     "closed_won": 0,
-    "closed_lost": 4,
-    "pipeline_value_usd": 27000
+    "closed_lost": 7,
+    "pipeline_value_usd": 22500
   },
   "prospects": [
     {
@@ -25,10 +25,10 @@
       "ownerEmail": "marco@rossispizza.com",
       "phone": "",
       "overallScore": 3,
-      "stage": "CONTACTED",
+      "stage": "CLOSED_LOST",
       "demoPath": "/demos/rossis-pizzeria/index.html",
       "outreachPath": "/outreach/rossis-pizzeria.md",
-      "lastAction": "2026-09-17T16:59:16.052Z",
+      "lastAction": "2026-09-19T17:30:26.809Z",
       "ownerEmailSource": "http://example.com/rossi/contact"
     },
     {
@@ -41,10 +41,10 @@
       "ownerEmail": "sarah@brightsmilemiami.com",
       "phone": "",
       "overallScore": 3,
-      "stage": "CONTACTED",
+      "stage": "CLOSED_LOST",
       "demoPath": "/demos/bright-smile-dental/index.html",
       "outreachPath": "/outreach/bright-smile-dental.md",
-      "lastAction": "2026-09-17T14:30:33.789Z",
+      "lastAction": "2026-09-19T17:30:27.163Z",
       "ownerEmailSource": "http://example.com/brightdental/contact"
     },
     {
@@ -57,10 +57,10 @@
       "ownerEmail": "avance@vancestlaw.com",
       "phone": "",
       "overallScore": 3,
-      "stage": "CONTACTED",
+      "stage": "CLOSED_LOST",
       "demoPath": "/demos/vance-sterling-law/index.html",
       "outreachPath": "/outreach/vance-sterling-law.md",
-      "lastAction": "2026-09-17T14:30:34.718Z",
+      "lastAction": "2026-09-19T17:30:27.511Z",
       "ownerEmailSource": "http://example.com/vancelaw/contact"
     },
     {
@@ -334,14 +334,15 @@
       "phone": "",
       "rating": 4.5,
       "reviewCount": 10,
-      "stage": "CONTACTED",
+      "stage": "MEETING_SCHEDULED",
       "opportunityHook": "No website listed on Google Maps profile",
       "demoPath": "/demos/hammons-family-dental/index.html",
       "outreachPath": "/outreach/hammons-family-dental.md",
-      "lastAction": "2026-09-19T08:49:15.362Z",
+      "lastAction": "2026-09-19T17:30:36.806Z",
       "createdAt": "2026-09-19T08:49:15.362Z",
       "source": "osm_overpass_live",
-      "ownerEmailSource": "https://maps.google.com/?q=Hammons%20Family%20Dental%20Austin%2C%20TX"
+      "ownerEmailSource": "https://maps.google.com/?q=Hammons%20Family%20Dental%20Austin%2C%20TX",
+      "proposalSent": true
     },
     {
       "businessName": "Fastbraces",
