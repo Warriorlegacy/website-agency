@@ -764,5 +764,183 @@
     "to": "avance@vancestlaw.com",
     "subject": "Quick redesign idea for Vance & Sterling Law",
     "timestamp": "2026-09-17T16:59:36.360Z"
+  },
+  {
+    "lead_slug": "apex-electrical-solutions",
+    "action": "move_to_nurture",
+    "channel": "system",
+    "reason": "Lead has received 3 outbound touches (voice call, email, email) with no recorded reply. Per the rule 'If 3+ touches with no reply, move to nurture', the lead should be moved to the nurture stage.",
+    "timestamp": "2026-09-19T16:52:11.168Z"
+  },
+  {
+    "lead_slug": "bella-napoli-trattoria",
+    "action": "move_to_nurture",
+    "channel": "system",
+    "reason": "3+ touches with no reply",
+    "timestamp": "2026-09-19T16:52:11.382Z"
+  },
+  {
+    "lead_slug": "blue-harbor-seafood-bar",
+    "action": "move_to_nurture",
+    "channel": "system",
+    "reason": "3+ outbound touches (voice call, 2 emails) with no recorded reply after 50 hours; meets criteria for moving to nurture.",
+    "timestamp": "2026-09-19T16:52:11.630Z"
+  },
+  {
+    "lead_slug": "cornerstone-artisan-bakery",
+    "action": "move_to_nurture",
+    "channel": "system",
+    "reason": "Lead has received 3 outbound touches with no recorded reply, meeting the threshold to move to nurture.",
+    "timestamp": "2026-09-19T16:52:11.868Z"
+  },
+  {
+    "lead_slug": "south-gables-dental",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 115,
+    "summary": "Jordan agreed to review the pre-built demo link and will follow up if satisfied with the design.",
+    "transcript": "ALEX: Hi, this is Alex with Apex AI Web Studio. I’m calling because I noticed South Gables Dental has a great 4.5-star reputation but currently doesn’t have a website. I’ve actually already built a modern, mobile-friendly demo for you to see. Do you have ten seconds to hear how it looks?\nOWNER: I’m in the middle of seeing a patient, so I’m pretty busy. What is this about? And how did you even find my number?\nALEX: I completely understand, Jordan. I pulled your info from public business directories. I’m not asking for a long commitment. We offer a flat $750 package that includes hosting and design, and since I already built the demo, you can see the exact result instantly without any back-and-forth. Would you like me to send the link so you can check it on your phone when you’re free?\nOWNER: A flat $750 is reasonable if it’s truly done. I don’t have time to sit on a call right now, but if it’s already built, I can take a look. Send me that link. If it looks good, I’ll call you back to discuss the next steps.",
+    "timestamp": "2026-09-19T16:52:39.991Z"
+  },
+  {
+    "lead_slug": "chinatown",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789836761109",
+    "to": "2712chinatown@gmail.com",
+    "subject": "Website Redesign Proposal & Next Steps for Chinatown",
+    "timestamp": "2026-09-19T16:52:41.109Z"
+  },
+  {
+    "lead_slug": "chinatown",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Chinatown",
+    "proposal_url": "/proposals/chinatown.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T16:52:41.110Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789836764394",
+    "to": "j@clarkstdog.com",
+    "subject": "Website Redesign Proposal & Next Steps for Clark Street Dog",
+    "timestamp": "2026-09-19T16:52:44.395Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Clark%20Street%20Dog",
+    "proposal_url": "/proposals/clark-street-dog.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T16:52:44.395Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789836767080",
+    "to": "austin@austindentalworks.com",
+    "subject": "Website Redesign Proposal & Next Steps for Austin Dental Works",
+    "timestamp": "2026-09-19T16:52:47.080Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Austin%20Dental%20Works",
+    "proposal_url": "/proposals/austin-dental-works.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T16:52:47.081Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789836769832",
+    "to": "jane@fastbracesuniversity.com",
+    "subject": "Website Redesign Proposal & Next Steps for Fastbraces",
+    "timestamp": "2026-09-19T16:52:49.832Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Fastbraces",
+    "proposal_url": "/proposals/fastbraces.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T16:52:49.833Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789836772499",
+    "to": "roofsolutions@beckerroofingcompany.com",
+    "subject": "Website Redesign Proposal & Next Steps for Becker Roofing Company",
+    "timestamp": "2026-09-19T16:52:52.499Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Becker%20Roofing%20Company",
+    "proposal_url": "/proposals/becker-roofing-company.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T16:52:52.500Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789836775092",
+    "to": "60634krosnoinc@gmail.com",
+    "subject": "Website Redesign Proposal & Next Steps for Krosno Inc",
+    "timestamp": "2026-09-19T16:52:55.092Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20Krosno%20Inc",
+    "proposal_url": "/proposals/krosno-inc.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-19T16:52:55.093Z"
   }
 ]
