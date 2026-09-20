@@ -1,15 +1,15 @@
 {
   "agency_name": "Apex AI Web Studio",
   "version": "1.0.0",
-  "last_updated": "2026-09-20T02:30:31.062Z",
+  "last_updated": "2026-09-20T05:30:45.417Z",
   "pipeline_summary": {
     "total_prospects": 22,
     "discovered": 0,
     "audited": 0,
     "demo_generated": 0,
     "outreach_drafted": 0,
-    "contacted": 5,
-    "meeting_scheduled": 9,
+    "contacted": 4,
+    "meeting_scheduled": 10,
     "closed_won": 0,
     "closed_lost": 8,
     "pipeline_value_usd": 21000
@@ -294,14 +294,15 @@
       "phone": "",
       "rating": 4.5,
       "reviewCount": 10,
-      "stage": "CONTACTED",
+      "stage": "MEETING_SCHEDULED",
       "opportunityHook": "No website listed on Google Maps profile",
       "demoPath": "/demos/lou-malnatis-pizzeria/index.html",
       "outreachPath": "/outreach/lou-malnatis-pizzeria.md",
-      "lastAction": "2026-09-19T08:49:15.061Z",
+      "lastAction": "2026-09-20T05:30:49.132Z",
       "createdAt": "2026-09-19T08:49:15.061Z",
       "source": "osm_overpass_live",
-      "ownerEmailSource": "https://maps.google.com/?q=Lou%20Malnati's%20Pizzeria%20Chicago%2C%20IL"
+      "ownerEmailSource": "https://maps.google.com/?q=Lou%20Malnati's%20Pizzeria%20Chicago%2C%20IL",
+      "proposalSent": true
     },
     {
       "businessName": "Austin Dental Works",
