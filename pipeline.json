@@ -1,18 +1,18 @@
 {
   "agency_name": "Apex AI Web Studio",
   "version": "1.0.0",
-  "last_updated": "2026-09-20T08:30:37.009Z",
+  "last_updated": "2026-09-20T08:52:11.082Z",
   "pipeline_summary": {
-    "total_prospects": 22,
+    "total_prospects": 23,
     "discovered": 0,
     "audited": 0,
     "demo_generated": 0,
     "outreach_drafted": 0,
-    "contacted": 4,
+    "contacted": 5,
     "meeting_scheduled": 10,
     "closed_won": 0,
     "closed_lost": 8,
-    "pipeline_value_usd": 21000
+    "pipeline_value_usd": 22500
   },
   "prospects": [
     {
@@ -449,6 +449,28 @@
       "source": "osm_overpass_live",
       "ownerEmailSource": "https://maps.google.com/?q=Krosno%20Inc%20Chicago%2C%20IL",
       "proposalSent": true
+    },
+    {
+      "slug": "big-smile-dental",
+      "businessName": "Big Smile Dental",
+      "url": "",
+      "phone": "",
+      "address": "2833 North Milwaukee Avenue, Chicago IL",
+      "city": "Chicago IL",
+      "niche": "medical",
+      "rating": null,
+      "reviewCount": null,
+      "ownerName": "Business Owner",
+      "ownerEmail": "info@bigsmiledental.com",
+      "ownerEmailSource": "https://duckduckgo.com/html/?q=%22Big%20Smile%20Dental%22%20Chicago%20IL%20email",
+      "stage": "CONTACTED",
+      "source": "osm_overpass_live",
+      "opportunityHook": "No website listed on Google Maps profile",
+      "createdAt": "2026-09-20T08:48:15.602Z",
+      "lastAction": "2026-09-20T08:52:11.081Z",
+      "demoPath": "/demos/big-smile-dental/index.html",
+      "overallScore": 2,
+      "outreachPath": "/outreach/big-smile-dental.md"
     }
   ]
 }

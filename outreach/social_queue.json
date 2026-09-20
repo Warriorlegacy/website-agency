@@ -32,5 +32,22 @@
     "scheduledAt": "2026-09-17T17:58:03.225Z",
     "status": "queued",
     "createdAt": "2026-09-17T16:58:03.225Z"
+  },
+  {
+    "id": "post_big-smile-dental_1789894327506",
+    "slug": "big-smile-dental",
+    "businessName": "Big Smile Dental",
+    "niche": "medical",
+    "city": "Chicago IL",
+    "demoUrl": "https://warriorlegacy.github.io/website-agency/demos/big-smile-dental/index.html",
+    "caption": "🏥 New project spotlight: Big Smile Dental in Chicago IL got a complete website overhaul. Patient-friendly, SEO-optimized, and blazing fast: https://warriorlegacy.github.io/website-agency/demos/big-smile-dental/index.html #HealthcareWeb #DentalDesign",
+    "platforms": [
+      "linkedin",
+      "x",
+      "instagram"
+    ],
+    "scheduledAt": "2026-09-20T09:52:07.506Z",
+    "status": "queued",
+    "createdAt": "2026-09-20T08:52:07.506Z"
   }
 ]

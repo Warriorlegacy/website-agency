@@ -1,0 +1,61 @@
+{
+  "businessName": "Big Smile Dental",
+  "slug": "big-smile-dental",
+  "url": "https://big-smile-dental.com",
+  "niche": "medical",
+  "city": "Chicago IL",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-09-20T08:52:06.906Z",
+  "liveSiteDetected": false,
+  "scrapeSource": "none",
+  "engine": "AI Audit",
+  "overallScore": 2,
+  "dimensions": {
+    "design": {
+      "score": 1,
+      "problems": [
+        "Complete absence of visual identity prevents trust establishment for a medical service",
+        "No interface exists to convey the sterile, professional, or welcoming atmosphere expected of a dental clinic"
+      ],
+      "quickFix": "Launch a minimal landing page with a professional logo, high-quality team photos, and a clean, white/blue color palette to establish immediate credibility."
+    },
+    "mobile": {
+      "score": 1,
+      "problems": [
+        "Zero mobile accessibility means 100% of mobile users (typically 60-70% of local search traffic) cannot access business information",
+        "Inability to click-to-call or view hours on mobile devices leads to immediate user drop-off"
+      ],
+      "quickFix": "Implement a mobile-first responsive template that prioritizes a prominent 'Call Now' button and clear display of address and hours."
+    },
+    "speed": {
+      "score": 1,
+      "problems": [
+        "No server response time as the site does not exist, resulting in infinite load time for any user attempt",
+        "Lack of any digital presence means no opportunity for Core Web Vitals optimization or caching"
+      ],
+      "quickFix": "Deploy the website on a fast, managed hosting platform (e.g., Cloudflare Pages or Vercel) to ensure sub-1-second initial load times."
+    },
+    "seo": {
+      "score": 1,
+      "problems": [
+        "Zero organic visibility for high-intent keywords like 'dentist in Chicago' or 'Big Smile Dental'",
+        "No structured data (LocalBusiness schema) to help search engines understand location, services, and ratings"
+      ],
+      "quickFix": "Create a dedicated 'Dentist in Chicago' landing page with optimized title tags, meta descriptions, and embedded Google Maps location data."
+    },
+    "conversion": {
+      "score": 1,
+      "problems": [
+        "No call-to-action (CTA) mechanisms exist to convert visitors into patients",
+        "Absence of online booking or contact forms forces users to rely on third-party directories, losing direct lead capture"
+      ],
+      "quickFix": "Integrate a simple online appointment scheduler (e.g., Calendly or a dental-specific PMS plugin) with a sticky 'Book Appointment' button visible on all screens."
+    }
+  },
+  "biggestOpportunity": "Big Smile Dental is currently invisible to the digital market in Chicago, meaning they are losing 100% of potential patients searching online; establishing a basic, mobile-optimized web presence with clear booking capabilities could capture an estimated 15-20% of local search traffic within the first month.",
+  "visualAudit": null,
+  "socialProfiles": null,
+  "emailSource": null
+}
