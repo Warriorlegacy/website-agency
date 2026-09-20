@@ -1693,5 +1693,100 @@
     "direction": "outbound",
     "provider": "smtp",
     "timestamp": "2026-09-20T08:52:11.081Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:03.387Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:03.635Z"
+  },
+  {
+    "lead_slug": "lou-malnatis-pizzeria",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:03.857Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:04.090Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:04.294Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:04.490Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:04.697Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:04.909Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-20T08:53:05.405Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1789894387043",
+    "to": "lapalapaaus@gmail.com",
+    "subject": "Website Redesign Proposal & Next Steps for La Palapa",
+    "timestamp": "2026-09-20T08:53:07.044Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "action": "send_closing_proposal",
+    "channel": "email",
+    "direction": "outbound",
+    "package": "growth",
+    "deposit_amount": 62500,
+    "payment_url": "upi://pay?pa=6202442690@jio&pn=Piyush%20Singh&am=62500&cu=INR&tn=Growth%20Package%20Deposit%20-%20La%20Palapa",
+    "proposal_url": "/proposals/la-palapa.html",
+    "email_provider": "smtp",
+    "timestamp": "2026-09-20T08:53:07.045Z"
   }
 ]
