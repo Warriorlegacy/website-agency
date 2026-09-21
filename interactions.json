@@ -3171,5 +3171,123 @@
     "direction": "internal",
     "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
     "timestamp": "2026-09-21T16:04:16.933Z"
+  },
+  {
+    "lead_slug": "omni-dental-group",
+    "action": "move_to_nurture",
+    "channel": "system",
+    "reason": "3+ total touches (2 emails + 1 blocked) with no reply, meeting the threshold to move to nurture.",
+    "timestamp": "2026-09-21T17:30:36.243Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:37.466Z"
+  },
+  {
+    "lead_slug": "chinatown",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:37.702Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:38.247Z"
+  },
+  {
+    "lead_slug": "lou-malnatis-pizzeria",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:38.466Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:38.671Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:39.030Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:39.265Z"
+  },
+  {
+    "lead_slug": "south-gables-dental",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1790011841500",
+    "to": "info@southgablesdental.com",
+    "subject": "Quick redesign idea for South Gables Dental",
+    "timestamp": "2026-09-21T17:30:41.501Z"
+  },
+  {
+    "lead_slug": "south-gables-dental",
+    "action": "send_followup",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-09-21T17:30:41.502Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:41.926Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:42.169Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T17:30:42.371Z"
+  },
+  {
+    "lead_slug": "south-gables-dental",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "meeting_scheduled",
+    "duration_sec": 115,
+    "summary": "Jordan, the owner of South Gables Dental, agreed to a 10-minute review call with Alex after learning about a pre-built website demo and a $750 flat package.",
+    "transcript": "ALEX: Good morning, is this Jordan, the owner of South Gables Dental? My name is Alex, and I'm a sales consultant with Apex AI Web Studio. I'm calling because we noticed your practice has an excellent reputation with a 4.5-star rating, but you don't currently have a website. We actually took the initiative to build a preliminary, modern website demo specifically for South Gables Dental to show you what's possible.\nOWNER: Hi Alex, this is Jordan. I'm pretty slammed right now, what exactly is this about? And how did you get my number? A website demo, you say? What's the catch?\nALEX: No catch at all, Jordan. We specialize in helping local businesses like yours establish a strong online presence quickly and affordably. We found your practice through local business directories and were impressed by your reviews. The 'catch' is simply that we're confident you'll be impressed with what we've created. Our complete, pre-built modern website package, including hosting and basic SEO, is a flat $750. The demo is live right now at http://localhost:3030/demos/south-gables-dental/index.html. It's fully functional, mobile-friendly, and designed to attract new patients.\nOWNER: Hmm, $750 for a complete website, and you've already built a demo? That's... surprisingly straightforward. I'm still really tight on time today, but that link sounds interesting. Could you send me that URL in a text? Or, maybe even better, could we schedule a quick 10-minute call tomorrow morning, say around 9:30 AM, so you can walk me through it quickly? That might be more efficient.",
+    "timestamp": "2026-09-21T17:30:52.485Z"
   }
 ]
