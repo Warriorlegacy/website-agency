@@ -3289,5 +3289,85 @@
     "summary": "Jordan, the owner of South Gables Dental, agreed to a 10-minute review call with Alex after learning about a pre-built website demo and a $750 flat package.",
     "transcript": "ALEX: Good morning, is this Jordan, the owner of South Gables Dental? My name is Alex, and I'm a sales consultant with Apex AI Web Studio. I'm calling because we noticed your practice has an excellent reputation with a 4.5-star rating, but you don't currently have a website. We actually took the initiative to build a preliminary, modern website demo specifically for South Gables Dental to show you what's possible.\nOWNER: Hi Alex, this is Jordan. I'm pretty slammed right now, what exactly is this about? And how did you get my number? A website demo, you say? What's the catch?\nALEX: No catch at all, Jordan. We specialize in helping local businesses like yours establish a strong online presence quickly and affordably. We found your practice through local business directories and were impressed by your reviews. The 'catch' is simply that we're confident you'll be impressed with what we've created. Our complete, pre-built modern website package, including hosting and basic SEO, is a flat $750. The demo is live right now at http://localhost:3030/demos/south-gables-dental/index.html. It's fully functional, mobile-friendly, and designed to attract new patients.\nOWNER: Hmm, $750 for a complete website, and you've already built a demo? That's... surprisingly straightforward. I'm still really tight on time today, but that link sounds interesting. Could you send me that URL in a text? Or, maybe even better, could we schedule a quick 10-minute call tomorrow morning, say around 9:30 AM, so you can walk me through it quickly? That might be more efficient.",
     "timestamp": "2026-09-21T17:30:52.485Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:31.992Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:32.416Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:32.641Z"
+  },
+  {
+    "lead_slug": "lou-malnatis-pizzeria",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:32.864Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:33.126Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:33.346Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:33.586Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:33.818Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:34.030Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-09-21T21:20:34.248Z"
   }
 ]
