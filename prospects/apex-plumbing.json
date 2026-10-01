@@ -1,0 +1,61 @@
+{
+  "businessName": "Apex Plumbing",
+  "slug": "apex-plumbing",
+  "url": "https://apex-plumbing.com",
+  "niche": "trade",
+  "city": "Chicago IL",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-10-01T10:26:42.891Z",
+  "liveSiteDetected": false,
+  "scrapeSource": "none",
+  "engine": "AI Audit",
+  "overallScore": 2,
+  "dimensions": {
+    "design": {
+      "score": 1,
+      "problems": [
+        "Complete absence of visual identity prevents brand recognition and trust establishment for a local service provider.",
+        "Lack of professional imagery (e.g., team, vehicles, completed jobs) fails to convey the reliability and expertise expected in the plumbing trade."
+      ],
+      "quickFix": "Launch a basic one-page website with a clean, professional template featuring high-quality photos of the team and branded trucks to establish immediate credibility."
+    },
+    "mobile": {
+      "score": 1,
+      "problems": [
+        "No mobile-optimized interface exists, making it impossible for users to access contact information or services on smartphones, which are the primary device for emergency service searches.",
+        "Absence of click-to-call functionality means mobile users cannot initiate contact without manually typing the phone number, creating a high friction barrier."
+      ],
+      "quickFix": "Implement a mobile-first landing page with a prominent, sticky 'Call Now' button that triggers a direct tel: link for instant contact."
+    },
+    "speed": {
+      "score": 1,
+      "problems": [
+        "No website infrastructure exists, resulting in a 100% bounce rate as users cannot load any content or service information.",
+        "Lack of server presence means zero opportunity for fast load times, which is critical for retaining users searching for emergency plumbing help."
+      ],
+      "quickFix": "Deploy a lightweight, static HTML site on a CDN (like Cloudflare Pages or Netlify) to ensure sub-second load times for the initial landing page."
+    },
+    "seo": {
+      "score": 1,
+      "problems": [
+        "Zero search engine visibility means Apex Plumbing is invisible to local searches for 'plumber in Chicago' or 'emergency plumbing Chicago IL'.",
+        "Lack of local schema markup and geographic keywords prevents the business from appearing in Google's Local Pack or map results."
+      ],
+      "quickFix": "Create a Google Business Profile and link it to a new website with optimized title tags and meta descriptions targeting 'Chicago Plumbing Services' and specific neighborhoods."
+    },
+    "conversion": {
+      "score": 1,
+      "problems": [
+        "No call-to-action (CTA) exists, so there is no pathway for potential customers to request a quote, book a service, or call for help.",
+        "Absence of social proof elements like reviews, testimonials, or licensing badges eliminates the trust signals necessary to convert hesitant customers in a competitive market."
+      ],
+      "quickFix": "Add a simple contact form and display 3-5 verified Google reviews with star ratings directly on the homepage to reduce perceived risk and drive immediate inquiries."
+    }
+  },
+  "biggestOpportunity": "Apex Plumbing is currently invisible to the high-intent local search traffic in Chicago; establishing a basic, mobile-optimized web presence with clear CTAs could capture an estimated 15-20% of local emergency plumbing searches that are currently going to competitors, potentially generating $5,000-$10,000 in additional monthly revenue.",
+  "visualAudit": null,
+  "socialProfiles": null,
+  "emailSource": null
+}

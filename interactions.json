@@ -8327,5 +8327,155 @@
     "direction": "internal",
     "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
     "timestamp": "2026-10-01T07:57:03.468Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:25.258Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:25.870Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:26.156Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:26.679Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:26.909Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:27.419Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:27.783Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:28.380Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-01T10:26:29.397Z"
+  },
+  {
+    "lead_slug": "greenstreet",
+    "action": "audit",
+    "channel": "system",
+    "result": "Score: 2/10",
+    "timestamp": "2026-10-01T10:26:32.213Z"
+  },
+  {
+    "lead_slug": "greenstreet",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/greenstreet/index.html",
+    "timestamp": "2026-10-01T10:26:32.220Z"
+  },
+  {
+    "lead_slug": "greenstreet",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-10-01T10:26:40.548Z"
+  },
+  {
+    "lead_slug": "greenstreet",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1790850401219",
+    "to": "snoddle@comrascompany.com",
+    "subject": "Quick redesign idea for GreenStreet",
+    "timestamp": "2026-10-01T10:26:41.221Z"
+  },
+  {
+    "lead_slug": "greenstreet",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-10-01T10:26:41.225Z"
+  },
+  {
+    "lead_slug": "apex-plumbing",
+    "action": "audit",
+    "channel": "system",
+    "result": "Score: 2/10",
+    "timestamp": "2026-10-01T10:26:42.893Z"
+  },
+  {
+    "lead_slug": "apex-plumbing",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/apex-plumbing/index.html",
+    "timestamp": "2026-10-01T10:26:42.900Z"
+  },
+  {
+    "lead_slug": "apex-plumbing",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-10-01T10:26:50.486Z"
+  },
+  {
+    "lead_slug": "apex-plumbing",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1790850411052",
+    "to": "office@apexplumbingchicago.com",
+    "subject": "Quick redesign idea for Apex Plumbing",
+    "timestamp": "2026-10-01T10:26:51.054Z"
+  },
+  {
+    "lead_slug": "apex-plumbing",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-10-01T10:26:51.058Z"
   }
 ]

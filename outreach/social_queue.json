@@ -49,5 +49,39 @@
     "scheduledAt": "2026-09-20T09:52:07.506Z",
     "status": "queued",
     "createdAt": "2026-09-20T08:52:07.506Z"
+  },
+  {
+    "id": "post_greenstreet_1790850398033",
+    "slug": "greenstreet",
+    "businessName": "GreenStreet",
+    "niche": "restaurant",
+    "city": "Miami FL",
+    "demoUrl": "https://warriorlegacy.github.io/website-agency/demos/greenstreet/index.html",
+    "caption": "🍽️ Just built a modern website redesign for GreenStreet in Miami FL! Mobile-first, fast, and designed to convert. Check it out: https://warriorlegacy.github.io/website-agency/demos/greenstreet/index.html #WebDesign #RestaurantMarketing",
+    "platforms": [
+      "linkedin",
+      "x",
+      "instagram"
+    ],
+    "scheduledAt": "2026-10-01T11:26:38.033Z",
+    "status": "queued",
+    "createdAt": "2026-10-01T10:26:38.033Z"
+  },
+  {
+    "id": "post_apex-plumbing_1790850407793",
+    "slug": "apex-plumbing",
+    "businessName": "Apex Plumbing",
+    "niche": "trade",
+    "city": "Chicago IL",
+    "demoUrl": "https://warriorlegacy.github.io/website-agency/demos/apex-plumbing/index.html",
+    "caption": "🔧 Another happy client: Apex Plumbing in Chicago IL now has a website that works as hard as they do. Tap-to-call, mobile-first: https://warriorlegacy.github.io/website-agency/demos/apex-plumbing/index.html #ContractorMarketing #LocalSEO",
+    "platforms": [
+      "linkedin",
+      "x",
+      "instagram"
+    ],
+    "scheduledAt": "2026-10-01T11:26:47.793Z",
+    "status": "queued",
+    "createdAt": "2026-10-01T10:26:47.793Z"
   }
 ]

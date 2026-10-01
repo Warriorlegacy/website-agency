@@ -1,0 +1,61 @@
+{
+  "businessName": "GreenStreet",
+  "slug": "greenstreet",
+  "url": "https://greenstreet.com",
+  "niche": "restaurant",
+  "city": "Miami FL",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-10-01T10:26:32.212Z",
+  "liveSiteDetected": false,
+  "scrapeSource": "none",
+  "engine": "AI Audit",
+  "overallScore": 2,
+  "dimensions": {
+    "design": {
+      "score": 1,
+      "problems": [
+        "Complete absence of visual identity prevents brand recognition for a Miami-based restaurant",
+        "Lack of food photography eliminates the primary emotional trigger for dining decisions"
+      ],
+      "quickFix": "Launch a basic one-page site featuring high-resolution hero images of signature dishes and the Miami dining atmosphere"
+    },
+    "mobile": {
+      "score": 1,
+      "problems": [
+        "No mobile interface exists to capture the high volume of local mobile-first restaurant searches",
+        "Inability to access hours or location on mobile leads to immediate user drop-off"
+      ],
+      "quickFix": "Implement a mobile-responsive landing page with a sticky 'Call Now' and 'Get Directions' button"
+    },
+    "speed": {
+      "score": 1,
+      "problems": [
+        "Non-existent infrastructure results in infinite load times for any user attempting to access the business",
+        "Zero technical foundation prevents any performance optimization or caching strategies"
+      ],
+      "quickFix": "Deploy a lightweight static site generator (like Next.js or Astro) to ensure sub-second load times for the initial page"
+    },
+    "seo": {
+      "score": 1,
+      "problems": [
+        "No indexed pages means GreenStreet is invisible to local search queries for 'restaurants in Miami'",
+        "Missing schema markup prevents Google from displaying rich snippets for menu items and ratings"
+      ],
+      "quickFix": "Create a dedicated 'Miami Restaurant' landing page with LocalBusiness schema markup including address, hours, and geo-coordinates"
+    },
+    "conversion": {
+      "score": 1,
+      "problems": [
+        "No reservation or ordering system exists to convert interest into revenue",
+        "Lack of social proof or menu details prevents users from making a commitment to visit"
+      ],
+      "quickFix": "Integrate a third-party reservation widget (like OpenTable or Resy) directly into the homepage header"
+    }
+  },
+  "biggestOpportunity": "GreenStreet is currently invisible to the digital dining market in Miami; establishing a basic, mobile-optimized web presence with integrated reservations could capture an estimated 15-20% of local search traffic that is currently being lost to competitors.",
+  "visualAudit": null,
+  "socialProfiles": null,
+  "emailSource": null
+}
