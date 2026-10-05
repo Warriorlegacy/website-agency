@@ -1,18 +1,18 @@
 {
   "agency_name": "Apex AI Web Studio",
   "version": "1.0.0",
-  "last_updated": "2026-10-05T10:48:45.408Z",
+  "last_updated": "2026-10-05T15:29:27.365Z",
   "pipeline_summary": {
     "total_prospects": 25,
     "discovered": 0,
     "audited": 0,
     "demo_generated": 0,
     "outreach_drafted": 0,
-    "contacted": 1,
+    "contacted": 0,
     "meeting_scheduled": 11,
     "closed_won": 0,
-    "closed_lost": 13,
-    "pipeline_value_usd": 18000
+    "closed_lost": 14,
+    "pipeline_value_usd": 16500
   },
   "prospects": [
     {
@@ -508,11 +508,11 @@
       "ownerName": "Business Owner",
       "ownerEmail": "office@apexplumbingchicago.com",
       "ownerEmailSource": "https://duckduckgo.com/html/?q=%22Apex%20Plumbing%22%20Chicago%20IL%20email",
-      "stage": "CONTACTED",
+      "stage": "CLOSED_LOST",
       "source": "osm_overpass_live",
       "opportunityHook": "No website listed on Google Maps profile",
       "createdAt": "2026-10-01T10:25:59.043Z",
-      "lastAction": "2026-10-01T10:26:51.056Z",
+      "lastAction": "2026-10-05T15:29:27.361Z",
       "demoPath": "/demos/apex-plumbing/index.html",
       "overallScore": 2,
       "outreachPath": "/outreach/apex-plumbing.md"
