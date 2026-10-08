@@ -11835,5 +11835,124 @@
     "direction": "internal",
     "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
     "timestamp": "2026-10-08T08:07:56.987Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:07.058Z"
+  },
+  {
+    "lead_slug": "chinatown",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:07.275Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:07.486Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:07.713Z"
+  },
+  {
+    "lead_slug": "lou-malnatis-pizzeria",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:07.927Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:08.165Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:08.607Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:08.820Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:09.077Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-10-08T10:52:09.281Z"
+  },
+  {
+    "lead_slug": "jimmy-johns",
+    "action": "audit",
+    "channel": "system",
+    "result": "Score: 4/10",
+    "timestamp": "2026-10-08T10:52:40.756Z"
+  },
+  {
+    "lead_slug": "jimmy-johns",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/jimmy-johns/index.html",
+    "timestamp": "2026-10-08T10:52:40.763Z"
+  },
+  {
+    "lead_slug": "jimmy-johns",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-10-08T10:53:10.243Z"
+  },
+  {
+    "lead_slug": "jimmy-johns",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1791456791129",
+    "to": "bschultz@jimmyjohns.com",
+    "subject": "Quick redesign idea for Jimmy John's",
+    "timestamp": "2026-10-08T10:53:11.130Z"
+  },
+  {
+    "lead_slug": "jimmy-johns",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-10-08T10:53:11.133Z"
   }
 ]

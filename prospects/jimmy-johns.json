@@ -1,0 +1,70 @@
+{
+  "businessName": "Jimmy John's",
+  "slug": "jimmy-johns",
+  "url": "https://locations.jimmyjohns.com/il/chicago/sandwiches-406.html",
+  "niche": "restaurant",
+  "city": "Chicago IL",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-10-08T10:52:40.754Z",
+  "liveSiteDetected": true,
+  "scrapeSource": "jina",
+  "engine": "Heuristic Engine",
+  "overallScore": 4,
+  "dimensions": {
+    "design": {
+      "score": 4,
+      "problems": [
+        "Visual hierarchy lacks modern trust signals and conversion-focused elements.",
+        "No clear value proposition above the fold visible within 5 seconds of landing."
+      ],
+      "quickFix": "Deploy a modern single-column layout with hero section, social proof badges, and clear CTA buttons."
+    },
+    "mobile": {
+      "score": 2,
+      "problems": [
+        "Site could not be reached via standard HTTP — possible SSL or server configuration issue",
+        "Missing viewport meta tag — site loads as a zoomed-out desktop page on phones."
+      ],
+      "quickFix": "Add responsive breakpoints and a fixed mobile CTA bar with one-tap calling."
+    },
+    "speed": {
+      "score": 6,
+      "problems": [
+        "Uncompressed images and render-blocking scripts delay page load beyond 3 seconds.",
+        "Large unused CSS/JS bundles increase Time to Interactive."
+      ],
+      "quickFix": "Switch to static HTML/CSS delivery with lazy-loaded images and deferred scripts."
+    },
+    "seo": {
+      "score": 4,
+      "problems": [
+        "Missing meta description — Google replaces it with random page content, reducing CTR.",
+        "No H1 tag — critical for search engine understanding of page topic."
+      ],
+      "quickFix": "Add LocalBusiness Schema.org JSON-LD markup and optimize H1 for \"restaurant Chicago IL\"."
+    },
+    "conversion": {
+      "score": 2,
+      "problems": [
+        "Phone numbers are plain text — unclickable on mobile, losing dozens of calls per month.",
+        "No above-fold quote form or consultation booking widget to capture visitor intent."
+      ],
+      "quickFix": "Add one primary CTA button (call or book) in the hero and a short 3-field inquiry form."
+    }
+  },
+  "biggestOpportunity": "By deploying a modern mobile-first site with click-to-call and a local SEO foundation, Jimmy John's could capture 25–40% more inbound leads from Chicago IL searchers — turning their website from a brochure into a lead generation engine.",
+  "visualAudit": {
+    "source": "dom_heuristic",
+    "hasMobileViewport": false,
+    "hasHorizontalScroll": false,
+    "desktopScreenshot": null,
+    "mobileScreenshot": null,
+    "layoutIssues": [
+      "Site could not be reached via standard HTTP — possible SSL or server configuration issue"
+    ]
+  },
+  "socialProfiles": null,
+  "emailSource": null
+}

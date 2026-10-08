@@ -83,5 +83,22 @@
     "scheduledAt": "2026-10-01T11:26:47.793Z",
     "status": "queued",
     "createdAt": "2026-10-01T10:26:47.793Z"
+  },
+  {
+    "id": "post_jimmy-johns_1791456787503",
+    "slug": "jimmy-johns",
+    "businessName": "Jimmy John's",
+    "niche": "restaurant",
+    "city": "Chicago IL",
+    "demoUrl": "https://warriorlegacy.github.io/website-agency/demos/jimmy-johns/index.html",
+    "caption": "🍽️ Just built a modern website redesign for Jimmy John's in Chicago IL! Mobile-first, fast, and designed to convert. Check it out: https://warriorlegacy.github.io/website-agency/demos/jimmy-johns/index.html #WebDesign #RestaurantMarketing",
+    "platforms": [
+      "linkedin",
+      "x",
+      "instagram"
+    ],
+    "scheduledAt": "2026-10-08T11:53:07.503Z",
+    "status": "queued",
+    "createdAt": "2026-10-08T10:53:07.503Z"
   }
 ]
