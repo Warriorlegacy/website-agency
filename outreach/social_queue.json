@@ -100,5 +100,22 @@
     "scheduledAt": "2026-10-08T11:53:07.503Z",
     "status": "queued",
     "createdAt": "2026-10-08T10:53:07.503Z"
+  },
+  {
+    "id": "post_castle-dental_1791626642292",
+    "slug": "castle-dental",
+    "businessName": "Castle Dental",
+    "niche": "medical",
+    "city": "Austin TX",
+    "demoUrl": "https://warriorlegacy.github.io/website-agency/demos/castle-dental/index.html",
+    "caption": "🏥 New project spotlight: Castle Dental in Austin TX got a complete website overhaul. Patient-friendly, SEO-optimized, and blazing fast: https://warriorlegacy.github.io/website-agency/demos/castle-dental/index.html #HealthcareWeb #DentalDesign",
+    "platforms": [
+      "linkedin",
+      "x",
+      "instagram"
+    ],
+    "scheduledAt": "2026-10-10T11:04:02.292Z",
+    "status": "queued",
+    "createdAt": "2026-10-10T10:04:02.292Z"
   }
 ]

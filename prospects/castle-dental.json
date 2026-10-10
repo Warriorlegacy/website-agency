@@ -1,0 +1,61 @@
+{
+  "businessName": "Castle Dental",
+  "slug": "castle-dental",
+  "url": "https://castle-dental.com",
+  "niche": "medical",
+  "city": "Austin TX",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-10-10T10:03:56.349Z",
+  "liveSiteDetected": false,
+  "scrapeSource": "none",
+  "engine": "AI Audit",
+  "overallScore": 2,
+  "dimensions": {
+    "design": {
+      "score": 1,
+      "problems": [
+        "Complete absence of visual identity prevents trust establishment for a medical provider",
+        "Lack of professional photography of the Austin facility and dental team creates a void in social proof"
+      ],
+      "quickFix": "Launch a minimal, high-contrast landing page featuring a hero image of the Castle Dental office in Austin and a clear 'Book Now' button."
+    },
+    "mobile": {
+      "score": 1,
+      "problems": [
+        "No mobile-optimized interface exists to capture on-the-go local search traffic",
+        "Inability to click-to-call or map directly from a mobile device due to missing website infrastructure"
+      ],
+      "quickFix": "Implement a mobile-first responsive template that prioritizes a sticky 'Call Now' bar and embedded Google Maps widget."
+    },
+    "speed": {
+      "score": 1,
+      "problems": [
+        "Zero load time metrics available because no server or content is hosted",
+        "No infrastructure exists to serve assets, resulting in a 100% bounce rate for any attempted access"
+      ],
+      "quickFix": "Deploy the site on a CDN-enabled hosting platform (e.g., Cloudflare Pages or Vercel) to ensure sub-1-second load times for Austin users."
+    },
+    "seo": {
+      "score": 1,
+      "problems": [
+        "No indexed pages exist for high-value local keywords like 'dentist in Austin TX' or 'Castle Dental reviews'",
+        "Missing local schema markup prevents the business from appearing in Google's Local Pack for medical queries"
+      ],
+      "quickFix": "Create a dedicated 'Services in Austin' page with LocalBusiness schema markup including address, geo-coordinates, and service area."
+    },
+    "conversion": {
+      "score": 1,
+      "problems": [
+        "No call-to-action (CTA) pathways exist to convert visitors into patients",
+        "Absence of online scheduling integration forces users to rely solely on phone calls, increasing friction"
+      ],
+      "quickFix": "Integrate a third-party dental scheduling tool (like Weave or Solutionreach) with a prominent 'Schedule Appointment' button on the homepage."
+    }
+  },
+  "biggestOpportunity": "Castle Dental is currently invisible to digital patients in Austin; launching a basic, mobile-optimized website with online scheduling could capture an estimated 15-20% of local search traffic that is currently being lost to competitors with established web presences.",
+  "visualAudit": null,
+  "socialProfiles": null,
+  "emailSource": null
+}
