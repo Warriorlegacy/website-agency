@@ -28131,5 +28131,93 @@
     "direction": "internal",
     "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
     "timestamp": "2026-11-10T11:32:09.213Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:36.561Z"
+  },
+  {
+    "lead_slug": "chinatown",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:36.878Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:37.147Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:37.413Z"
+  },
+  {
+    "lead_slug": "lou-malnatis-pizzeria",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:37.688Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:37.935Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:38.211Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:38.473Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:38.737Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:38.999Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-10T11:55:39.247Z"
   }
 ]
