@@ -1,18 +1,18 @@
 {
   "agency_name": "Apex AI Web Studio",
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:22:41.540Z",
+  "last_updated": "2026-11-28T12:06:56.968Z",
   "pipeline_summary": {
-    "total_prospects": 27,
+    "total_prospects": 28,
     "discovered": 0,
     "audited": 0,
     "demo_generated": 0,
     "outreach_drafted": 0,
-    "contacted": 0,
+    "contacted": 1,
     "meeting_scheduled": 11,
     "closed_won": 0,
     "closed_lost": 16,
-    "pipeline_value_usd": 16500
+    "pipeline_value_usd": 18000
   },
   "prospects": [
     {
@@ -560,6 +560,28 @@
       "demoPath": "/demos/castle-dental/index.html",
       "overallScore": 2,
       "outreachPath": "/outreach/castle-dental.md"
+    },
+    {
+      "slug": "intelligent-air-services",
+      "businessName": "Intelligent Air Services",
+      "url": "https://www.iairservices.com/",
+      "phone": "+1-512-323-2500",
+      "address": "5602 Clay Avenue, Austin TX",
+      "city": "Austin TX",
+      "niche": "trade",
+      "rating": null,
+      "reviewCount": null,
+      "ownerName": "Business Owner",
+      "ownerEmail": "support@iairservices.com",
+      "ownerEmailSource": "https://www.iairservices.com/contact",
+      "stage": "CONTACTED",
+      "source": "osm_overpass_live",
+      "opportunityHook": "Website unreachable: fetch failed",
+      "createdAt": "2026-11-28T12:05:44.131Z",
+      "lastAction": "2026-11-28T12:06:56.955Z",
+      "demoPath": "/demos/intelligent-air-services/index.html",
+      "overallScore": 6.2,
+      "outreachPath": "/outreach/intelligent-air-services.md"
     }
   ]
 }

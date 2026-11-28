@@ -35379,5 +35379,124 @@
     "direction": "internal",
     "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
     "timestamp": "2026-11-28T05:22:41.537Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:47.298Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:47.797Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:48.017Z"
+  },
+  {
+    "lead_slug": "lou-malnatis-pizzeria",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:48.314Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:48.597Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:48.819Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:49.153Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:49.437Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:49.680Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T12:06:50.109Z"
+  },
+  {
+    "lead_slug": "intelligent-air-services",
+    "action": "audit",
+    "channel": "system",
+    "result": "Score: 6.2/10",
+    "timestamp": "2026-11-28T12:06:52.778Z"
+  },
+  {
+    "lead_slug": "intelligent-air-services",
+    "action": "generate_mvp",
+    "channel": "system",
+    "result": "/demos/intelligent-air-services/index.html",
+    "timestamp": "2026-11-28T12:06:52.805Z"
+  },
+  {
+    "lead_slug": "intelligent-air-services",
+    "action": "draft_outreach",
+    "channel": "system",
+    "timestamp": "2026-11-28T12:06:56.063Z"
+  },
+  {
+    "lead_slug": "intelligent-air-services",
+    "channel": "email",
+    "direction": "outbound",
+    "action": "send_email",
+    "provider": "smtp",
+    "messageId": "smtp-1795867616941",
+    "to": "support@iairservices.com",
+    "subject": "Quick redesign idea for Intelligent Air Services",
+    "timestamp": "2026-11-28T12:06:56.949Z"
+  },
+  {
+    "lead_slug": "intelligent-air-services",
+    "action": "send_email",
+    "channel": "email",
+    "direction": "outbound",
+    "provider": "smtp",
+    "timestamp": "2026-11-28T12:06:56.963Z"
   }
 ]

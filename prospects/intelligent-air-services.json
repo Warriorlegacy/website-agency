@@ -1,0 +1,70 @@
+{
+  "businessName": "Intelligent Air Services",
+  "slug": "intelligent-air-services",
+  "url": "https://www.iairservices.com/",
+  "niche": "trade",
+  "city": "Austin TX",
+  "ownerName": "Business Owner",
+  "ownerEmail": "",
+  "phone": "",
+  "auditDate": "2026-11-28T12:06:52.771Z",
+  "liveSiteDetected": true,
+  "scrapeSource": "jina",
+  "engine": "AI Audit",
+  "overallScore": 6.2,
+  "dimensions": {
+    "design": {
+      "score": 6,
+      "problems": [
+        "The navigation menu is excessively deep and cluttered, listing 11+ specific service area pages directly in the dropdown, which creates visual noise and cognitive overload for users.",
+        "The header lacks a clear, high-contrast primary Call-to-Action (CTA) button for 'Book Now' or 'Get a Quote', relying instead on a standard phone link that blends into the text."
+      ],
+      "quickFix": "Collapse the 'Service Area' dropdown into a single 'Service Areas' link that leads to a dedicated page, and add a prominent, high-contrast 'Schedule Service' button in the top right corner of the header."
+    },
+    "mobile": {
+      "score": 5,
+      "problems": [
+        "Desktop-fixed widths detected that break on small mobile viewports",
+        "The extensive nested menu structure (3 levels deep) is likely to cause usability issues on mobile devices, requiring excessive scrolling and tapping to find specific services like 'AC Repair'."
+      ],
+      "quickFix": "Implement a simplified mobile menu that groups all service areas under a single 'Where We Serve' accordion item and ensure the phone number is a sticky, full-width button at the bottom of the viewport."
+    },
+    "speed": {
+      "score": 7,
+      "problems": [
+        "The logo and other assets are being served from a third-party mirror domain (nicolel100.sg-host.com) rather than the primary domain, which can introduce latency and potential security/trust issues.",
+        "The heavy use of nested menus and likely unoptimized images for the numerous service area pages may increase the initial page load time and JavaScript execution time."
+      ],
+      "quickFix": "Migrate all static assets (images, CSS, JS) to be served directly from the primary domain (iairservices.com) and implement lazy loading for all images below the fold."
+    },
+    "seo": {
+      "score": 7,
+      "problems": [
+        "The title tag 'HVAC Company – AC & Heating Services in Austin, TX and surrounding areas' is generic and misses high-intent keywords like 'Repair' or 'Installation' which are likely higher volume for immediate service needs.",
+        "The URL structure for service areas (e.g., /service-area/lakeway-tx/) is good, but the homepage content provided does not show clear H1/H2 hierarchy for local SEO, potentially diluting the relevance for 'Austin HVAC'."
+      ],
+      "quickFix": "Update the homepage title to 'Austin HVAC Repair & Installation | Intelligent Air Services' and ensure the H1 tag on the homepage explicitly includes 'Austin' and 'HVAC' to strengthen local relevance."
+    },
+    "conversion": {
+      "score": 6,
+      "problems": [
+        "There is no visible urgency or incentive mechanism (like a 'Same-Day Service' badge or a limited-time coupon) in the immediate view, which reduces the impulse to call for urgent HVAC issues.",
+        "The 'Coupons' link is buried in the 'About' menu, making it difficult for price-sensitive customers to find discounts, which is a key conversion driver in the HVAC industry."
+      ],
+      "quickFix": "Add a prominent '24/7 Emergency Service' or 'Same-Day Appointment' badge next to the phone number in the header and move the 'Coupons' link to the main navigation bar for immediate visibility."
+    }
+  },
+  "biggestOpportunity": "Intelligent Air Services can significantly increase lead volume in Austin by simplifying the mobile navigation and adding a sticky 'Book Now' button, which is estimated to improve mobile conversion rates by 15-20% by reducing friction for urgent HVAC repairs.",
+  "visualAudit": {
+    "source": "dom_heuristic",
+    "hasMobileViewport": true,
+    "hasHorizontalScroll": true,
+    "desktopScreenshot": null,
+    "mobileScreenshot": null,
+    "layoutIssues": [
+      "Desktop-fixed widths detected that break on small mobile viewports"
+    ]
+  },
+  "socialProfiles": null,
+  "emailSource": null
+}

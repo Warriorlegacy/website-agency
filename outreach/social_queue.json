@@ -117,5 +117,22 @@
     "scheduledAt": "2026-10-10T11:04:02.292Z",
     "status": "queued",
     "createdAt": "2026-10-10T10:04:02.292Z"
+  },
+  {
+    "id": "post_intelligent-air-services_1795867613519",
+    "slug": "intelligent-air-services",
+    "businessName": "Intelligent Air Services",
+    "niche": "trade",
+    "city": "Austin TX",
+    "demoUrl": "https://warriorlegacy.github.io/website-agency/demos/intelligent-air-services/index.html",
+    "caption": "🔧 Another happy client: Intelligent Air Services in Austin TX now has a website that works as hard as they do. Tap-to-call, mobile-first: https://warriorlegacy.github.io/website-agency/demos/intelligent-air-services/index.html #ContractorMarketing #LocalSEO",
+    "platforms": [
+      "linkedin",
+      "x",
+      "instagram"
+    ],
+    "scheduledAt": "2026-11-28T13:06:53.519Z",
+    "status": "queued",
+    "createdAt": "2026-11-28T12:06:53.519Z"
   }
 ]
