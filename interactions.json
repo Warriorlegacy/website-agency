@@ -35498,5 +35498,89 @@
     "direction": "outbound",
     "provider": "smtp",
     "timestamp": "2026-11-28T12:06:56.963Z"
+  },
+  {
+    "lead_slug": "la-palapa",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:01.385Z"
+  },
+  {
+    "lead_slug": "thundercloud-subs",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:02.518Z"
+  },
+  {
+    "lead_slug": "clark-street-dog",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:02.846Z"
+  },
+  {
+    "lead_slug": "austin-dental-works",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:03.660Z"
+  },
+  {
+    "lead_slug": "hammons-family-dental",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:04.156Z"
+  },
+  {
+    "lead_slug": "fastbraces",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:04.435Z"
+  },
+  {
+    "lead_slug": "lincoln-square-orthodontics",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:04.758Z"
+  },
+  {
+    "lead_slug": "becker-roofing-company",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:05.069Z"
+  },
+  {
+    "lead_slug": "krosno-inc",
+    "action": "send_blocked",
+    "channel": "email",
+    "direction": "internal",
+    "reason": "missing: at least 2 numbered concrete fixes; a second concrete fix (value-first framing)",
+    "timestamp": "2026-11-28T14:42:05.347Z"
+  },
+  {
+    "lead_slug": "intelligent-air-services",
+    "action": "voice_call",
+    "channel": "voice_ai",
+    "direction": "outbound",
+    "provider": "ai_simulation",
+    "outcome": "demo_reviewed",
+    "duration_sec": 115,
+    "summary": "Owner agreed to review the pre-built demo link and schedule a 10-minute review after seeing the flat-rate offer.",
+    "transcript": "ALEX: Hi, this is Alex with Apex AI Web Studio. I’m calling because I noticed Intelligent Air Services has a great 4.7-star reputation in Austin, but your current website looks a bit dated. I’ve actually built a quick, modern demo for you to see what’s possible. Do you have a quick minute?\nOWNER: I'm in the middle of a job, so I'm pretty busy. What is this about? And how did you even find us?\nALEX: I understand, Jordan. I’ll be brief. We found you through local business directories. I’ve already created a live, pre-built demo of a modern site for your business. It’s a flat $750 package, no monthly fees, and it’s ready to go. I can send you the link right now so you can check it on your phone in 30 seconds.\nOWNER: A flat fee? That’s reasonable. I’m skeptical about these quick fixes, but if it’s already built, I can take a look. Send me the link. If it looks good, I’ll set aside 10 minutes later this week to review it properly.",
+    "timestamp": "2026-11-28T14:42:06.509Z"
   }
 ]
